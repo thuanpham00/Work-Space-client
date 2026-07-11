@@ -1,6 +1,9 @@
 export const path = {
   login: "/login",
   register: "/register",
-  home: "/",
+
   friends: "/friends",
+
+  infoUser: "/setting-account/info-user",
+  changePassword: "/setting-account/change-password",
 };

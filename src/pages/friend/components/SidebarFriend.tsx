@@ -1,4 +1,6 @@
+import { Button } from "antd";
 import styles from "./SidebarFriend.module.scss";
+import { PlusOutlined } from "@ant-design/icons";
 
 const friends = [
   {
@@ -93,7 +95,10 @@ const FriendItem = ({ friend }: { friend: (typeof friends)[0] }) => {
 export default function SidebarFriend() {
   return (
     <div className={styles.layoutInner}>
-      <h1 className={styles.layoutInnerTitle}>Danh sách bạn bè</h1>
+      <div className="flex items-center justify-between mb-3!">
+        <h1 className={styles.layoutInnerTitle}>Danh sách bạn bè</h1>
+        <Button type="link" icon={<PlusOutlined className="text-xl!" />} className={styles.addFriendButton}></Button>
+      </div>
       <div className={styles.layoutList}>
         {friends.map((friend) => (
           <FriendItem key={friend.id} friend={friend} />

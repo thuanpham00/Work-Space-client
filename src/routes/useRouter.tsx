@@ -3,10 +3,13 @@ import { Navigate, Outlet, useLocation, useRoutes, useSearchParams } from "react
 import { useAppStore } from "../store/store";
 import AuthLayout from "../layouts/AuthLayout";
 import { path } from "../utils/path";
-import LoginPage from "../pages/auth/login";
-import RegisterPage from "../pages/auth/register";
-import FriendPage from "../pages/friend/friend";
+import LoginPage from "../pages/Auth/LoginPage";
+import RegisterPage from "../pages/Auth/RegisterPage";
 import MainLayout from "../layouts/MainLayout/MainLayout";
+import FriendPage from "../pages/friend/FriendPage";
+import UserSideNav from "../pages/SettingAccount/Layouts/UserSideNav";
+import InfoUserPage from "../pages/SettingAccount/Pages/InfoUserPage";
+import ChangePasswordPage from "../pages/SettingAccount/Pages/ChangePasswordPage";
 
 const ProjectRouter = () => {
   const isLogin = useAppStore((state) => state.accessToken);
@@ -49,6 +52,20 @@ export default function useRouter() {
                   <FriendPage />
                 </Suspense>
               ),
+            },
+            {
+              path: "",
+              element: <UserSideNav />,
+              children: [
+                {
+                  path: path.infoUser,
+                  element: <InfoUserPage />,
+                },
+                {
+                  path: path.changePassword,
+                  element: <ChangePasswordPage />,
+                },
+              ],
             },
           ],
         },

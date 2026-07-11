@@ -1,13 +1,27 @@
+import type { GenderType } from "./user.type";
+
 export type RegisterBodyType = {
-  name: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
-  phone: string;
-  dateOfBirth: string;
 };
 
 export type LoginBodyType = {
   email: string;
   password: string;
+};
+
+export type UpdateUserBodyType = {
+  fullName: string;
+  phone: string;
+  bio: string;
+  gender: GenderType;
+  dateOfBirth: string;
+};
+
+export type ChangePasswordBodyType = {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 };

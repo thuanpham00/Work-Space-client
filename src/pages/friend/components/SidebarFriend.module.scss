@@ -1,5 +1,5 @@
-@use "../../styles/variables" as *;
-@use "../../styles/mixins" as *;
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
 
 .layoutInner {
   padding: $spacing-md;
@@ -9,7 +9,6 @@
   font-size: 18px;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: $spacing-sm;
   transition: color $transition-normal;
 }
 
@@ -43,4 +42,10 @@
 .friendItemName {
   color: var(--color-text);
   transition: color $transition-normal;
+}
+
+.addFriendButton {
+  > span {
+    font-size: 13px !important;
+  }
 }

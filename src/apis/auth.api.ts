@@ -1,4 +1,4 @@
-import type { LoginBodyType, RegisterBodyType } from "../types/auth.type";
+import type { ChangePasswordBodyType, LoginBodyType, RegisterBodyType, UpdateUserBodyType } from "../types/auth.type";
 import type { UserType } from "../types/user.type";
 import type { AuthResponse, SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
@@ -22,5 +22,17 @@ export const authAPI = {
 
   refreshToken: () => {
     return Http.post<AuthResponse>("/users/refresh-token");
+  },
+
+  update: (data: UpdateUserBodyType) => {
+    return Http.patch<SuccessResponse<{ user: UserType }>>("/users/me", data);
+  },
+
+  uploadAvatar: (file: File) => {
+    return Http.post<SuccessResponse<{ url: string }>>("/users/upload", file);
+  },
+
+  changePassword: (data: ChangePasswordBodyType) => {
+    return Http.post<SuccessResponse<{ message: string }>>("/users/change-password", data);
   },
 };

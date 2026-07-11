@@ -1,12 +1,12 @@
 import { Form, Input, Checkbox, Button, message } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import settings from "../../settings.json";
 import type { LoginBodyType } from "../../types/auth.type";
 import { useMutation } from "react-query";
 import { authAPI } from "../../apis/auth.api";
 import { useAppStore } from "../../store/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./auth.module.scss";
 
 export default function LoginPage() {
@@ -15,6 +15,18 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const setAccessToken = useAppStore((state) => state.setAccessToken);
   const setUser = useAppStore((state) => state.setUser);
+  const { state } = useLocation();
+
+  const { email, password } = state || {};
+
+  useEffect(() => {
+    if (email && password) {
+      form.setFieldsValue({
+        email,
+        password,
+      });
+    }
+  }, [email, password]);
 
   const loginMutation = useMutation({
     mutationFn: (body: LoginBodyType) => {

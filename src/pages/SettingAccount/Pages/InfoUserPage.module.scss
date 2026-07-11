@@ -1,0 +1,58 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.page {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: $spacing-xl;
+  align-items: flex-start;
+}
+
+.avatarColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  padding-top: $spacing-sm;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+  transition: border-color $transition-normal;
+}
+
+.uploadButton {
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  :global(.ant-form-item) {
+    margin-bottom: $spacing-md;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+@media (max-width: 768px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .avatarColumn {
+    flex-direction: row;
+    align-items: center;
+  }
+}

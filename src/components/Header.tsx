@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { setIsDarkModeToLS } from "../utils/auth";
 import styles from "./Header.module.scss";
+import { path } from "../utils/path";
 
 const { Header: HeaderAntd } = Layout;
 
@@ -38,7 +39,7 @@ export default function Header() {
         <p className={styles.userEmail}>{user?.email || "email@example.com"}</p>
       </div>
       <Divider />
-      <button className={styles.menuItem} onClick={() => {}}>
+      <button className={styles.menuItem} onClick={() => navigate(path.infoUser)}>
         <SettingOutlined />
         <span>Cài đặt tài khoản</span>
       </button>
