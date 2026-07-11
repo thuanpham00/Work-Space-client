@@ -1,0 +1,19 @@
+@use "reset";
+@use "variables" as *;
+@use "mixins" as *;
+@use "antd-theme";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @include custom-scrollbar;
+}
+
+a,
+button {
+  transition:
+    color $transition-fast,
+    background-color $transition-fast;
+}

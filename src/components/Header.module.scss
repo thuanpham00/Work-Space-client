@@ -1,0 +1,130 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+
+.header {
+  @include flex-between;
+  display: flex;
+  height: 64px;
+  padding: 0 $spacing-md !important;
+  background: var(--color-header);
+  border-bottom: 1px solid var(--color-border);
+  transition:
+    background-color $transition-normal,
+    border-color $transition-normal;
+}
+
+.logoSection {
+  @include flex-center;
+  height: 100%;
+  gap: $spacing-sm;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color $transition-normal;
+}
+
+.actions {
+  @include flex-center;
+  gap: $spacing-sm;
+}
+
+.themeToggle {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+  font-size: 18px;
+  color: var(--color-text-secondary);
+
+  &:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.userButton {
+  @include flex-center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  border: none;
+  background: transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  color: var(--color-text);
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.userName {
+  text-align: left;
+  display: none;
+
+  @include respond-to("sm") {
+    display: block;
+  }
+}
+
+.userNameText {
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.userMenu {
+  min-width: 200px;
+  padding: $spacing-sm 0;
+}
+
+.userInfo {
+  padding: $spacing-sm $spacing-md;
+}
+
+.userNameLabel {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.userEmail {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.menuItem {
+  @include flex-start;
+  gap: $spacing-sm;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  color: var(--color-text);
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.menuItemDanger {
+  color: var(--color-danger);
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
+}

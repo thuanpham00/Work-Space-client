@@ -1,0 +1,46 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.layoutInner {
+  padding: $spacing-md;
+}
+
+.layoutInnerTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: $spacing-sm;
+  transition: color $transition-normal;
+}
+
+.layoutList {
+  overflow-y: auto;
+  height: calc(100vh - 150px);
+  @include custom-scrollbar;
+}
+
+.friendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-xs;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.friendAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  object-fit: cover;
+}
+
+.friendItemName {
+  color: var(--color-text);
+  transition: color $transition-normal;
+}

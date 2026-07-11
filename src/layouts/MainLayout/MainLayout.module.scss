@@ -1,0 +1,63 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.layout {
+  height: 100vh;
+  display: flex;
+}
+
+.sider {
+  height: 100vh;
+  background: var(--color-sider) !important;
+  transition: background-color $transition-normal;
+
+  :global(.ant-layout-sider-children) {
+    background: var(--color-sider) !important;
+    @include flex-column;
+  }
+}
+
+.siderContent {
+  @include flex-center;
+  height: 64px;
+  gap: $spacing-sm;
+}
+
+.logo {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-primary-500);
+  border-radius: $radius-md;
+}
+
+.menu {
+  flex: 1;
+  border-right: none !important;
+  background: transparent !important;
+
+  :global(.ant-menu-title-content) {
+    display: none;
+  }
+
+  :global(.ant-menu-item) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+
+    .anticon {
+      margin-right: 0 !important;
+      font-size: 18px;
+    }
+  }
+}
+
+.content {
+  background: var(--color-card);
+  overflow: auto;
+  @include custom-scrollbar;
+  transition:
+    background-color $transition-normal,
+    border-color $transition-normal;
+}

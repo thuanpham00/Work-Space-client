@@ -1,0 +1,193 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.wrapper {
+  width: 100%;
+  padding: $spacing-lg;
+}
+
+// Logo section
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.logoIcon {
+  width: 48px;
+  height: 48px;
+  background: var(--color-primary-500);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.logoSvg {
+  width: 28px;
+  height: 28px;
+}
+
+.logoText {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  transition: color $transition-normal;
+}
+
+// Title
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: $spacing-md;
+  transition: color $transition-normal;
+}
+
+.titleLarge {
+  font-size: 24px;
+}
+
+.wave {
+  display: inline-block;
+  margin-left: 4px;
+  animation: wave 1.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20%,
+  60% {
+    transform: rotate(-14deg);
+  }
+  40%,
+  80% {
+    transform: rotate(14deg);
+  }
+}
+
+// Google button
+.googleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.googleButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  padding: 12px $spacing-md;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-text);
+  transition: all $transition-fast;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .dark & {
+    &:hover {
+      background: var(--color-bg);
+    }
+  }
+}
+
+.googleIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.googleText {
+  font-weight: 500;
+}
+
+// Divider
+.divider {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+  transition: background-color $transition-normal;
+}
+
+.dividerText {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  transition: color $transition-normal;
+}
+
+// Form rows
+.formRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.forgotLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary-500);
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-primary-600);
+  }
+}
+
+// Footer text
+.footerText {
+  margin-top: $spacing-lg;
+  text-align: center;
+  color: var(--color-text-secondary);
+  transition: color $transition-normal;
+}
+
+.footerTextSmall {
+  font-size: 12px;
+  margin-top: $spacing-sm;
+}
+
+.authLink {
+  font-weight: 500;
+  color: var(--color-primary-500);
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-primary-600);
+  }
+}
+
+// Submit button override
+.submitButton {
+  margin-top: 10px;
+  height: 48px !important;
+  font-size: 18px !important;
+
+  > span {
+    font-size: 15px !important;
+  }
+}
