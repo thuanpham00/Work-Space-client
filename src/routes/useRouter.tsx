@@ -6,7 +6,7 @@ import { path } from "../utils/path";
 import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
 import MainLayout from "../layouts/MainLayout/MainLayout";
-import FriendPage from "../pages/friend/FriendPage";
+import FriendPage from "../pages/Friend/FriendPage";
 import UserSideNav from "../pages/SettingAccount/Layouts/UserSideNav";
 import InfoUserPage from "../pages/SettingAccount/Pages/InfoUserPage";
 import ChangePasswordPage from "../pages/SettingAccount/Pages/ChangePasswordPage";

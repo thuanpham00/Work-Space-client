@@ -1,27 +1,43 @@
-import { Avatar, Button, Col, DatePicker, Form, Input, message, Radio, Row } from "antd";
-import { UserOutlined, MailOutlined, PhoneOutlined, CameraOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Radio,
+  Row,
+  Upload,
+  type GetProp,
+  type UploadProps,
+} from "antd";
+import { UserOutlined, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import styles from "./InfoUserPage.module.scss";
 import { useMutation, useQuery } from "react-query";
-import { authAPI } from "../../../apis/auth.api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAccessTokenFromLS } from "../../../utils/auth";
 import type { GenderType, UserType } from "../../../types/user.type";
 import type { Dayjs } from "dayjs";
 import type { UpdateUserBodyType } from "../../../types/auth.type";
 import { queryClient } from "../../../main";
 import dayjs from "dayjs";
+import { userAPI } from "../../../apis/user.api";
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function InfoUserPage() {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const avatarUrl = Form.useWatch("avatar", form);
 
   const { data } = useQuery({
     queryKey: ["me"],
-    queryFn: () => authAPI.getProfile(),
+    queryFn: () => userAPI.getProfile(),
     enabled: getAccessTokenFromLS() !== null,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  const infoUser = data?.data.data.user;
+  const infoUser = data?.data?.data?.user;
 
   useEffect(() => {
     if (infoUser) {
@@ -33,19 +49,20 @@ export default function InfoUserPage() {
         bio: infoUser.bio,
         dateOfBirth: infoUser.dateOfBirth ? dayjs(infoUser.dateOfBirth) : null,
         gender: infoUser.gender || "MALE",
+        avatar: infoUser.avatar || undefined,
       });
     }
   }, [data]);
 
   const updateUser = useMutation({
-    mutationFn: (data: UpdateUserBodyType) => authAPI.update(data),
+    mutationFn: (data: UpdateUserBodyType) => userAPI.update(data),
   });
 
   const updateAvatar = useMutation({
-    mutationFn: (file: File) => authAPI.uploadAvatar(file),
+    mutationFn: (formData: FormData) => userAPI.uploadAvatar(formData),
   });
 
-  const onFinish = async (values: Omit<UserType, "avatar">) => {
+  const onFinish = async (values: UserType) => {
     const valid = await form.validateFields();
     if (!valid) return;
 
@@ -56,6 +73,10 @@ export default function InfoUserPage() {
       gender: values.gender as GenderType,
       bio: values.bio,
     };
+
+    if (values.avatar && values.avatar !== infoUser?.avatar) {
+      data.avatar = values.avatar;
+    }
 
     updateUser.mutate(data, {
       onSuccess: () => {
@@ -79,22 +100,90 @@ export default function InfoUserPage() {
       bio: infoUser?.bio,
       dateOfBirth: infoUser?.dateOfBirth ? dayjs(infoUser.dateOfBirth) : null,
       gender: infoUser?.gender || "MALE",
+      avatar: infoUser?.avatar || undefined,
     });
   };
+
+  // validate ảnh trước upload
+  const beforeUpload = (file: FileType) => {
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("Chỉ chấp nhận file JPG/PNG!");
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error("Ảnh phải nhỏ hơn 2MB!");
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  // theo dõi trạng thái upload
+  const handleChange: UploadProps["onChange"] = (info) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const url = info.file.response.data.data.url;
+      setLoading(false);
+      if (url) {
+        form.setFieldValue("avatar", url);
+      }
+    } else if (info.file.status === "error") {
+      setLoading(false);
+      message.error("Upload ảnh thất bại");
+    }
+  };
+
+  // upload ảnh
+  const customRequest: UploadProps["customRequest"] = ({ file, onSuccess, onError }) => {
+    const formData = new FormData();
+    formData.append("avatar", file as Blob);
+    updateAvatar.mutate(formData, {
+      onSuccess: (res) => onSuccess?.(res),
+      onError: (err) => onError?.(err as Error),
+    });
+  };
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
 
   return (
     <div className={styles.page}>
       <div className={styles.avatarColumn}>
-        <Avatar size={96} src={infoUser?.avatar} className={styles.avatar}>
-          {infoUser?.username.charAt(0)}
-        </Avatar>
-        <Button type="default" icon={<CameraOutlined />} className={styles.uploadButton}>
-          Đổi ảnh đại diện
-        </Button>
+        <h3>Ảnh đại diện</h3>
+        <Upload
+          name="avatar"
+          listType="picture-circle"
+          className="avatar-uploader"
+          showUploadList={false}
+          beforeUpload={beforeUpload}
+          customRequest={customRequest}
+          onChange={handleChange}
+        >
+          {avatarUrl ? (
+            <img
+              draggable={false}
+              src={avatarUrl}
+              alt="avatar"
+              style={{ width: "100%", height: "100px", borderRadius: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            uploadButton
+          )}
+        </Upload>
       </div>
 
       <Form form={form} layout="vertical" className={styles.form} onFinish={onFinish}>
         <Row gutter={[12, 12]}>
+          <Form.Item name="avatar" hidden>
+            <Input />
+          </Form.Item>
+
           <Col span={12}>
             <Form.Item label="Tên đăng nhập" name="username">
               <Input prefix={<UserOutlined />} disabled />

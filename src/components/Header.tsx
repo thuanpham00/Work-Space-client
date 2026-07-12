@@ -1,25 +1,33 @@
 import { Button, Layout, Popover, Avatar, Divider } from "antd";
 import { UserOutlined, SettingOutlined, LogoutOutlined, SunOutlined, MoonOutlined } from "@ant-design/icons";
 import { useAppStore } from "../store/store";
-import { authAPI } from "../apis/auth.api";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { setIsDarkModeToLS } from "../utils/auth";
+import { getAccessTokenFromLS, setIsDarkModeToLS } from "../utils/auth";
 import styles from "./Header.module.scss";
 import { path } from "../utils/path";
+import { userAPI } from "../apis/user.api";
 
 const { Header: HeaderAntd } = Layout;
 
 export default function Header() {
   const navigate = useNavigate();
-  const user = useAppStore((state) => state.user);
   const isDarkMode = useAppStore((state) => state.isDarkMode);
   const reset = useAppStore((state) => state.reset);
   const setIsDarkMode = useAppStore((state) => state.setIsDarkMode);
 
+  const { data } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => userAPI.getProfile(),
+    enabled: getAccessTokenFromLS() !== null,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  const infoUser = data?.data?.data?.user;
+
   const logoutMutation = useMutation({
     mutationFn: () => {
-      return authAPI.logout();
+      return userAPI.logout();
     },
     onSuccess: () => {
       reset();
@@ -35,8 +43,8 @@ export default function Header() {
   const userMenuContent = (
     <div className={styles.userMenu}>
       <div className={styles.userInfo}>
-        <p className={styles.userNameLabel}>{user?.username || "User"}</p>
-        <p className={styles.userEmail}>{user?.email || "email@example.com"}</p>
+        <p className={styles.userNameLabel}>{infoUser?.username || "User"}</p>
+        <p className={styles.userEmail}>{infoUser?.email || "email@example.com"}</p>
       </div>
       <Divider />
       <button className={styles.menuItem} onClick={() => navigate(path.infoUser)}>
@@ -69,9 +77,14 @@ export default function Header() {
 
         <Popover content={userMenuContent} trigger="click" placement="bottomRight" arrow={false}>
           <button className={styles.userButton}>
-            <Avatar size={36} icon={<UserOutlined />} src={user?.avatar} />
+            <Avatar
+              size={36}
+              src={infoUser?.avatar}
+              icon={<UserOutlined />}
+              style={{ borderRadius: "100%", objectFit: "cover", width: "36px", height: "36px" }}
+            />
             <div className={styles.userName}>
-              <p className={styles.userNameText}>{user?.username || "User"}</p>
+              <p className={styles.userNameText}>{infoUser?.username || "User"}</p>
             </div>
           </button>
         </Popover>

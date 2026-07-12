@@ -34,7 +34,7 @@ export default function MainLayout() {
             {
               key: "1",
               icon: (
-                <Tooltip title="Bạn bè">
+                <Tooltip title="Trò chuyện trực tiếp" placement="right">
                   <Users onClick={() => navigate("/friends")} />
                 </Tooltip>
               ),

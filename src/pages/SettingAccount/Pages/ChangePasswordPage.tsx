@@ -2,8 +2,8 @@ import { Button, Form, Input, message } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import styles from "./ChangePasswordPage.module.scss";
 import type { ChangePasswordBodyType } from "../../../types/auth.type";
-import { authAPI } from "../../../apis/auth.api";
 import { useMutation } from "react-query";
+import { userAPI } from "../../../apis/user.api";
 
 interface ChangePasswordValues {
   currentPassword: string;
@@ -15,7 +15,7 @@ export default function ChangePasswordPage() {
   const [form] = Form.useForm();
 
   const changePassword = useMutation({
-    mutationFn: (data: ChangePasswordBodyType) => authAPI.changePassword(data),
+    mutationFn: (data: ChangePasswordBodyType) => userAPI.changePassword(data),
   });
 
   const onFinish = (values: ChangePasswordValues) => {

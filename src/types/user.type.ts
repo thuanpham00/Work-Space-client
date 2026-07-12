@@ -18,3 +18,9 @@ export type UserType = {
   gender: GenderType;
   fullName: string;
 };
+
+export type ListUserParamsType = {
+  page: number;
+  limit: number;
+  search: string;
+};

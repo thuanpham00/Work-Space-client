@@ -4,17 +4,16 @@ import { path } from "../../utils/path";
 import settings from "../../settings.json";
 import type { LoginBodyType } from "../../types/auth.type";
 import { useMutation } from "react-query";
-import { authAPI } from "../../apis/auth.api";
 import { useAppStore } from "../../store/store";
 import { useEffect, useState } from "react";
 import styles from "./auth.module.scss";
+import { userAPI } from "../../apis/user.api";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const setAccessToken = useAppStore((state) => state.setAccessToken);
-  const setUser = useAppStore((state) => state.setUser);
   const { state } = useLocation();
 
   const { email, password } = state || {};
@@ -30,7 +29,7 @@ export default function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: (body: LoginBodyType) => {
-      return authAPI.login(body);
+      return userAPI.login(body);
     },
   });
 
@@ -40,7 +39,6 @@ export default function LoginPage() {
       const res = await loginMutation.mutateAsync(values);
       message.success(res.data.message);
       setAccessToken(res.data.data.access_token);
-      setUser(res.data.data.user);
       navigate("/");
     } catch (error) {
     } finally {

@@ -1,9 +1,14 @@
-import type { ChangePasswordBodyType, LoginBodyType, RegisterBodyType, UpdateUserBodyType } from "../types/auth.type";
-import type { UserType } from "../types/user.type";
+import type {
+  ChangePasswordBodyType,
+  LoginBodyType,
+  RegisterBodyType,
+  UpdateUserBodyType,
+} from "../types/auth.type";
+import type { ListUserParamsType, UserType } from "../types/user.type";
 import type { AuthResponse, SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
 
-export const authAPI = {
+export const userAPI = {
   register: (data: RegisterBodyType) => {
     return Http.post<AuthResponse>("/users/register", data);
   },
@@ -28,11 +33,19 @@ export const authAPI = {
     return Http.patch<SuccessResponse<{ user: UserType }>>("/users/me", data);
   },
 
-  uploadAvatar: (file: File) => {
-    return Http.post<SuccessResponse<{ url: string }>>("/users/upload", file);
+  uploadAvatar: (file: FormData) => {
+    return Http.post<SuccessResponse<{ url: string }>>("/users/upload", file, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 
   changePassword: (data: ChangePasswordBodyType) => {
     return Http.post<SuccessResponse<{ message: string }>>("/users/change-password", data);
+  },
+
+  list: (params: ListUserParamsType) => {
+    return Http.get<SuccessResponse<{ users: UserType[]; total: number }>>("/users", { params });
   },
 };

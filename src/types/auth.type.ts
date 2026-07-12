@@ -18,6 +18,7 @@ export type UpdateUserBodyType = {
   bio: string;
   gender: GenderType;
   dateOfBirth: string;
+  avatar?: string;
 };
 
 export type ChangePasswordBodyType = {

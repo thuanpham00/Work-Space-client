@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import styles from "./auth.module.scss";
 import { useMutation } from "react-query";
-import { authAPI } from "../../apis/auth.api";
 import type { RegisterBodyType } from "../../types/auth.type";
 import { useState } from "react";
+import { userAPI } from "../../apis/user.api";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();
@@ -14,7 +14,7 @@ export default function RegisterPage() {
 
   const registerMutation = useMutation({
     mutationFn: (body: RegisterBodyType) => {
-      return authAPI.register(body);
+      return userAPI.register(body);
     },
   });
 

@@ -1,6 +1,8 @@
 import { Button } from "antd";
 import styles from "./SidebarFriend.module.scss";
 import { PlusOutlined } from "@ant-design/icons";
+import { useRef } from "react";
+import { AddFriendModal, type AddFriendRef } from "./AddFriendModal";
 
 const friends = [
   {
@@ -93,17 +95,29 @@ const FriendItem = ({ friend }: { friend: (typeof friends)[0] }) => {
 };
 
 export default function SidebarFriend() {
+  const modalAddFriendRef = useRef<AddFriendRef>(null);
+
   return (
     <div className={styles.layoutInner}>
       <div className="flex items-center justify-between mb-3!">
         <h1 className={styles.layoutInnerTitle}>Danh sách bạn bè</h1>
-        <Button type="link" icon={<PlusOutlined className="text-xl!" />} className={styles.addFriendButton}></Button>
+        <Button
+          type="link"
+          icon={<PlusOutlined className="text-xl!" />}
+          className={styles.addFriendButton}
+          onClick={() => {
+            console.log("click");
+            modalAddFriendRef.current?.handleOpen?.();
+          }}
+        ></Button>
       </div>
       <div className={styles.layoutList}>
         {friends.map((friend) => (
           <FriendItem key={friend.id} friend={friend} />
         ))}
       </div>
+
+      <AddFriendModal ref={modalAddFriendRef} onClose={() => {}} onSubmitOk={() => {}} />
     </div>
   );
 }

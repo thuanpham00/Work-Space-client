@@ -1,0 +1,10 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.list {
+  @include custom-scrollbar;
+}
+
+.listItem {
+  align-items: center !important;
+}

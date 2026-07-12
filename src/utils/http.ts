@@ -3,7 +3,7 @@ import axios from "axios";
 import { message } from "antd";
 import { useAppStore } from "../store/store";
 import { config } from "./config";
-import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setUserToLS } from "./auth";
+import { clearLS, getAccessTokenFromLS, setAccessTokenToLS } from "./auth";
 import type { AuthResponse, MessageResponse, SuccessResponse } from "../types/utils.type";
 import { isAxiosExpiredTokenError, isError401 } from "./error";
 
@@ -41,7 +41,6 @@ class http {
           const data = response.data as AuthResponse;
           this.accessToken = data.data.access_token;
           setAccessTokenToLS(this.accessToken);
-          setUserToLS(data.data.user);
         }
         if (response.config.url === "/users/logout") {
           clearLS();
