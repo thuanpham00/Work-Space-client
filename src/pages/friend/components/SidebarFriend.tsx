@@ -1,8 +1,9 @@
 import { Button } from "antd";
 import styles from "./SidebarFriend.module.scss";
 import { PlusOutlined } from "@ant-design/icons";
-import { useRef } from "react";
-import { AddFriendModal, type AddFriendRef } from "./AddFriendModal";
+import { useContext } from "react";
+import { List } from "lucide-react";
+import { FriendContext, type ModeListFriend } from "../FriendPage";
 
 const friends = [
   {
@@ -85,39 +86,51 @@ const friends = [
   },
 ];
 
-const FriendItem = ({ friend }: { friend: (typeof friends)[0] }) => {
+const FriendItem = ({
+  friend,
+  setModeListFriend,
+}: {
+  friend: (typeof friends)[0];
+  setModeListFriend: (value: ModeListFriend) => void;
+}) => {
   return (
-    <div className={styles.friendItem}>
+    <button className={styles.friendItem} onClick={() => setModeListFriend("chat")}>
       <img src={friend.avatar} alt={friend.name} className={styles.friendAvatar} />
       <span className={styles.friendItemName}>{friend.name}</span>
-    </div>
+    </button>
   );
 };
 
-export default function SidebarFriend() {
-  const modalAddFriendRef = useRef<AddFriendRef>(null);
+export default function SidebarFriend({ openModalAddFriend }: { openModalAddFriend: () => void }) {
+  const { setModeListFriend } = useContext(FriendContext);
 
   return (
     <div className={styles.layoutInner}>
+      <Button
+        type="link"
+        onClick={() => setModeListFriend("list")}
+        className={styles.buttonListFriend}
+        icon={<List size={16} />}
+      >
+        Danh sách bạn bè
+      </Button>
+      <div className="border-t-2! border-gray-300 my-2!"></div>
       <div className="flex items-center justify-between mb-3!">
-        <h1 className={styles.layoutInnerTitle}>Danh sách bạn bè</h1>
+        <h2 className={styles.layoutInnerTitleChat}>Tin nhắn trực tiếp</h2>
         <Button
           type="link"
           icon={<PlusOutlined className="text-xl!" />}
           className={styles.addFriendButton}
           onClick={() => {
-            console.log("click");
-            modalAddFriendRef.current?.handleOpen?.();
+            openModalAddFriend();
           }}
         ></Button>
       </div>
       <div className={styles.layoutList}>
         {friends.map((friend) => (
-          <FriendItem key={friend.id} friend={friend} />
+          <FriendItem key={friend.id} friend={friend} setModeListFriend={setModeListFriend} />
         ))}
       </div>
-
-      <AddFriendModal ref={modalAddFriendRef} onClose={() => {}} onSubmitOk={() => {}} />
     </div>
   );
 }

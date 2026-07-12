@@ -2,19 +2,27 @@
 @use "../../../styles/mixins" as *;
 
 .layoutInner {
-  padding: $spacing-md;
+  padding: 10px $spacing-md 0;
 }
 
-.layoutInnerTitle {
-  font-size: 18px;
-  font-weight: 600;
+.buttonListFriend {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--color-text);
+  transition: color $transition-normal;
+  padding: 0;
+}
+
+.layoutInnerTitleChat {
+  font-size: 15px;
+  font-weight: 400;
   color: var(--color-text);
   transition: color $transition-normal;
 }
 
 .layoutList {
   overflow-y: auto;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 200px);
   @include custom-scrollbar;
 }
 
