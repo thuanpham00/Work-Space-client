@@ -10,17 +10,25 @@ const AppProvider = ({ children }: Props) => {
   return (
     <ConfigProvider
       theme={{
-        algorithm: isDarkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+        algorithm: isDarkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm, // theme gốc của antd
         token: {
-          colorPrimary: "#3b82f6",
-          borderRadius: 12,
-          fontFamily: "Poppins, sans-serif",
-        },
+          colorPrimary: "#d51f56",
+          colorPrimaryHover: "#d51f56",
+          colorText: isDarkMode ? "#ffffff" : "#111827",
+          borderRadius: 8,
+        }, // cấu hình 1 chỗ thì các component Antd khác sẽ tự theo // có thể set màu dựa tren isDarkMode
       }}
     >
-      {children}
+      <>{children}</>
     </ConfigProvider>
   );
 };
 
 export default AppProvider;
+
+/**
+ * 
+ * algorithm điều khiển theme gốc của Antd
+   theme.css điều khiển CSS variables cho phần UI tự viết của bạn
+  _antd-theme.scss chỉ là lớp override bổ sung, nên nếu bạn dùng màu hardcode trong đó thì nó sẽ không tự theo dark mode nữa
+ */

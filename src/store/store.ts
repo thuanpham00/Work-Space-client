@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getAccessTokenFromLS, getIsDarkModeFromLS, getUserFromLS, setIsDarkModeToLS } from "../utils/auth";
+import { getAccessTokenFromLS, getIsDarkModeFromLS, getUserFromLS } from "../utils/auth";
 import type { UserType } from "../types/user.type";
 
 type AppStoreType = {
@@ -29,7 +29,6 @@ export const useAppStore = create<AppStoreType>((set) => ({
   isDarkMode: initialDarkMode,
   setIsDarkMode: (isDarkMode: boolean) => {
     document.documentElement.classList.toggle("dark", isDarkMode);
-    setIsDarkModeToLS(isDarkMode);
     set({ isDarkMode });
   },
 

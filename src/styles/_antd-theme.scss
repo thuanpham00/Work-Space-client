@@ -1,33 +1,12 @@
 @use "variables" as *;
 @use "mixins" as *;
 
-.ant-layout {
-  background: var(--color-bg) !important;
-  transition: background-color $transition-normal;
-}
-
-.ant-layout-header {
-  background: var(--color-header) !important;
-  padding: 0 !important;
-  border-bottom: 1px solid var(--color-border);
-  transition:
-    background-color $transition-normal,
-    border-color $transition-normal;
-}
-
-.ant-layout-sider {
-  background: var(--color-sider) !important;
-}
-
 .ant-input,
 .ant-input-affix-wrapper,
 .ant-input-password,
 .ant-input-number,
 .ant-select-selector,
 .ant-picker {
-  background: var(--color-bg) !important;
-  color: var(--color-text) !important;
-  border-color: var(--color-border) !important;
   border-radius: $radius-md !important;
   font-size: 14px !important;
   line-height: 1.5 !important;
@@ -38,18 +17,12 @@
     border-color $transition-fast,
     color $transition-fast;
 
-  &:hover {
-    border-color: var(--color-primary-500) !important;
-  }
-
   &:focus,
   &-focused {
-    border-color: var(--color-primary-500) !important;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
   }
 }
 
-// Autofill browser - ghi đè background vàng + font-size
 input.ant-input:-webkit-autofill,
 input.ant-input:-webkit-autofill:hover,
 input.ant-input:-webkit-autofill:focus,
@@ -62,12 +35,10 @@ input.ant-input:-webkit-autofill:focus,
   transition: background-color 5000s ease-in-out 0s !important;
 }
 
-// Input thường (.ant-input)
 .ant-input {
   padding: 8px 12px !important;
 }
 
-// Input.Password standalone
 .ant-input-password {
   padding: 8px 12px !important;
 
@@ -83,7 +54,6 @@ input.ant-input:-webkit-autofill:focus,
   }
 }
 
-// Input với affix wrapper (prefix/suffix icons)
 .ant-input-affix-wrapper {
   padding: 0 12px !important;
   overflow: hidden;
@@ -104,137 +74,4 @@ input.ant-input:-webkit-autofill:focus,
   .ant-input-suffix {
     margin: 0 4px !important;
   }
-}
-
-.ant-input-prefix,
-.ant-input-suffix {
-  color: var(--color-text-secondary) !important;
-}
-
-.ant-input-password-icon {
-  color: var(--color-text-secondary) !important;
-
-  &:hover {
-    color: var(--color-primary-500) !important;
-  }
-}
-
-// ==========================================
-// BUTTONS
-// ==========================================
-
-.ant-btn-primary {
-  background: var(--color-primary-500) !important;
-  border-color: var(--color-primary-500) !important;
-  font-weight: 600 !important;
-  border-radius: $radius-md !important;
-
-  &:hover,
-  &:focus {
-    background: var(--color-primary-600) !important;
-    border-color: var(--color-primary-600) !important;
-  }
-}
-
-.ant-btn-text {
-  color: var(--color-text) !important;
-
-  &:hover {
-    background: var(--color-bg-secondary) !important;
-    color: var(--color-text) !important;
-  }
-}
-
-// ==========================================
-// CARD, POPOVER, MESSAGE, etc.
-// ==========================================
-
-.ant-card {
-  background: var(--color-card) !important;
-  border-color: var(--color-border) !important;
-}
-
-.ant-popover-inner {
-  background: var(--color-card) !important;
-  border: 1px solid var(--color-border) !important;
-}
-
-.ant-popover-arrow::after {
-  background: var(--color-card) !important;
-}
-
-.ant-message-notice-content {
-  background: var(--color-card) !important;
-  color: var(--color-text) !important;
-  border: 1px solid var(--color-border) !important;
-  box-shadow: var(--shadow-md) !important;
-}
-
-.ant-divider {
-  border-color: var(--color-border) !important;
-  margin: 0 !important;
-}
-
-// Form labels
-.ant-form-item-label > label {
-  color: var(--color-text) !important;
-}
-
-// Modal
-.ant-modal-content {
-  background: var(--color-card) !important;
-  border: 1px solid var(--color-border) !important;
-}
-
-.ant-modal-header {
-  background: var(--color-card) !important;
-  border-bottom-color: var(--color-border) !important;
-}
-
-.ant-modal-title {
-  color: var(--color-text) !important;
-}
-
-// Table
-.ant-table {
-  background: var(--color-card) !important;
-  color: var(--color-text) !important;
-}
-
-.ant-table-thead > tr > th {
-  background: var(--color-bg-secondary) !important;
-  color: var(--color-text) !important;
-  border-bottom-color: var(--color-border) !important;
-}
-
-.ant-table-tbody > tr > td {
-  border-bottom-color: var(--color-border) !important;
-}
-
-.ant-table-tbody > tr:hover > td {
-  background: var(--color-bg-secondary) !important;
-}
-
-// Dropdown
-.ant-dropdown-menu {
-  background: var(--color-card) !important;
-  border: 1px solid var(--color-border) !important;
-}
-
-.ant-dropdown-menu-item {
-  color: var(--color-text) !important;
-
-  &:hover {
-    background: var(--color-bg-secondary) !important;
-  }
-}
-
-// Tag
-.ant-tag {
-  border-color: var(--color-border) !important;
-}
-
-// Avatar
-.ant-avatar {
-  background: var(--color-primary-500) !important;
 }
