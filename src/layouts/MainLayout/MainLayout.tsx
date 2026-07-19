@@ -1,47 +1,87 @@
-import { UploadOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import { Layout, Menu, Tooltip } from "antd";
-import { Outlet, useNavigate } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Avatar, Layout, Menu, Tooltip } from "antd";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from "./MainLayout.module.scss";
-import Header from "../../components/Header";
 import { Users } from "lucide-react";
+import Header from "../../components/Header/Header";
+import { useQuery } from "react-query";
+import { workspaceAPI } from "../../apis/workspace.api";
+import { getAccessTokenFromLS } from "../../utils/auth";
+import { useMemo } from "react";
+import type { WorkspaceType } from "../../types/workspace.type";
+import logo from "../../assets/image/chat.png";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // gọi api lấy ds workspace của user và workspace user tham gia
+  const { data: dataWorkspace } = useQuery({
+    queryKey: ["workspaces"],
+    queryFn: () => workspaceAPI.getWorkspaces(),
+    enabled: getAccessTokenFromLS() !== null,
+    staleTime: 1000 * 60 * 15, // 15 minutes
+  });
+
+  const listWorkspaces = dataWorkspace?.data?.data?.workspaces || [];
+
+  const selectedKeys = useMemo(() => {
+    if (pathname === "/friends") return ["friends"];
+
+    if (pathname.startsWith("/workspaces/")) {
+      const workspaceId = pathname.split("/")[2];
+      return [workspaceId];
+    }
+
+    return [];
+  }, [pathname]);
+
+  const menu = useMemo(() => {
+    return [
+      {
+        key: "friends",
+        icon: (
+          <Tooltip title="Trò chuyện trực tiếp" placement="right">
+            <Avatar icon={<Users />} />
+          </Tooltip>
+        ),
+      },
+      ...listWorkspaces.map((workspace: WorkspaceType) => ({
+        key: workspace.id,
+        icon: (
+          <Tooltip title={workspace.name} placement="right">
+            <Avatar src={workspace.avatar} alt={workspace.name}>
+              {workspace.name[0].toUpperCase()}
+            </Avatar>
+          </Tooltip>
+        ),
+      })),
+    ];
+  }, [listWorkspaces, navigate]);
 
   return (
     <Layout className={styles.layout}>
-      <Sider trigger={null} collapsible className={styles.sider} theme="dark" width={64}>
+      <Sider trigger={null} collapsible className={styles.sider} theme="dark" width={80}>
         <div className={styles.siderContent}>
           <div className={styles.logo}>
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
+            <img src={logo} alt="logo" />
           </div>
         </div>
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          selectedKeys={selectedKeys}
+          onClick={({ key }) => {
+            if (key === "friends") {
+              navigate("/friends");
+            } else {
+              navigate(`/workspaces/${key}`);
+            }
+          }}
           className={styles.menu}
-          items={[
-            {
-              key: "1",
-              icon: (
-                <Tooltip title="Trò chuyện trực tiếp" placement="right">
-                  <Users onClick={() => navigate("/friends")} />
-                </Tooltip>
-              ),
-            },
-            { key: "2", icon: <VideoCameraOutlined /> },
-            { key: "3", icon: <UploadOutlined /> },
-          ]}
+          items={menu}
         />
       </Sider>
       <Layout>

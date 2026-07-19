@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useRef, useState } from "react";
-import MainFriend from "./components/MainFriend";
+import { createContext, useState } from "react";
+import styles from "./Workspace.module.scss";
 import SidebarFriend from "./components/SidebarFriend";
-import styles from "./Friend.module.scss";
-import InfoUser from "./components/InfoUser";
-import { AddFriendModal, type AddFriendRef } from "./components/AddFriendModal";
 
 export type ModeListFriend = "list" | "chat";
 
@@ -17,9 +14,8 @@ export const FriendContext = createContext<{
   setModeListFriend: (_value: ModeListFriend) => {},
 });
 
-export default function FriendPage() {
+export default function WorkspacePage() {
   const [modeListFriend, setModeListFriend] = useState<ModeListFriend>("list");
-  const modalAddFriendRef = useRef<AddFriendRef>(null);
 
   return (
     <FriendContext.Provider value={{ modeListFriend, setModeListFriend }}>
@@ -28,16 +24,10 @@ export default function FriendPage() {
           <SidebarFriend />
         </div>
 
-        <div className={styles.friendContent}>
-          <MainFriend openModalAddFriend={() => modalAddFriendRef.current?.handleOpen?.()} />
-        </div>
+        <div className={styles.friendContent}>1</div>
 
-        <div className={styles.friendSideBarRight}>
-          <InfoUser />
-        </div>
+        <div className={styles.friendSideBarRight}>2</div>
       </div>
-
-      <AddFriendModal ref={modalAddFriendRef} onClose={() => {}} onSubmitOk={() => {}} />
     </FriendContext.Provider>
   );
 }

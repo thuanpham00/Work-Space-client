@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Suspense } from "react";
 import { Navigate, Outlet, useLocation, useRoutes, useSearchParams } from "react-router-dom";
 import { useAppStore } from "../store/store";
@@ -10,6 +11,7 @@ import FriendPage from "../pages/Friend/FriendPage";
 import UserSideNav from "../pages/SettingAccount/Layouts/UserSideNav";
 import InfoUserPage from "../pages/SettingAccount/Pages/InfoUserPage";
 import ChangePasswordPage from "../pages/SettingAccount/Pages/ChangePasswordPage";
+import Workspace from "../pages/Workspace/Workspace";
 
 const ProjectRouter = () => {
   const isLogin = useAppStore((state) => state.accessToken);
@@ -50,6 +52,14 @@ export default function useRouter() {
               element: (
                 <Suspense>
                   <FriendPage />
+                </Suspense>
+              ),
+            },
+            {
+              path: path.workspaces,
+              element: (
+                <Suspense>
+                  <Workspace />
                 </Suspense>
               ),
             },

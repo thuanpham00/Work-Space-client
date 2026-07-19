@@ -1,6 +1,5 @@
 import { Button } from "antd";
 import styles from "./SidebarFriend.module.scss";
-import { PlusOutlined } from "@ant-design/icons";
 import { useContext } from "react";
 import { List } from "lucide-react";
 import { FriendContext, type ModeListFriend } from "../FriendPage";
@@ -101,13 +100,13 @@ const FriendItem = ({
   );
 };
 
-export default function SidebarFriend({ openModalAddFriend }: { openModalAddFriend: () => void }) {
+export default function SidebarFriend() {
   const { setModeListFriend } = useContext(FriendContext);
 
   return (
     <div className={styles.layoutInner}>
       <Button
-        type="link"
+        type="primary"
         onClick={() => setModeListFriend("list")}
         className={styles.buttonListFriend}
         icon={<List size={16} />}
@@ -117,14 +116,6 @@ export default function SidebarFriend({ openModalAddFriend }: { openModalAddFrie
       <div className="border-t-2! border-gray-300 my-2!"></div>
       <div className="flex items-center justify-between mb-3!">
         <h2 className={styles.layoutInnerTitleChat}>Tin nhắn trực tiếp</h2>
-        <Button
-          type="link"
-          icon={<PlusOutlined className="text-xl!" />}
-          className={styles.addFriendButton}
-          onClick={() => {
-            openModalAddFriend();
-          }}
-        ></Button>
       </div>
       <div className={styles.layoutList}>
         {friends.map((friend) => (

@@ -1,12 +1,12 @@
 import { Button, Layout, Popover, Avatar, Divider } from "antd";
 import { UserOutlined, SettingOutlined, LogoutOutlined, SunOutlined, MoonOutlined } from "@ant-design/icons";
-import { useAppStore } from "../store/store";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { getAccessTokenFromLS, setIsDarkModeToLS } from "../utils/auth";
 import styles from "./Header.module.scss";
-import { path } from "../utils/path";
-import { userAPI } from "../apis/user.api";
+import { useAppStore } from "../../store/store";
+import { getAccessTokenFromLS, setIsDarkModeToLS } from "../../utils/auth";
+import { userAPI } from "../../apis/user.api";
+import { path } from "../../utils/path";
 
 const { Header: HeaderAntd } = Layout;
 

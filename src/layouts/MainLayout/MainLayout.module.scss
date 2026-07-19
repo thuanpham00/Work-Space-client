@@ -27,8 +27,6 @@
   @include flex-center;
   width: 40px;
   height: 40px;
-  background: var(--color-primary-500);
-  border-radius: $radius-md;
 }
 
 .menu {
@@ -41,6 +39,7 @@
   }
 
   :global(.ant-menu-item) {
+    height: 50px !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
     display: flex !important;
@@ -50,6 +49,11 @@
       margin-right: 0 !important;
       font-size: 18px;
     }
+  }
+
+  :global(.ant-avatar) {
+    width: 42px;
+    height: 42px;
   }
 }
 

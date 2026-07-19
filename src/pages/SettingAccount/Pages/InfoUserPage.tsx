@@ -191,24 +191,13 @@ export default function InfoUserPage() {
           </Col>
 
           <Col span={12}>
-            <Form.Item
-              label="Họ và tên"
-              name="fullName"
-              rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
-            >
+            <Form.Item label="Họ và tên" name="fullName">
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                { required: true, message: "Vui lòng nhập email" },
-                { type: "email", message: "Email không hợp lệ" },
-              ]}
-            >
+            <Form.Item label="Email" name="email">
               <Input prefix={<MailOutlined />} placeholder="example@email.com" disabled />
             </Form.Item>
           </Col>

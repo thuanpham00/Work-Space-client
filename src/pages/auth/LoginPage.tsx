@@ -1,4 +1,4 @@
-import { Form, Input, Checkbox, Button, message } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import settings from "../../settings.json";
@@ -8,6 +8,7 @@ import { useAppStore } from "../../store/store";
 import { useEffect, useState } from "react";
 import styles from "./auth.module.scss";
 import { userAPI } from "../../apis/user.api";
+import logo from "../../assets/image/chat.png";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
@@ -25,7 +26,7 @@ export default function LoginPage() {
         password,
       });
     }
-  }, [email, password]);
+  }, [email, password, form]);
 
   const loginMutation = useMutation({
     mutationFn: (body: LoginBodyType) => {
@@ -41,6 +42,7 @@ export default function LoginPage() {
       setAccessToken(res.data.data.access_token);
       navigate("/");
     } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -51,14 +53,7 @@ export default function LoginPage() {
       {/* Logo */}
       <div className={styles.logo}>
         <div className={styles.logoIcon}>
-          <svg className={styles.logoSvg} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
+          <img src={logo} alt="logo" />
         </div>
         <span className={styles.logoText}>WorkSpace</span>
       </div>
@@ -113,15 +108,12 @@ export default function LoginPage() {
         </Form.Item>
 
         <div className={styles.formRow}>
-          <Form.Item name="remember" valuePropName="checked" className="!mb-0">
-            <Checkbox>Giữ tôi đăng nhập</Checkbox>
-          </Form.Item>
           <a href="#" className={styles.forgotLink}>
             Quên mật khẩu?
           </a>
         </div>
 
-        <Form.Item className="!mb-0">
+        <Form.Item className="mb-0!">
           <Button
             type="primary"
             htmlType="submit"

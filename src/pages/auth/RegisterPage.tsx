@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import type { RegisterBodyType } from "../../types/auth.type";
 import { useState } from "react";
 import { userAPI } from "../../apis/user.api";
+import logo from "../../assets/image/chat.png";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();
@@ -28,9 +29,10 @@ export default function RegisterPage() {
         state: {
           email: values.email,
           password: values.password,
-        }
+        },
       });
     } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -40,14 +42,7 @@ export default function RegisterPage() {
     <div className={styles.wrapper}>
       <div className={styles.logo}>
         <div className={styles.logoIcon}>
-          <svg className={styles.logoSvg} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
+          <img src={logo} alt="logo" />
         </div>
         <span className={styles.logoText}>WorkSpace</span>
       </div>
@@ -104,7 +99,7 @@ export default function RegisterPage() {
           <Input.Password placeholder="Confirm Password" />
         </Form.Item>
 
-        <Form.Item className="!mb-0">
+        <Form.Item className="mb-0!">
           <Button type="primary" loading={loading} htmlType="submit" block className={styles.submitButton}>
             Đăng ký
           </Button>
