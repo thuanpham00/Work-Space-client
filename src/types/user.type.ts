@@ -25,3 +25,5 @@ export type ListUserParamsType = {
   limit: number;
   search: string;
 };
+
+export type StatusUserType = "ONLINE" | "OFFLINE" | "AWAY" | "BUSY";
