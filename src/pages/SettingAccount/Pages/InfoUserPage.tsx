@@ -54,7 +54,7 @@ export default function InfoUserPage() {
         avatar: infoUser.avatar || undefined,
       });
     }
-  }, [data]);
+  }, [form, infoUser]);
 
   const updateUser = useMutation({
     mutationFn: (data: UpdateUserBodyType) => userAPI.update(data),
