@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import { useAppStore } from "../../store/store";
-import { getAccessTokenFromLS, setIsDarkModeToLS } from "../../utils/auth";
+import { setIsDarkModeToLS } from "../../utils/auth";
 import { userAPI } from "../../apis/user.api";
 import { path } from "../../utils/path";
 
@@ -15,11 +15,12 @@ export default function Header() {
   const isDarkMode = useAppStore((state) => state.isDarkMode);
   const reset = useAppStore((state) => state.reset);
   const setIsDarkMode = useAppStore((state) => state.setIsDarkMode);
+  const token = useAppStore((state) => state.accessToken);
 
   const { data } = useQuery({
-    queryKey: ["me"],
+    queryKey: ["me", token],
     queryFn: () => userAPI.getProfile(),
-    enabled: getAccessTokenFromLS() !== null,
+    enabled: !!token,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 

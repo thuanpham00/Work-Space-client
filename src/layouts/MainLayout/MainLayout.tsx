@@ -6,22 +6,23 @@ import { Users } from "lucide-react";
 import Header from "../../components/Header/Header";
 import { useQuery } from "react-query";
 import { workspaceAPI } from "../../apis/workspace.api";
-import { getAccessTokenFromLS } from "../../utils/auth";
 import { useMemo } from "react";
 import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
+import { useAppStore } from "../../store/store";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const token = useAppStore((state) => state.accessToken);
 
   // gọi api lấy ds workspace của user và workspace user tham gia
   const { data: dataWorkspace } = useQuery({
-    queryKey: ["workspaces"],
+    queryKey: ["workspaces", token],
     queryFn: () => workspaceAPI.getWorkspaces(),
-    enabled: getAccessTokenFromLS() !== null,
+    enabled: !!token,
     staleTime: 1000 * 60 * 15, // 15 minutes
   });
 

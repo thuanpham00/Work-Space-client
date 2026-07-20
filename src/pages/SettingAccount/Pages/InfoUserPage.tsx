@@ -15,13 +15,13 @@ import { UserOutlined, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutline
 import styles from "./InfoUserPage.module.scss";
 import { useMutation, useQuery } from "react-query";
 import { useEffect, useState } from "react";
-import { getAccessTokenFromLS } from "../../../utils/auth";
 import type { GenderType, UserType } from "../../../types/user.type";
 import type { Dayjs } from "dayjs";
 import type { UpdateUserBodyType } from "../../../types/auth.type";
 import { queryClient } from "../../../main";
 import dayjs from "dayjs";
 import { userAPI } from "../../../apis/user.api";
+import { useAppStore } from "../../../store/store";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -29,11 +29,13 @@ export default function InfoUserPage() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const avatarUrl = Form.useWatch("avatar", form);
+  const token = useAppStore((state) => state.accessToken);
 
+  // nếu token thay đổi thì gọi lại api để lấy thông tin user
   const { data } = useQuery({
-    queryKey: ["me"],
+    queryKey: ["me", token],
     queryFn: () => userAPI.getProfile(),
-    enabled: getAccessTokenFromLS() !== null,
+    enabled: !!token,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
