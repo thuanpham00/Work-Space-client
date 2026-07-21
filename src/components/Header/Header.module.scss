@@ -7,9 +7,9 @@
   height: 64px;
   padding: 0 $spacing-md !important;
   background: var(--color-header);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border); // gọi biến theo kiểu css
   transition:
-    background-color $transition-normal,
+    background-color $transition-normal, // gọi biến theo kiểu scss
     border-color $transition-normal;
 }
 

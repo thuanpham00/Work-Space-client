@@ -10,8 +10,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      retry: 0,
+      refetchOnWindowFocus: false, // Không tự động refetch khi focus lại cửa sổ, bất kể dữ liệu còn fresh hay đã stale.
+      retry: 0, // gọi lại api khi thất bại (0 lần)
     },
   },
 });

@@ -9,6 +9,8 @@ import type { ListUserParamsType, UserType } from "../../../types/user.type";
 import { useDebounce } from "../../../Hooks/useDebounce";
 import { useAppStore } from "../../../store/store";
 import { X } from "lucide-react";
+import { friendApi } from "../../../apis/friend.api";
+import { queryClient } from "../../../main";
 
 export interface AddFriendRef {
   handleOpen: () => void;
@@ -68,7 +70,7 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
     }, [listUser]);
 
     const addFriendMutation = useMutation({
-      mutationFn: (friendId: string) => userAPI.addFriend(friendId),
+      mutationFn: (friendId: string) => friendApi.addFriend(friendId),
     });
 
     const handleSendRequest = async () => {
@@ -82,6 +84,7 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
         setConfirmVisible(false);
         refetch();
         onSubmitOk?.();
+        queryClient.invalidateQueries({ queryKey: ["friends"] });
       } catch (error) {
         console.log(error);
         message.error(`Có lỗi xảy ra khi ${typeStatus === "add" ? "gửi lời mời kết bạn" : "hủy lời mời"}`);

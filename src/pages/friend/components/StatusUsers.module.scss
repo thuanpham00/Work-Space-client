@@ -60,6 +60,10 @@
 .friendList {
   display: flex;
   flex-direction: column;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  padding-right: 10px;
+  @include custom-scrollbar;
 }
 
 .friendRow {

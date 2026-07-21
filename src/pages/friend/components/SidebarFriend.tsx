@@ -3,6 +3,9 @@ import styles from "./SidebarFriend.module.scss";
 import { useContext } from "react";
 import { List } from "lucide-react";
 import { FriendContext, type ModeListFriend } from "../FriendPage";
+import { useQuery } from "react-query";
+import { useAppStore } from "../../../store/store";
+import { channelApi } from "../../../apis/channel.api";
 
 const friends = [
   {
@@ -102,6 +105,17 @@ const FriendItem = ({
 
 export default function SidebarFriend() {
   const { setModeListFriend } = useContext(FriendContext);
+  const accessToken = useAppStore((app) => app.accessToken);
+
+  const { data: dataChannelDM, isLoading } = useQuery({
+    queryKey: ["channel-DM", accessToken],
+    queryFn: () => channelApi.getDirectMessageChannels({ search: "" }),
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    keepPreviousData: true,
+    enabled: Boolean(accessToken),
+  });
+
+  console.log(dataChannelDM);
 
   return (
     <div className={styles.layoutInner}>

@@ -49,10 +49,6 @@ export const userAPI = {
     return Http.get<SuccessResponse<{ users: UserType[]; total: number }>>("/users", { params });
   },
 
-  addFriend: (friendId: string) => {
-    return Http.post<SuccessResponse<{ message: string }>>(`/users/addFriend`, { friendId });
-  },
-
   infoUserStatus: (userId: string) => {
     return Http.get<SuccessResponse<{ user: UserType }>>(`/users/${userId}/status`);
   },
