@@ -1,0 +1,139 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+/* Right Member Profile Sidebar */
+.profileSidebar {
+  width: 25%;
+  background-color: var(--color-bg);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.profileBanner {
+  height: 100px;
+  min-height: 100px;
+  width: 100%;
+}
+
+.profileAvatarWrapper {
+  position: relative;
+  height: 48px;
+  padding-left: 16px;
+}
+
+.profileAvatarContainer {
+  position: absolute;
+  top: -45px;
+  width: 80px;
+  height: 80px;
+  border-radius: $radius-full;
+  border: 6px solid var(--color-bg);
+  background-color: var(--color-bg);
+}
+
+.profileAvatarImg {
+  width: 100%;
+  height: 100%;
+  border-radius: $radius-full;
+  object-fit: cover;
+}
+
+.profileStatusDot {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 18px;
+  height: 18px;
+  border-radius: $radius-full;
+  border: 3px solid var(--color-bg);
+  background-color: #22c55e;
+}
+
+.profileDetails {
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profileUserNames {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profileDisplayName {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.profileUsername {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.profileBioSection {
+  background-color: var(--color-bg-secondary);
+  padding: 10px 12px;
+  border-radius: $radius-sm;
+}
+
+.bioText {
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-border);
+  width: 100%;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionHeader {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.sectionText {
+  font-size: 13px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.fullProfileBtn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: center;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: var(--color-border);
+  }
+}

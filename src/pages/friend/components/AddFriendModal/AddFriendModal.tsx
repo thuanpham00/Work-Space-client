@@ -4,13 +4,13 @@ import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
 import React, { useEffect, useImperativeHandle, useState } from "react";
 import styles from "./AddFriendModal.module.scss";
 import { useMutation, useQuery } from "react-query";
-import { userAPI } from "../../../apis/user.api";
-import type { ListUserParamsType, UserType } from "../../../types/user.type";
-import { useDebounce } from "../../../Hooks/useDebounce";
-import { useAppStore } from "../../../store/store";
+import { userAPI } from "../../../../apis/user.api";
+import type { ListUserParamsType, UserType } from "../../../../types/user.type";
+import { useDebounce } from "../../../../Hooks/useDebounce";
+import { useAppStore } from "../../../../store/store";
 import { X } from "lucide-react";
-import { friendApi } from "../../../apis/friend.api";
-import { queryClient } from "../../../main";
+import { friendApi } from "../../../../apis/friend.api";
+import { queryClient } from "../../../../main";
 
 export interface AddFriendRef {
   handleOpen: () => void;

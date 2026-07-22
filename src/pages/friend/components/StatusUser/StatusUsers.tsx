@@ -12,11 +12,11 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { getAccessTokenFromLS } from "../../../utils/auth";
-import { friendApi } from "../../../apis/friend.api";
+import { getAccessTokenFromLS } from "../../../../utils/auth";
+import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
-import { useDebounce } from "../../../Hooks/useDebounce";
-import { queryClient } from "../../../main";
+import { useDebounce } from "../../../../Hooks/useDebounce";
+import { queryClient } from "../../../../main";
 
 const StatusList = {
   ONLINE: "ONLINE",
@@ -77,7 +77,6 @@ function FriendRow({
           ) : (
             <div className={styles.friendAvatarFallback}>{getAvatarLetter(friend)}</div>
           )}
-          {/* <span className={`${styles.friendPresence} ${styles[`friendPresence_${status}`]}`}></span> */}
         </div>
 
         <div className={styles.friendMeta}>
@@ -175,7 +174,7 @@ function FriendStatusPanel({
 }
 
 export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend: () => void }) {
-  const [type, setType] = useState<Status>(StatusList.ONLINE);
+  const [type, setType] = useState<Status>(StatusList.ACCEPTED);
   const [search, setSearch] = useState("");
   const accessToken = getAccessTokenFromLS();
 
@@ -248,16 +247,6 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
 
   const items: TabsProps["items"] = [
     {
-      key: StatusList.ONLINE,
-      label: (
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span>Online</span>
-        </div>
-      ),
-      children: <div>1</div>,
-    },
-    {
       key: StatusList.ACCEPTED,
       label: (
         <div className="flex items-center gap-2">
@@ -276,6 +265,16 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
           onReject={handleReject}
         />
       ),
+    },
+    {
+      key: StatusList.ONLINE,
+      label: (
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span>Online</span>
+        </div>
+      ),
+      children: <div>1</div>,
     },
     {
       key: StatusList.REQUESTED,

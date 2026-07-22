@@ -12,8 +12,8 @@ const AppProvider = ({ children }: Props) => {
       theme={{
         algorithm: isDarkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm, // theme gốc của antd
         token: {
-          colorPrimary: "#d51f56",
-          colorPrimaryHover: "#d51f56",
+          colorPrimary: "#ef4815",
+          colorPrimaryHover: "#f76235",
           colorText: isDarkMode ? "#ffffff" : "#111827",
           borderRadius: 8,
         }, // cấu hình 1 chỗ thì các component Antd khác sẽ tự theo // có thể set màu dựa tren isDarkMode

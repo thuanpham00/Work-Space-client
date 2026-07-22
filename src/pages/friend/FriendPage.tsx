@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useRef, useState } from "react";
-import MainFriend from "./components/MainFriend";
-import SidebarFriend from "./components/SidebarFriend";
+import MainFriend from "./components/MainFriend/MainFriend";
+import SidebarFriend from "./components/SidebarFriend/SidebarFriend";
 import styles from "./Friend.module.scss";
-import InfoUser from "./components/InfoUser";
-import { AddFriendModal, type AddFriendRef } from "./components/AddFriendModal";
+import { AddFriendModal, type AddFriendRef } from "./components/AddFriendModal/AddFriendModal";
 
 export type ModeListFriend = "list" | "chat";
 
@@ -30,10 +29,6 @@ export default function FriendPage() {
 
         <div className={styles.friendContent}>
           <MainFriend openModalAddFriend={() => modalAddFriendRef.current?.handleOpen?.()} />
-        </div>
-
-        <div className={styles.friendSideBarRight}>
-          <InfoUser />
         </div>
       </div>
 

@@ -1,0 +1,281 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-bg);
+  overflow: hidden;
+}
+
+/* Header Styles */
+.chatHeader {
+  height: 48px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: var(--color-bg);
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.atIcon {
+  color: var(--color-text-secondary);
+}
+
+.headerName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: $radius-full;
+  background-color: #22c55e;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  background-color: var(--color-bg-secondary);
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  padding: 4px 28px 4px 8px;
+  font-size: 13px;
+  width: 144px;
+  color: var(--color-text);
+  transition: width $transition-normal;
+
+  &:focus {
+    width: 240px;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  right: 8px;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* Chat Body Layout */
+.chatBody {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Messages Pane */
+.messagesPane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+
+.messagesList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  @include custom-scrollbar;
+}
+
+.messageItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 4px 0;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.messageAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.messageContentWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.messageMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.messageSender {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.messageTime {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.messageText {
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.messageAttachment {
+  margin-top: 8px;
+  border-radius: $radius-md;
+  overflow: hidden;
+  max-width: 400px;
+  border: 1px solid var(--color-border);
+}
+
+.attachmentImg {
+  max-width: 100%;
+  max-height: 300px;
+  display: block;
+  object-fit: contain;
+}
+
+/* Input Form and Container */
+.inputForm {
+  flex-shrink: 0;
+  padding: 0 16px 16px;
+  background-color: var(--color-bg);
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-secondary);
+  border-radius: $radius-sm;
+  padding: 10px 16px;
+  gap: 12px;
+}
+
+.inputPlusButton {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.chatInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-text);
+  font-size: 14px;
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.6;
+  }
+}
+
+.inputActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.sendBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary-500);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $transition-fast;
+
+  &:hover {
+    transform: scale(1.1);
+    color: var(--color-primary-600);
+  }
+}
