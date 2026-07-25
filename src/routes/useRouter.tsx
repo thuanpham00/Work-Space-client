@@ -12,6 +12,7 @@ import UserSideNav from "../pages/SettingAccount/Layouts/UserSideNav";
 import InfoUserPage from "../pages/SettingAccount/Pages/InfoUserPage";
 import ChangePasswordPage from "../pages/SettingAccount/Pages/ChangePasswordPage";
 import Workspace from "../pages/Workspace/Workspace";
+import SettingDisplayPage from "../pages/SettingAccount/Pages/SettingDisplayPage";
 
 const ProjectRouter = () => {
   const isLogin = useAppStore((state) => state.accessToken);
@@ -74,6 +75,10 @@ export default function useRouter() {
                 {
                   path: path.changePassword,
                   element: <ChangePasswordPage />,
+                },
+                {
+                  path: path.settingDisplay,
+                  element: <SettingDisplayPage />,
                 },
               ],
             },

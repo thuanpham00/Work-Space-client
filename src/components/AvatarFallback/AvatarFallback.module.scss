@@ -1,0 +1,53 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.avatarWrapper {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: $radius-full;
+  border: 2px solid var(--color-bg, #09090b);
+}
+
+.statusOnline {
+  background-color: #22c55e;
+}
+
+.statusIdle {
+  background-color: #f59e0b;
+}
+
+.statusDnd {
+  background-color: #ef4444;
+}
+
+.statusOffline {
+  background-color: #71717a;
+}
+
+.avatar {
+  border-radius: $radius-full;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatarFallback {
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #5b6cff, #22c55e);
+  user-select: none;
+}

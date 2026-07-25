@@ -11,14 +11,17 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { getAccessTokenFromLS } from "../../../../utils/auth";
 import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { queryClient } from "../../../../main";
+import { FriendContext } from "../../FriendPage";
+import type { FriendResponse } from "../../../../types/friend.type";
+import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 
-const StatusList = {
+export const StatusList = {
   ONLINE: "ONLINE",
   ACCEPTED: "ACCEPTED",
   REQUESTED: "REQUEST_SENT",
@@ -27,14 +30,6 @@ const StatusList = {
 
 export type Status = (typeof StatusList)[keyof typeof StatusList];
 
-type FriendCard = {
-  id: string;
-  username?: string;
-  displayName?: string;
-  fullName?: string;
-  avatar?: string | null;
-};
-
 const statusLabel: Record<Status, string> = {
   [StatusList.ONLINE]: "Trực tuyến",
   [StatusList.ACCEPTED]: "Tất cả",
@@ -42,42 +37,28 @@ const statusLabel: Record<Status, string> = {
   [StatusList.RECEIVED]: "Chờ xác nhận",
 };
 
-function getDisplayName(friend: FriendCard) {
-  return friend.displayName || friend.fullName || friend.username || "";
-}
-
-function getAvatarLetter(friend: FriendCard) {
-  const source = getDisplayName(friend).trim();
-
-  return source ? source.charAt(0).toUpperCase() : "?";
-}
-
 function FriendRow({
   friend,
   status,
   onAccept,
   onReject,
 }: {
-  friend: FriendCard;
+  friend: FriendResponse;
   status: Status;
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
 }) {
-  const avatar = friend.avatar?.trim();
-  const displayName = getDisplayName(friend);
+  const { setSelectFriend, setModeListFriend } = useContext(FriendContext);
+
+  const avatar = friend.avatar || "";
+  const displayName = friend.displayName || friend.fullName || friend.username || "";
   const isReceived = status === StatusList.RECEIVED;
   const isRequested = status === StatusList.REQUESTED;
 
   return (
     <div className={styles.friendRow}>
       <div className={styles.friendIdentity}>
-        <div className={styles.friendAvatarWrap}>
-          {avatar ? (
-            <img className={styles.friendAvatar} src={avatar} alt={displayName} />
-          ) : (
-            <div className={styles.friendAvatarFallback}>{getAvatarLetter(friend)}</div>
-          )}
-        </div>
+        <AvatarFallback src={avatar} alt={displayName} showStatus={false} />
 
         <div className={styles.friendMeta}>
           <div className={styles.friendName}>{displayName}</div>
@@ -104,7 +85,15 @@ function FriendRow({
           <Button size="small">Đã gửi</Button>
         ) : (
           <>
-            <Button type="text" size="small" icon={<MessageCircleMore size={16} />} />
+            <Button
+              onClick={() => {
+                setSelectFriend(friend.id);
+                setModeListFriend("chat");
+              }}
+              type="text"
+              size="small"
+              icon={<MessageCircleMore size={16} />}
+            />
             <Button type="text" size="small" icon={<MoreVertical size={16} />} />
           </>
         )}
@@ -123,7 +112,7 @@ function FriendStatusPanel({
   onReject,
 }: {
   status: Status;
-  friends: FriendCard[];
+  friends: FriendResponse[];
   isLoading: boolean;
   search: string;
   onSearchChange: (value: string) => void;
@@ -193,7 +182,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
     enabled: Boolean(accessToken),
   });
 
-  const friends = (dataFriends?.data.data.friends ?? []) as FriendCard[];
+  const friends = (dataFriends?.data.data.friends ?? []) as FriendResponse[];
 
   const [confirmAcceptOpen, setConfirmAcceptOpen] = useState(false);
   const [confirmRejectOpen, setConfirmRejectOpen] = useState(false);

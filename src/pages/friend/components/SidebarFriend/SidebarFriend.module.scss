@@ -94,7 +94,7 @@
   background: transparent;
   outline: none;
   text-align: left;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
 
   &:hover {
     background: var(--color-bg-secondary);
@@ -125,59 +125,6 @@
   }
 }
 
-.avatarWrapper {
-  position: relative;
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-}
-
-.friendAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: $radius-full;
-  object-fit: cover;
-}
-
-.avatarFallback {
-  width: 36px;
-  height: 36px;
-  border-radius: $radius-full;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
-  color: white;
-  background: linear-gradient(135deg, #5b6cff, #22c55e);
-}
-
-.statusDot {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 12px;
-  height: 12px;
-  border-radius: $radius-full;
-  border: 2px solid var(--color-bg, #09090b);
-}
-
-.statusOnline {
-  background-color: #22c55e;
-}
-
-.statusIdle {
-  background-color: #f59e0b;
-}
-
-.statusDnd {
-  background-color: #ef4444;
-}
-
-.statusOffline {
-  background-color: #71717a;
-}
-
 .friendInfo {
   display: flex;
   flex-direction: column;
@@ -187,9 +134,9 @@
 }
 
 .friendItemName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   transition: color $transition-fast;
   white-space: nowrap;
   overflow: hidden;

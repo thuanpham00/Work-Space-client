@@ -47,7 +47,7 @@ export default function Header() {
         <p className={styles.userNameLabel}>{infoUser?.username || "User"}</p>
         <p className={styles.userEmail}>{infoUser?.email || "email@example.com"}</p>
       </div>
-      <Divider />
+      <Divider className="my-2! mx-2!"/>
       <button className={styles.menuItem} onClick={() => navigate(path.infoUser)}>
         <SettingOutlined />
         <span>Cài đặt tài khoản</span>

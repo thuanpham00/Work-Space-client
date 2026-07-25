@@ -1,7 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Phone, Video, Pin, Search, PlusCircle, Gift, Smile, AtSign, Send, Sticker } from "lucide-react";
 import styles from "./DirectChat.module.scss";
-import InfoUser, { mockUser } from "../InfoUser/InfoUser";
+import InfoUser from "../InfoUser/InfoUser";
+import { FriendContext } from "../../FriendPage";
+import { useQuery } from "react-query";
+import { useAppStore } from "../../../../store/store";
+import { channelApi } from "../../../../apis/channel.api";
+import type { ChannelDM } from "../../../../types/channel.type";
 
 const initialMessages = [
   {
@@ -18,9 +23,20 @@ const initialMessages = [
 ];
 
 export default function DirectChat() {
+  const { selectFriend } = useContext(FriendContext);
+  const accessToken = useAppStore((app) => app.accessToken);
+
   const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const { data: dataChannelDM } = useQuery({
+    queryKey: ["friends", selectFriend, accessToken],
+    queryFn: () => channelApi.getDirectMessageChannelDetail(selectFriend),
+    enabled: Boolean(selectFriend),
+  });
+
+  const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
 
   const handleSendMessage = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -54,12 +70,14 @@ export default function DirectChat() {
     scrollToBottom();
   }, [messages]);
 
+  if (!channelDMDetail) return;
+
   return (
     <div className={styles.chatContainer}>
       <header className={styles.chatHeader}>
         <div className={styles.headerLeft}>
           <AtSign className={styles.atIcon} size={22} />
-          <span className={styles.headerName}>{mockUser.displayName}</span>
+          <span className={styles.headerName}>{channelDMDetail.friend.fullName}</span>
           <span className={styles.statusIndicator}></span>
         </div>
         <div className={styles.headerRight}>
@@ -119,7 +137,7 @@ export default function DirectChat() {
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={`Nhắn @${mockUser.displayName}`}
+                  placeholder={`Nhắn @${channelDMDetail.friend.username}`}
                   className={styles.chatInput}
                 />
                 <div className={styles.inputActions}>
@@ -143,7 +161,7 @@ export default function DirectChat() {
           </div>
         </div>
 
-        <InfoUser />
+        <InfoUser channelDMDetail={channelDMDetail} />
       </div>
     </div>
   );

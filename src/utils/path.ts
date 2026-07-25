@@ -5,6 +5,7 @@ export const path = {
   friends: "/friends",
   workspaces: "/workspaces/:id",
 
-  infoUser: "/setting-account/info-user",
-  changePassword: "/setting-account/change-password",
+  infoUser: "/setting/info-user",
+  changePassword: "/setting/change-password",
+  settingDisplay: "/setting/setting-display",
 };

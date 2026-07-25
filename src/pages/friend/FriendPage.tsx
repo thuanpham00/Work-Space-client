@@ -11,17 +11,23 @@ export type ModeListFriend = "list" | "chat";
 export const FriendContext = createContext<{
   modeListFriend: ModeListFriend;
   setModeListFriend: (value: ModeListFriend) => void;
+  selectFriend: string | null;
+  setSelectFriend: (value: string | null) => void;
 }>({
   modeListFriend: "list",
   setModeListFriend: (_value: ModeListFriend) => {},
+  selectFriend: null,
+  setSelectFriend: (_value: string | null) => {},
 });
 
 export default function FriendPage() {
   const [modeListFriend, setModeListFriend] = useState<ModeListFriend>("list");
+  const [selectFriend, setSelectFriend] = useState<string | null>(null);
+
   const modalAddFriendRef = useRef<AddFriendRef>(null);
 
   return (
-    <FriendContext.Provider value={{ modeListFriend, setModeListFriend }}>
+    <FriendContext.Provider value={{ modeListFriend, setModeListFriend, selectFriend, setSelectFriend }}>
       <div className={styles.friend}>
         <div className={styles.friendSidebar}>
           <SidebarFriend />

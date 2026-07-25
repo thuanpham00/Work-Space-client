@@ -5,48 +5,36 @@ import { List, Plus } from "lucide-react";
 import { FriendContext, type ModeListFriend } from "../../FriendPage";
 import { useQuery } from "react-query";
 import { useAppStore } from "../../../../store/store";
-import { channelApi } from "../../../../apis/channel.api";
-import type { ChannelDM } from "../../../../types/channel.type";
+import { friendApi } from "../../../../apis/friend.api";
+import { StatusList } from "../StatusUser/StatusUsers";
+import type { FriendResponse } from "../../../../types/friend.type";
+import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 
-const ChannelItem = ({
-  channel,
+const FriendItem = ({
+  friend,
   setModeListFriend,
 }: {
-  channel: ChannelDM;
+  friend: FriendResponse;
   setModeListFriend: (value: ModeListFriend) => void;
 }) => {
-  const member = Array.isArray(channel.members) ? channel.members[0] : channel.members;
-  const user = member?.user;
+  const { setSelectFriend } = useContext(FriendContext);
 
-  const displayName = user?.displayName || user?.fullName || user?.username || channel.name || "Người dùng";
-  const avatar = user?.avatar;
-  const bio = user?.bio;
-  const status = (user?.status || "OFFLINE").toUpperCase();
-
-  const statusClass =
-    status === "ONLINE"
-      ? styles.statusOnline
-      : status === "IDLE" || status === "AWAY"
-        ? styles.statusIdle
-        : status === "DND"
-          ? styles.statusDnd
-          : styles.statusOffline;
-
-  const avatarLetter = displayName.trim().charAt(0).toUpperCase() || "?";
+  const displayName = friend.displayName || friend.fullName || friend.username || "Người dùng";
+  const avatar = friend.avatar;
+  const status = (friend?.status || "OFFLINE").toUpperCase();
 
   return (
-    <button className={styles.friendItem} onClick={() => setModeListFriend("chat")}>
-      <div className={styles.avatarWrapper}>
-        {avatar ? (
-          <img src={avatar} alt={displayName} className={styles.friendAvatar} />
-        ) : (
-          <div className={styles.avatarFallback}>{avatarLetter}</div>
-        )}
-        <span className={`${styles.statusDot} ${statusClass}`} />
-      </div>
+    <button
+      className={styles.friendItem}
+      onClick={() => {
+        setModeListFriend("chat");
+        setSelectFriend(friend.id);
+      }}
+    >
+      <AvatarFallback src={avatar} alt={displayName} status={status as any} showStatus={true} />
+
       <div className={styles.friendInfo}>
         <span className={styles.friendItemName}>{displayName}</span>
-        {bio && <span className={styles.friendSubtext}>{bio}</span>}
       </div>
     </button>
   );
@@ -56,15 +44,23 @@ export default function SidebarFriend() {
   const { setModeListFriend, modeListFriend } = useContext(FriendContext);
   const accessToken = useAppStore((app) => app.accessToken);
 
-  const { data: dataChannelDM, isLoading } = useQuery({
-    queryKey: ["channel-DM", accessToken],
-    queryFn: () => channelApi.getDirectMessageChannels(),
+  // const { data: dataChannelDM, isLoading } = useQuery({
+  //   queryKey: ["channel-DM", accessToken],
+  //   queryFn: () => channelApi.getDirectMessageChannels(),
+  //   staleTime: 1000 * 60 * 15, // 15 minutes
+  //   keepPreviousData: true,
+  //   enabled: Boolean(accessToken),
+  // });
+
+  const { data: dataFriends, isLoading } = useQuery({
+    queryKey: ["friends", accessToken],
+    queryFn: () => friendApi.getFriends({ status: StatusList.ACCEPTED, search: "" }),
     staleTime: 1000 * 60 * 15, // 15 minutes
     keepPreviousData: true,
     enabled: Boolean(accessToken),
   });
 
-  const listChannelDM = (dataChannelDM?.data?.data.channels || []) as ChannelDM[];
+  const friends = (dataFriends?.data.data.friends ?? []) as FriendResponse[];
 
   return (
     <div className={styles.layoutInner}>
@@ -91,11 +87,11 @@ export default function SidebarFriend() {
           <div className="flex items-center justify-center py-4 w-full">
             <Spin size="small" />
           </div>
-        ) : listChannelDM.length === 0 ? (
+        ) : friends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
         ) : (
-          listChannelDM.map((channel) => (
-            <ChannelItem key={channel.id} channel={channel} setModeListFriend={setModeListFriend} />
+          friends.map((friend) => (
+            <FriendItem key={friend.id} friend={friend} setModeListFriend={setModeListFriend} />
           ))
         )}
       </div>

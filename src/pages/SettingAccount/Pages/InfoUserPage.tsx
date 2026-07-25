@@ -181,7 +181,7 @@ export default function InfoUserPage() {
       </div>
 
       <Form form={form} layout="vertical" className={styles.form} onFinish={onFinish}>
-        <Row gutter={[12, 12]}>
+        <Row gutter={[16, 16]}>
           <Form.Item name="avatar" hidden>
             <Input />
           </Form.Item>
