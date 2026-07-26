@@ -7,3 +7,30 @@ export const generateSocket = (accessToken: string) => {
     },
   });
 };
+
+export const formatMessageTime = (dateString: string | number | Date) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const isToday =
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+  const isYesterday =
+    new Date(now.getTime() - 86400000).getDate() === date.getDate() &&
+    new Date(now.getTime() - 86400000).getMonth() === date.getMonth() &&
+    new Date(now.getTime() - 86400000).getFullYear() === date.getFullYear();
+
+  const timeOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "2-digit" };
+  const timeString = date.toLocaleTimeString(undefined, timeOptions);
+
+  if (isToday) {
+    return `Today at ${timeString}`;
+  } else if (isYesterday) {
+    return `Yesterday at ${timeString}`;
+  } else {
+    const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return `${date.toLocaleDateString(undefined, dateOptions)} ${timeString}`;
+  }
+};
