@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { getAccessTokenFromLS, getIsDarkModeFromLS, getUserFromLS } from "../utils/auth";
 import type { UserType } from "../types/user.type";
+import { Socket } from "socket.io-client";
 
 type AppStoreType = {
   user: UserType;
@@ -9,6 +10,9 @@ type AppStoreType = {
   setAccessToken: (accessToken: string | null) => void;
   isDarkMode: boolean;
   setIsDarkMode: (isDarkMode: boolean) => void;
+
+  socket: Socket | null;
+  setSocket: (socket: Socket | null) => void;
 
   reset: () => void;
 };
@@ -37,4 +41,7 @@ export const useAppStore = create<AppStoreType>((set) => ({
       user: null,
       accessToken: null,
     }),
+
+  socket: null,
+  setSocket: (socket: Socket | null) => set({ socket }),
 }));

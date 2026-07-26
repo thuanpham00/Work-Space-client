@@ -48,7 +48,7 @@ function FriendRow({
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
 }) {
-  const { setSelectFriend, setModeListFriend } = useContext(FriendContext);
+  const { setSelectFriendId, setModeListFriend, setSelectChannelId } = useContext(FriendContext);
 
   const avatar = friend.avatar || "";
   const displayName = friend.displayName || friend.fullName || friend.username || "";
@@ -59,7 +59,8 @@ function FriendRow({
     <div
       className={styles.friendRow}
       onClick={() => {
-        setSelectFriend(friend.id);
+        setSelectFriendId(friend.id);
+        setSelectChannelId(null);
         setModeListFriend("chat");
       }}
     >
@@ -93,7 +94,8 @@ function FriendRow({
           <>
             <Button
               onClick={() => {
-                setSelectFriend(friend.id);
+                setSelectFriendId(friend.id);
+                setSelectChannelId(null);
                 setModeListFriend("chat");
               }}
               type="text"

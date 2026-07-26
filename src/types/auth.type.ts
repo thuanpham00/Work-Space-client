@@ -13,12 +13,14 @@ export type LoginBodyType = {
 };
 
 export type UpdateUserBodyType = {
-  fullName: string;
-  phone: string;
-  bio: string;
-  gender: GenderType;
-  dateOfBirth: string;
+  fullName?: string;
+  phone?: string;
+  bio?: string;
+  gender?: GenderType;
+  dateOfBirth?: string;
   avatar?: string;
+  status?: string;
+  privacySettings?: string;
 };
 
 export type ChangePasswordBodyType = {

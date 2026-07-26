@@ -5,7 +5,7 @@ interface AvatarFallbackProps {
   src?: string | null;
   alt: string;
   size?: number;
-  status?: "ONLINE" | "IDLE" | "AWAY" | "DND" | "OFFLINE";
+  status?: "ONLINE" | "BUSY" | "OFFLINE";
   showStatus?: boolean;
   className?: string;
   /** inline style cho status dot - dùng thay classNameStatus khi cần override position */
@@ -25,13 +25,7 @@ export default function AvatarFallback({
   const letter = alt?.trim().charAt(0).toUpperCase() || "?";
 
   const statusClass =
-    status === "ONLINE"
-      ? styles.statusOnline
-      : status === "IDLE" || status === "AWAY"
-        ? styles.statusIdle
-        : status === "DND"
-          ? styles.statusDnd
-          : styles.statusOffline;
+    status === "ONLINE" ? styles.statusOnline : status === "BUSY" ? styles.statusBusy : styles.statusOffline;
 
   return (
     <div className={`${styles.avatarWrapper} ${className ?? ""}`}>

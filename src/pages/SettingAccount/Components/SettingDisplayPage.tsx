@@ -1,8 +1,12 @@
-import { Button, Checkbox, Col, Form, Row, Select } from "antd";
+import { Button, Checkbox, Col, Form, message, Row, Select } from "antd";
 import styles from "./InfoUserPage.module.scss";
 import { statusUser } from "../../../types/friend.type";
 import type { UserType } from "../../../types/user.type";
 import { useEffect } from "react";
+import type { UpdateUserBodyType } from "../../../types/auth.type";
+import { userAPI } from "../../../apis/user.api";
+import { useMutation } from "react-query";
+import { queryClient } from "../../../main";
 
 const { Option } = Select;
 
@@ -10,17 +14,42 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
   const [form] = Form.useForm();
 
   const handleReset = () => {
-    form.resetFields();
-  };
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+    form.setFieldsValue({
+      status: infoUser.status,
+      privacySettings: JSON.parse(infoUser.privacySettings as string),
+    });
   };
 
   useEffect(() => {
     if (infoUser) {
       form.setFieldValue("status", infoUser.status);
+      form.setFieldValue("privacySettings", JSON.parse(infoUser.privacySettings as string));
     }
   }, [infoUser]);
+
+  const updateUser = useMutation({
+    mutationFn: (data: UpdateUserBodyType) => userAPI.update(data),
+  });
+
+  const onFinish = async () => {
+    const valid = await form.validateFields();
+    if (!valid) return;
+
+    const data: UpdateUserBodyType = {
+      status: valid.status,
+      privacySettings: JSON.stringify(valid.privacySettings),
+    };
+
+    updateUser.mutate(data, {
+      onSuccess: () => {
+        message.success("Cập nhật thông tin thành công");
+        queryClient.invalidateQueries({ queryKey: ["me"] });
+      },
+      onError: () => {
+        message.error("Cập nhật thông tin thất bại");
+      },
+    });
+  };
 
   return (
     <div>

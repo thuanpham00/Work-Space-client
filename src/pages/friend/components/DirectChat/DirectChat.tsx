@@ -7,60 +7,123 @@ import { useQuery } from "react-query";
 import { useAppStore } from "../../../../store/store";
 import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelDM } from "../../../../types/channel.type";
+import type { QueryBase } from "../../../../types/query.type";
+import { messageType, type Message } from "../../../../types/message.type";
+import { Avatar } from "antd";
+import InfiniteScroll from "react-infinite-scroll-component";
 
-const initialMessages = [
-  {
-    id: "msg-3",
-    sender: {
-      username: "hoang_son1999",
-      displayName: "Hồ Hoàng Sơn",
-      avatar: "https://i.pravatar.cc/150?img=12",
-    },
-    time: "3:01 CH",
-    content: "có nhận thông báo này k em mới tag a vô",
-    attachment: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop", // placeholder image representing screenshot
-  },
-];
+const PAGE = 1;
+const LIMIT = 10;
+
+const formatMessageTime = (dateString: string | number | Date) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const isToday =
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+  const isYesterday =
+    new Date(now.getTime() - 86400000).getDate() === date.getDate() &&
+    new Date(now.getTime() - 86400000).getMonth() === date.getMonth() &&
+    new Date(now.getTime() - 86400000).getFullYear() === date.getFullYear();
+
+  const timeOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "2-digit" };
+  const timeString = date.toLocaleTimeString(undefined, timeOptions);
+
+  if (isToday) {
+    return `Today at ${timeString}`;
+  } else if (isYesterday) {
+    return `Yesterday at ${timeString}`;
+  } else {
+    const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return `${date.toLocaleDateString(undefined, dateOptions)} ${timeString}`;
+  }
+};
 
 export default function DirectChat() {
-  const { selectFriend } = useContext(FriendContext);
-  console.log("selectFriend", selectFriend);
+  const { selectFriendId, selectChannelId } = useContext(FriendContext);
   const accessToken = useAppStore((app) => app.accessToken);
+  const socket = useAppStore((app) => app.socket);
 
-  const [messages, setMessages] = useState(initialMessages);
+  const [query, setQuery] = useState<QueryBase>({
+    limit: LIMIT,
+    page: PAGE,
+  });
+
+  const [pagination, setPagination] = useState({
+    page: PAGE,
+    total_page: 0,
+  });
+
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  console.log("messages", messages);
+
   const { data: dataChannelDM } = useQuery({
-    queryKey: ["friends", selectFriend, accessToken],
-    queryFn: () => channelApi.getDirectMessageChannelDetail(selectFriend),
-    enabled: Boolean(selectFriend),
+    queryKey: ["channelDM", selectFriendId, accessToken],
+    queryFn: () => channelApi.getDirectMessageChannelDetail(selectFriendId),
+    enabled: Boolean(selectFriendId),
+    staleTime: 60 * 1000 * 5,
+  });
+  const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
+  const channelId = channelDMDetail?.id || selectChannelId;
+
+  const { data: dataMessage } = useQuery({
+    queryKey: ["messageChannel", channelId, query, accessToken],
+    queryFn: () => channelApi.getMessagesChannel(channelId, query),
+    enabled: Boolean(channelId),
+    staleTime: 60 * 1000 * 5,
   });
 
-  const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
+  const conversationListData = dataMessage?.data?.data?.messages as Message[];
+  const page = dataMessage?.data?.data?.page;
+  const total_page = dataMessage?.data?.data?.total_page;
+
+  useEffect(() => {
+    setMessages([]); // clear old messages
+    setQuery({ page: PAGE, limit: LIMIT }); // reset pagination
+    setPagination({ page: PAGE, total_page: 0 });
+  }, [selectFriendId, selectChannelId]);
+
+  useEffect(() => {
+    if (!conversationListData) return;
+    if (page === PAGE) setMessages(conversationListData);
+    else setMessages((prev) => [...prev, ...conversationListData]);
+    setPagination({ page, total_page });
+  }, [conversationListData, page, total_page]);
+
+  useEffect(() => {
+    if (socket && channelId) {
+      socket.emit("join_channel", channelId);
+    }
+  }, [socket, channelId]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("receive_message", (msg: any) => {
+      setMessages((prev) => [msg, ...prev]);
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [socket]);
 
   const handleSendMessage = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!inputValue.trim()) return;
 
-    const newMsg = {
-      id: `msg-${Date.now()}`,
-      sender: {
-        username: "thuanphammm",
-        displayName: "thuanphammm",
-        avatar: "https://i.pravatar.cc/150?img=33",
-      },
-      time: new Date().toLocaleTimeString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
-      content: inputValue,
-      attachment: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop",
-    };
-
-    setMessages([...messages, newMsg]);
     setInputValue("");
+    socket?.emit("send_message", {
+      channel_id: channelId,
+      content: inputValue,
+      message_type: messageType.TEXT,
+    });
   };
 
   const scrollToBottom = () => {
@@ -70,6 +133,15 @@ export default function DirectChat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const fetchConversationDataMore = () => {
+    if (pagination.page < pagination.total_page) {
+      setQuery({
+        page: pagination.page + 1,
+        limit: LIMIT,
+      });
+    }
+  };
 
   if (!channelDMDetail) return;
 
@@ -101,30 +173,49 @@ export default function DirectChat() {
 
       <div className={styles.chatBody}>
         <div className={styles.messagesPane}>
-          <div className={styles.messagesList}>
-            {messages.map((msg) => {
-              return (
-                <div key={msg.id} className={styles.messageItem}>
-                  <img
-                    src={msg.sender.avatar}
-                    alt={msg.sender.displayName}
-                    className={styles.messageAvatar}
-                  />
-                  <div className={styles.messageContentWrapper}>
-                    <div className={styles.messageMeta}>
-                      <span className={styles.messageSender}>{msg.sender.displayName}</span>
-                      <span className={styles.messageTime}>{msg.time}</span>
-                    </div>
-                    <div className={styles.messageText}>{msg.content}</div>
-                    {msg.attachment && (
+          <div
+            className={styles.messagesList}
+            id="scrollableDiv"
+            style={{
+              overflow: "auto",
+              display: "flex",
+              flexDirection: "column-reverse",
+            }}
+          >
+            <InfiniteScroll
+              dataLength={messages.length}
+              next={fetchConversationDataMore}
+              style={{
+                display: "flex",
+                flexDirection: "column-reverse",
+              }}
+              inverse={true}
+              hasMore={pagination.page < pagination.total_page}
+              loader={<h4>Loading...</h4>}
+              scrollableTarget="scrollableDiv"
+            >
+              {messages.map((msg) => {
+                return (
+                  <div key={msg.id} className={styles.messageItem}>
+                    <Avatar src={msg.sender?.avatar} alt={msg.sender?.displayName}>
+                      {msg.sender?.displayName.charAt(0)}
+                    </Avatar>
+                    <div className={styles.messageContentWrapper}>
+                      <div className={styles.messageMeta}>
+                        <span className={styles.messageSender}>{msg.sender?.displayName}</span>
+                        <span className={styles.messageTime}>{formatMessageTime(msg.createdAt)}</span>
+                      </div>
+                      <div className={styles.messageText}>{msg.content}</div>
+                      {/* {msg.attachment && (
                       <div className={styles.messageAttachment}>
                         <img src={msg.attachment} alt="Attachment" className={styles.attachmentImg} />
                       </div>
-                    )}
+                    )} */}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </InfiniteScroll>
             <div ref={messagesEndRef} />
           </div>
 

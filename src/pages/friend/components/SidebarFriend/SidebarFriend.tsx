@@ -17,7 +17,7 @@ const FriendItem = ({
   friend: FriendResponse;
   setModeListFriend: (value: ModeListFriend) => void;
 }) => {
-  const { setSelectFriend } = useContext(FriendContext);
+  const { setSelectFriendId } = useContext(FriendContext);
 
   const displayName = friend.displayName || friend.fullName || friend.username || "Người dùng";
   const avatar = friend.avatar;
@@ -28,7 +28,8 @@ const FriendItem = ({
       className={styles.friendItem}
       onClick={() => {
         setModeListFriend("chat");
-        setSelectFriend(friend.id);
+        setSelectFriendId(friend.id);
+
       }}
     >
       <AvatarFallback src={avatar} alt={displayName} status={status as any} showStatus={true} />
@@ -43,14 +44,6 @@ const FriendItem = ({
 export default function SidebarFriend() {
   const { setModeListFriend, modeListFriend } = useContext(FriendContext);
   const accessToken = useAppStore((app) => app.accessToken);
-
-  // const { data: dataChannelDM, isLoading } = useQuery({
-  //   queryKey: ["channel-DM", accessToken],
-  //   queryFn: () => channelApi.getDirectMessageChannels(),
-  //   staleTime: 1000 * 60 * 15, // 15 minutes
-  //   keepPreviousData: true,
-  //   enabled: Boolean(accessToken),
-  // });
 
   const { data: dataFriends, isLoading } = useQuery({
     queryKey: ["friends", accessToken],

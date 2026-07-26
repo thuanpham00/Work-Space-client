@@ -9,12 +9,15 @@ import { useEffect, useState } from "react";
 import styles from "./auth.module.scss";
 import { userAPI } from "../../apis/user.api";
 import logo from "../../assets/image/chat.png";
+import { generateSocket } from "../../utils/utils";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const setAccessToken = useAppStore((state) => state.setAccessToken);
+  const setSocket = useAppStore((state) => state.setSocket);
+  const setUser = useAppStore((state) => state.setUser);
   const { state } = useLocation();
 
   const { email, password } = state || {};
@@ -40,6 +43,9 @@ export default function LoginPage() {
       const res = await loginMutation.mutateAsync(values);
       message.success(res.data.message);
       setAccessToken(res.data.data.access_token);
+      setUser(res.data.data.user);
+      setSocket(generateSocket(res.data.data.access_token)); // khởi tạo socket khi login thành công
+
       navigate("/");
     } catch (error) {
       console.log(error);

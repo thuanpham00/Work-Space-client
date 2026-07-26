@@ -2,7 +2,7 @@
 import { Avatar, Layout, Menu, Tooltip } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from "./MainLayout.module.scss";
-import { Users } from "lucide-react";
+import { Settings, Users } from "lucide-react";
 import Header from "../../components/Header/Header";
 import { useQuery } from "react-query";
 import { workspaceAPI } from "../../apis/workspace.api";
@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
 import { useAppStore } from "../../store/store";
+import { path } from "../../utils/path";
 
 const { Sider, Content } = Layout;
 
@@ -84,7 +85,11 @@ export default function MainLayout() {
           className={styles.menu}
           items={menu}
         />
-        <div className="mt-auto">1</div>
+        <div className="shrink-0 mb-2! flex justify-center">
+          <Tooltip title="Cài đặt" placement="right">
+            <Avatar icon={<Settings size={16}/>} onClick={() => navigate(path.settingAccount)} />
+          </Tooltip>
+        </div>
       </Sider>
       <Layout>
         <Header />
