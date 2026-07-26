@@ -56,7 +56,13 @@ function FriendRow({
   const isRequested = status === StatusList.REQUESTED;
 
   return (
-    <div className={styles.friendRow}>
+    <div
+      className={styles.friendRow}
+      onClick={() => {
+        setSelectFriend(friend.id);
+        setModeListFriend("chat");
+      }}
+    >
       <div className={styles.friendIdentity}>
         <AvatarFallback src={avatar} alt={displayName} showStatus={false} />
 
@@ -320,6 +326,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
             </Button>
           ),
         }}
+        className={styles.tab}
       />
 
       <Modal

@@ -84,6 +84,7 @@ export default function MainLayout() {
           className={styles.menu}
           items={menu}
         />
+        <div className="mt-auto">1</div>
       </Sider>
       <Layout>
         <Header />

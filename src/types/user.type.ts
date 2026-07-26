@@ -18,6 +18,12 @@ export type UserType = {
   gender: GenderType;
   fullName: string;
   receivedFriendRequests?: { status: string }[];
+  privacySettings: {
+    showEmail: boolean;
+    showPhone: boolean;
+    showGender: boolean;
+    showBirthday: boolean;
+  };
 };
 
 export type ListUserParamsType = {

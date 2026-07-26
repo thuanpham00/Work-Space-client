@@ -24,6 +24,7 @@ const initialMessages = [
 
 export default function DirectChat() {
   const { selectFriend } = useContext(FriendContext);
+  console.log("selectFriend", selectFriend);
   const accessToken = useAppStore((app) => app.accessToken);
 
   const [messages, setMessages] = useState(initialMessages);

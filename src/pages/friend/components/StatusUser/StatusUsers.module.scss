@@ -1,12 +1,13 @@
 @use "../../../../styles/variables" as *;
 @use "../../../../styles/mixins" as *;
 
-.statusUsersInner {
-  padding: 0 $spacing-md;
+.tab {
+  padding: 0 8px;
 }
 
 .searchBar {
   margin-bottom: 8px;
+  padding: 0 8px;
 
   :global(.ant-input) {
     background: transparent;
@@ -14,6 +15,7 @@
 }
 
 .panelHeader {
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -53,8 +55,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 7px 0;
+  padding: 8px;
   border-top: 1px solid var(--color-border);
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #71717a;
+  }
 }
 
 .friendIdentity {

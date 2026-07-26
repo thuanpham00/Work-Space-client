@@ -8,11 +8,8 @@ import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
 import MainLayout from "../layouts/MainLayout/MainLayout";
 import FriendPage from "../pages/Friend/FriendPage";
-import UserSideNav from "../pages/SettingAccount/Layouts/UserSideNav";
-import InfoUserPage from "../pages/SettingAccount/Pages/InfoUserPage";
-import ChangePasswordPage from "../pages/SettingAccount/Pages/ChangePasswordPage";
 import Workspace from "../pages/Workspace/Workspace";
-import SettingDisplayPage from "../pages/SettingAccount/Pages/SettingDisplayPage";
+import SettingAccount from "../pages/SettingAccount/SettingAccount";
 
 const ProjectRouter = () => {
   const isLogin = useAppStore((state) => state.accessToken);
@@ -65,22 +62,12 @@ export default function useRouter() {
               ),
             },
             {
-              path: "",
-              element: <UserSideNav />,
-              children: [
-                {
-                  path: path.infoUser,
-                  element: <InfoUserPage />,
-                },
-                {
-                  path: path.changePassword,
-                  element: <ChangePasswordPage />,
-                },
-                {
-                  path: path.settingDisplay,
-                  element: <SettingDisplayPage />,
-                },
-              ],
+              path: path.settingAccount,
+              element: (
+                <Suspense>
+                  <SettingAccount />
+                </Suspense>
+              ),
             },
           ],
         },
