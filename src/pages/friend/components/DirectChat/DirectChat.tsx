@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
-import { Phone, Video, Pin, Search, PlusCircle, Gift, Smile, AtSign, Send, Sticker } from "lucide-react";
+import { useState, useEffect, useContext } from "react";
+import { Phone, Video, Pin, Search, AtSign } from "lucide-react";
 import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
 import { FriendContext } from "../../FriendPage";
@@ -8,13 +8,13 @@ import { useAppStore } from "../../../../store/store";
 import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelDM } from "../../../../types/channel.type";
 import type { QueryBase } from "../../../../types/query.type";
-import { messageType, type Message } from "../../../../types/message.type";
-import { Avatar } from "antd";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { formatMessageTime } from "../../../../utils/utils";
+import { type Message } from "../../../../types/message.type";
+import { Spin } from "antd";
+import Messages from "../../../../components/Messages/Messages";
+import Composer from "../../../../components/Composer/Composer";
 
 const PAGE = 1;
-const LIMIT = 10;
+const LIMIT = 50;
 
 export default function DirectChat() {
   const { selectFriendId, selectChannelId } = useContext(FriendContext);
@@ -32,8 +32,6 @@ export default function DirectChat() {
   });
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: dataChannelDM } = useQuery({
     queryKey: ["channelDM", selectFriendId, accessToken],
@@ -69,9 +67,13 @@ export default function DirectChat() {
   }, [conversationListData, page, total_page]);
 
   useEffect(() => {
-    if (socket && channelId) {
-      socket.emit("join_channel", channelId);
-    }
+    if (!socket || !channelId) return;
+
+    socket.emit("join_channel", channelId); // join vào channel để cùng nhận socket
+
+    return () => {
+      socket.emit("leave_channel", channelId);
+    };
   }, [socket, channelId]);
 
   useEffect(() => {
@@ -79,27 +81,19 @@ export default function DirectChat() {
 
     socket.on("receive_message", (msg: any) => {
       setMessages((prev) => [msg, ...prev]);
+      setTimeout(scrollToBottom, 50); // Cuộn mượt về scrollTop = 0
     });
-    scrollToBottom();
+
     return () => {
       socket.off("receive_message");
     };
   }, [socket]);
 
-  const handleSendMessage = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!inputValue.trim()) return;
-
-    setInputValue("");
-    socket?.emit("send_message", {
-      channel_id: channelId,
-      content: inputValue,
-      message_type: messageType.TEXT,
-    });
-  };
-
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const scrollableDiv = document.getElementById("scrollableDiv");
+    if (scrollableDiv) {
+      scrollableDiv.scrollTop = 0;
+    }
   };
 
   const fetchConversationDataMore = () => {
@@ -111,7 +105,12 @@ export default function DirectChat() {
     }
   };
 
-  if (!channelDMDetail) return;
+  if (!channelDMDetail)
+    return (
+      <div className={styles.loading}>
+        <Spin size="large" tip="Loading..." />
+      </div>
+    );
 
   return (
     <div className={styles.chatContainer}>
@@ -141,84 +140,12 @@ export default function DirectChat() {
 
       <div className={styles.chatBody}>
         <div className={styles.messagesPane}>
-          <div
-            className={styles.messagesList}
-            id="scrollableDiv"
-            style={{
-              overflow: "auto",
-              display: "flex",
-              flexDirection: "column-reverse",
-            }}
-          >
-            <InfiniteScroll
-              dataLength={messages.length}
-              next={fetchConversationDataMore}
-              style={{
-                display: "flex",
-                flexDirection: "column-reverse",
-              }}
-              inverse={true}
-              hasMore={pagination.page < pagination.total_page}
-              loader={<h4>Loading...</h4>}
-              scrollableTarget="scrollableDiv"
-            >
-              {messages.map((msg) => {
-                return (
-                  <div key={msg.id} className={styles.messageItem}>
-                    <Avatar src={msg.sender?.avatar} alt={msg.sender?.displayName}>
-                      {msg.sender?.displayName.charAt(0)}
-                    </Avatar>
-                    <div className={styles.messageContentWrapper}>
-                      <div className={styles.messageMeta}>
-                        <span className={styles.messageSender}>{msg.sender?.displayName}</span>
-                        <span className={styles.messageTime}>{formatMessageTime(msg.createdAt)}</span>
-                      </div>
-                      <div className={styles.messageText}>{msg.content}</div>
-                      {/* {msg.attachment && (
-                      <div className={styles.messageAttachment}>
-                        <img src={msg.attachment} alt="Attachment" className={styles.attachmentImg} />
-                      </div>
-                    )} */}
-                    </div>
-                  </div>
-                );
-              })}
-            </InfiniteScroll>
-            <div ref={messagesEndRef} />
-          </div>
-
-          <div className={styles.inputForm}>
-            <form onSubmit={handleSendMessage}>
-              <div className={styles.inputContainer}>
-                <button type="button" className={styles.inputPlusButton}>
-                  <PlusCircle size={22} />
-                </button>
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={`Nhắn @${channelDMDetail.friend.username}`}
-                  className={styles.chatInput}
-                />
-                <div className={styles.inputActions}>
-                  <button type="button" className={styles.actionBtn}>
-                    <Gift size={20} />
-                  </button>
-                  <button type="button" className={styles.actionBtn}>
-                    <Sticker size={20} />
-                  </button>
-                  <button type="button" className={styles.actionBtn}>
-                    <Smile size={20} />
-                  </button>
-                  {inputValue.trim() && (
-                    <button type="submit" className={styles.sendBtn}>
-                      <Send size={18} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </form>
-          </div>
+          <Messages
+            messages={messages}
+            pagination={pagination}
+            fetchConversationDataMore={fetchConversationDataMore}
+          />
+          <Composer channelId={channelId} />
         </div>
 
         <InfoUser channelDMDetail={channelDMDetail} />

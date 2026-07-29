@@ -1,0 +1,8 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.emoji {
+  .epr-body {
+    @include custom-scrollbar;
+  }
+}

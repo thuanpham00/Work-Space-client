@@ -13,12 +13,14 @@ import { generateSocket } from "../../utils/utils";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const setUser = useAppStore((state) => state.setUser);
   const setAccessToken = useAppStore((state) => state.setAccessToken);
   const setSocket = useAppStore((state) => state.setSocket);
-  const setUser = useAppStore((state) => state.setUser);
+
   const { state } = useLocation();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
 
   const { email, password } = state || {};
 

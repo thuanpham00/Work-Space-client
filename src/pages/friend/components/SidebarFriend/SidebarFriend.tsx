@@ -29,7 +29,6 @@ const FriendItem = ({
       onClick={() => {
         setModeListFriend("chat");
         setSelectFriendId(friend.id);
-
       }}
     >
       <AvatarFallback src={avatar} alt={displayName} status={status as any} showStatus={true} />

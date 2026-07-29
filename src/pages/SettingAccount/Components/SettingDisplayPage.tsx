@@ -23,7 +23,7 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
   useEffect(() => {
     if (infoUser) {
       form.setFieldValue("status", infoUser.status);
-      form.setFieldValue("privacySettings", JSON.parse(infoUser.privacySettings as string));
+      form.setFieldValue("privacySettings", infoUser.privacySettings as string);
     }
   }, [infoUser]);
 
@@ -37,7 +37,7 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
 
     const data: UpdateUserBodyType = {
       status: valid.status,
-      privacySettings: JSON.stringify(valid.privacySettings),
+      privacySettings: valid.privacySettings,
     };
 
     updateUser.mutate(data, {

@@ -43,7 +43,7 @@
   --color-card: #ffffff;
 
   /* Layout */
-  --color-sider: #18181b;
+  --color-sider: #09090b;
   --color-header: #ffffff;
 
   /* Status */
@@ -69,8 +69,8 @@
   --color-border: #27272a;
   --color-card: #18181b;
 
-  --color-header: #09090b;
   --color-sider: #09090b;
+  --color-header: #09090b;
 
   --color-primary: #ef4815;
 

@@ -1,0 +1,48 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.wrapper {
+  position: absolute;
+  right: 0;
+  transform: translateY(-58%);
+  transition: opacity 0.3s ease-in-out;
+  overflow: visible;
+
+  &.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.gifGrid {
+  height: 400px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  padding: 4px;
+  border-radius: 4px;
+
+  @include custom-scrollbar;
+}
+
+.gifItem {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 8px;
+  object-fit: cover;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+
+  &:hover {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+}
