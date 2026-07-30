@@ -1,4 +1,4 @@
-import { Sticker, Smile, Send, Image } from "lucide-react";
+import { Smile, Send, Image } from "lucide-react";
 import styles from "./Composer.module.scss";
 import EmojiMessage from "../EmojiMessage/EmojiMessage";
 import { useState, useRef, useEffect } from "react";
@@ -7,25 +7,27 @@ import { messageType, type MessageType } from "../../types/message.type";
 import GifPicker from "../GiphyMesage/GiphyMessage";
 import { AiOutlineGif } from "react-icons/ai";
 
-export type TypeDisplayMessage = "emoji" | "gif" | "sticker";
+export type TypeDisplayMessage = "emoji" | "gif" | "sticker" | "file";
 
 export default function Composer({ channelId }: { channelId: string }) {
   const [inputValue, setInputValue] = useState("");
   const socket = useAppStore((app) => app.socket);
   const [typeMessage, setTypeMessage] = useState<MessageType>(messageType.TEXT);
-  const [selectedEmoji, setSelectedEmoji] = useState<string>("");
 
   const [typeDisplayMessage, setTypeDisplayMessage] = useState<TypeDisplayMessage | null>(null);
-  const emojiWrapperRef = useRef<HTMLDivElement>(null);
-  const giphyWrapperRef = useRef<HTMLDivElement>(null);
+  const actionBtnWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (emojiWrapperRef.current && !emojiWrapperRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const isOutsideButtons = actionBtnWrapperRef.current && !actionBtnWrapperRef.current.contains(target);
+
+      if (isOutsideButtons) {
         setTypeDisplayMessage(null);
       }
     };
-    if (typeDisplayMessage === "emoji") {
+
+    if (typeDisplayMessage) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
@@ -45,8 +47,6 @@ export default function Composer({ channelId }: { channelId: string }) {
     });
   };
 
-  console.log("typeDisplayMessage", typeDisplayMessage);
-
   return (
     <div className={styles.inputForm}>
       <form onSubmit={handleSendMessage}>
@@ -58,13 +58,14 @@ export default function Composer({ channelId }: { channelId: string }) {
             placeholder={`Nhắn `}
             className={styles.chatInput}
           />
-          <div className={styles.inputActions}>
+          <div className={styles.inputActions} ref={actionBtnWrapperRef}>
             <button type="button" className={styles.actionBtn}>
               <Image size={20} />
             </button>
+
             <button
               type="button"
-              className={styles.actionBtn}
+              className={`${styles.actionBtn} ${typeDisplayMessage === "gif" ? styles.active : ""}`}
               onClick={() => {
                 if (typeDisplayMessage === "gif") {
                   setTypeDisplayMessage(null);
@@ -77,7 +78,7 @@ export default function Composer({ channelId }: { channelId: string }) {
             </button>
             <button
               type="button"
-              className={styles.actionBtn}
+              className={`${styles.actionBtn} ${typeDisplayMessage === "emoji" ? styles.active : ""}`}
               onClick={() => {
                 if (typeDisplayMessage === "emoji") {
                   setTypeDisplayMessage(null);
@@ -95,9 +96,9 @@ export default function Composer({ channelId }: { channelId: string }) {
             )}
           </div>
 
-          <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} ref={emojiWrapperRef} />
+          <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} />
 
-          <GifPicker show={typeDisplayMessage} ref={giphyWrapperRef} />
+          <GifPicker show={typeDisplayMessage} />
         </div>
       </form>
     </div>

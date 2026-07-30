@@ -1,5 +1,5 @@
 import { gf } from "../../utils/giphy";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { TypeDisplayMessage } from "../Composer/Composer";
 import styles from "./GyphyMessage.module.scss";
 
@@ -9,12 +9,11 @@ interface GyphyProps {
 
 const LIMIT = 30;
 
-const GifPicker = forwardRef<HTMLDivElement, GyphyProps>(({ show }, ref) => {
+export default function GifPicker({ show }: GyphyProps) {
   const [gifs, setGifs] = useState([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const loadGifs = async (currentOffset: number) => {
@@ -62,7 +61,7 @@ const GifPicker = forwardRef<HTMLDivElement, GyphyProps>(({ show }, ref) => {
   }, [offset, loading, hasMore]);
 
   return (
-    <div ref={ref} className={`${styles.wrapper} ${show === "gif" ? styles.show : styles.hide}`}>
+    <div className={`${styles.wrapper} ${show === "gif" ? styles.show : styles.hide}`}>
       <div className={styles.gifGrid}>
         {gifs.map((gif) => (
           <img
@@ -81,8 +80,4 @@ const GifPicker = forwardRef<HTMLDivElement, GyphyProps>(({ show }, ref) => {
       </div>
     </div>
   );
-});
-
-GifPicker.displayName = "GifPicker";
-
-export default GifPicker;
+}
