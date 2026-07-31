@@ -1,13 +1,11 @@
-import { Smile, Send, Image } from "lucide-react";
+import { Smile, Send, FileChartColumn } from "lucide-react";
 import styles from "./Composer.module.scss";
 import EmojiMessage from "../EmojiMessage/EmojiMessage";
 import { useState, useRef, useEffect } from "react";
 import { useAppStore } from "../../store/store";
-import { messageType, type MessageType } from "../../types/message.type";
+import { messageType, type MessageType, type TypeDisplayMessage } from "../../types/message.type";
 import GifPicker from "../GiphyMesage/GiphyMessage";
 import { AiOutlineGif } from "react-icons/ai";
-
-export type TypeDisplayMessage = "emoji" | "gif" | "sticker" | "file";
 
 export default function Composer({ channelId }: { channelId: string }) {
   const [inputValue, setInputValue] = useState("");
@@ -47,6 +45,16 @@ export default function Composer({ channelId }: { channelId: string }) {
     });
   };
 
+  const handleSendGiphyMessage = (gif: any) => {
+    socket?.emit("send_gif", {
+      channel_id: channelId,
+      file_name: gif.title,
+      file_url: gif.images.fixed_width.url,
+      mime_type: "image/gif",
+      file_size: gif.images.fixed_width.size,
+    });
+  };
+
   return (
     <div className={styles.inputForm}>
       <form onSubmit={handleSendMessage}>
@@ -60,7 +68,7 @@ export default function Composer({ channelId }: { channelId: string }) {
           />
           <div className={styles.inputActions} ref={actionBtnWrapperRef}>
             <button type="button" className={styles.actionBtn}>
-              <Image size={20} />
+              <FileChartColumn size={20} />
             </button>
 
             <button
@@ -94,11 +102,11 @@ export default function Composer({ channelId }: { channelId: string }) {
                 <Send size={18} />
               </button>
             )}
+
+            <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} />
+
+            <GifPicker show={typeDisplayMessage} onSubmit={handleSendGiphyMessage} />
           </div>
-
-          <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} />
-
-          <GifPicker show={typeDisplayMessage} />
         </div>
       </form>
     </div>

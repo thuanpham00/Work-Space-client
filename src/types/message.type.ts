@@ -1,4 +1,7 @@
+import type { Attachment } from "./attachment.type";
 import type { UserType } from "./user.type";
+
+export type TypeDisplayMessage = "emoji" | "gif" | "file";
 
 export type Message = {
   id: string;
@@ -11,6 +14,7 @@ export type Message = {
   updatedAt: string;
   deletedAt: UserType;
   sender: UserType;
+  attachments: Attachment[];
 };
 
 export const messageType = {

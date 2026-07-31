@@ -22,11 +22,32 @@
   }
 }
 
+.messageItemSameUser {
+  display: flex;
+  align-items: flex-start;
+  padding: 2px 0;
+  // 40px (avatar width) + 16px (gap) = 56px — căn thẳng hàng với nội dung tin nhắn có avatar
+  padding-left: 56px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
 .messageContentWrapper {
   display: flex;
   flex-direction: column;
   min-width: 0;
   flex: 1;
+}
+
+.messageAvatar {
+  img {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-full;
+    object-fit: cover;
+  }
 }
 
 .messageMeta {
@@ -67,13 +88,12 @@
   margin-top: 8px;
   border-radius: $radius-md;
   overflow: hidden;
-  max-width: 400px;
+  max-width: 300px;
   border: 1px solid var(--color-border);
 }
 
 .attachmentImg {
-  max-width: 100%;
-  max-height: 300px;
+  width: 100%;
   display: block;
   object-fit: contain;
 }

@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import dayjs from "dayjs";
 
 export const generateSocket = (accessToken: string) => {
   return io(import.meta.env.VITE_URL_API_SERVER, {
@@ -33,4 +34,8 @@ export const formatMessageTime = (dateString: string | number | Date) => {
     const dateOptions: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" };
     return `${date.toLocaleDateString(undefined, dateOptions)} ${timeString}`;
   }
+};
+
+export const formatDateString = (isoString: string, format: string = "DD-MM-YYYY") => {
+  return dayjs(isoString).format(format);
 };

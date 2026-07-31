@@ -1,5 +1,6 @@
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { ChannelDM } from "../../../../types/channel.type";
+import { formatDateString } from "../../../../utils/utils";
 import styles from "./InfoUser.module.scss";
 
 export default function InfoUser({ channelDMDetail }: { channelDMDetail: ChannelDM }) {
@@ -37,7 +38,7 @@ export default function InfoUser({ channelDMDetail }: { channelDMDetail: Channel
 
         <div className={styles.profileSection}>
           <h4 className={styles.sectionHeader}>Gia nhập từ</h4>
-          <p className={styles.sectionText}>Trống</p>
+          <p className={styles.sectionText}>{formatDateString(channelDMDetail.friend.createdAt)}</p>
         </div>
 
         <button className={styles.fullProfileBtn}>Xem hồ sơ đầy đủ</button>

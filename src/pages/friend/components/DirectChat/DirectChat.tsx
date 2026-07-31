@@ -80,6 +80,7 @@ export default function DirectChat() {
     if (!socket) return;
 
     socket.on("receive_message", (msg: any) => {
+      console.log("receive_message", msg);
       setMessages((prev) => [msg, ...prev]);
       setTimeout(scrollToBottom, 50); // Cuộn mượt về scrollTop = 0
     });

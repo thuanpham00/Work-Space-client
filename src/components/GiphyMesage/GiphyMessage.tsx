@@ -5,11 +5,12 @@ import styles from "./GyphyMessage.module.scss";
 
 interface GyphyProps {
   show: TypeDisplayMessage | null;
+  onSubmit: (gif: any) => void;
 }
 
 const LIMIT = 30;
 
-export default function GifPicker({ show }: GyphyProps) {
+export default function GifPicker({ show, onSubmit }: GyphyProps) {
   const [gifs, setGifs] = useState([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -69,7 +70,7 @@ export default function GifPicker({ show }: GyphyProps) {
             src={gif.images.fixed_width.url}
             className={styles.gifItem}
             onClick={() => {
-              console.log(gif.images.original.url);
+              onSubmit(gif);
             }}
           />
         ))}
