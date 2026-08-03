@@ -39,11 +39,7 @@ export default function useRouter() {
           children: [
             {
               index: true,
-              element: (
-                <Suspense>
-                  <FriendPage />
-                </Suspense>
-              ),
+              element: <Navigate to={path.friends} replace />,
             },
             {
               path: path.friends,

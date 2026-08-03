@@ -1,4 +1,5 @@
 export const path = {
+  orgin: "/",
   login: "/login",
   register: "/register",
 
