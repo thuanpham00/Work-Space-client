@@ -6,7 +6,7 @@ export default function AuthLayout() {
       className={`min-h-screen bg-(--color-bg) flex items-center justify-center relative overflow-hidden`}
     >
       <div
-        className={`w-full bg-(--color-card) border border-(--color-border) rounded-2xl shadow-xl p-6 max-w-lg`}
+        className={`w-full bg-(--color-bg-secondary) border border-(--color-bg-secondary) rounded-2xl shadow-xl p-6 max-w-lg`}
       >
         <Outlet />
       </div>

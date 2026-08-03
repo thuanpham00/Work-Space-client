@@ -76,9 +76,9 @@
 
 // Card styles
 @mixin card {
-  background: var(--color-card);
+  background: var(--color-bg-secondary);
   border-radius: $radius-lg;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-bg-secondary);
   padding: $spacing-lg;
   transition: box-shadow $transition-normal;
 }
@@ -87,7 +87,7 @@
 @mixin input-base {
   width: 100%;
   padding: $spacing-sm $spacing-md;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-bg-secondary);
   border-radius: $radius-md;
   font-size: 1rem;
   transition:
@@ -119,11 +119,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--color-border);
+    background: var(--color-bg);
     border-radius: 3px;
 
     &:hover {
-      background: var(--color-text-secondary);
+      background: var(--color-text);
     }
   }
 }

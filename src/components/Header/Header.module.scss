@@ -6,8 +6,8 @@
   display: flex;
   height: 50px;
   padding: 0 $spacing-md !important;
-  background: var(--color-header);
-  border-bottom: 1px solid var(--color-border); // gọi biến theo kiểu css
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-bg-secondary); // gọi biến theo kiểu css
   transition:
     background-color $transition-normal, // gọi biến theo kiểu scss
     border-color $transition-normal;

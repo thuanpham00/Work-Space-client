@@ -21,7 +21,7 @@
   height: 96px;
   border-radius: $radius-full;
   object-fit: cover;
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--color-bg-secondary);
   transition: border-color $transition-normal;
 }
 

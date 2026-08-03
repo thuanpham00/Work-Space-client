@@ -5,13 +5,12 @@
 .profileSidebar {
   margin: 8px;
   width: 25%;
-  background-color: var(--color-bg-secondary);
-  border-left: 1px solid var(--color-border);
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  background-color: var(--color-bg);
+  border-left: 1px solid var(--color-bg);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 96%;
   flex-shrink: 0;
   overflow-y: auto;
 }
@@ -86,7 +85,7 @@
 
 .divider {
   height: 1px;
-  background-color: var(--color-border);
+  background-color: var(--color-bg-secondary);
   width: 100%;
 }
 
@@ -116,7 +115,7 @@
   width: 100%;
   padding: 10px;
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-bg-secondary);
   border-radius: $radius-sm;
   font-size: 13px;
   font-weight: 600;
@@ -126,6 +125,6 @@
   transition: background-color $transition-fast;
 
   &:hover {
-    background-color: var(--color-border);
+    background-color: var(--color-bg-secondary);
   }
 }

@@ -8,11 +8,12 @@
 
 .sider {
   height: 100vh;
-  background: var(--color-sider) !important;
+  background: var(--color-bg) !important;
   transition: background-color $transition-normal;
+  border-right: 1px solid var(--color-bg-secondary);
 
   :global(.ant-layout-sider-children) {
-    background: var(--color-sider) !important;
+    background: var(--color-bg) !important;
     @include flex-column;
   }
 }
@@ -58,7 +59,7 @@
 }
 
 .content {
-  background: var(--color-card);
+  background: var(--color-bg-secondary);
   overflow: auto;
   @include custom-scrollbar;
   transition:
