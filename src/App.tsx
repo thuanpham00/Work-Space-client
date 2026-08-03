@@ -6,8 +6,8 @@ import { generateSocket } from "./utils/utils";
 
 const App = () => {
   const router = useRouter();
-  const socket = useAppStore((app) => app.socket);
   const accessToken = useAppStore((app) => app.accessToken);
+  const socket = useAppStore((app) => app.socket);
   const setSocket = useAppStore((app) => app.setSocket);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (accessToken) {
+    if (accessToken && !socket) {
       setSocket(generateSocket(accessToken));
     }
   }, [accessToken]);

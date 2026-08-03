@@ -12,12 +12,10 @@ import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback
 
 const FriendItem = ({
   friend,
-  setModeListFriend,
 }: {
   friend: FriendResponse;
-  setModeListFriend: (value: ModeListFriend) => void;
 }) => {
-  const { setSelectFriendId } = useContext(FriendContext);
+  const { setSelectFriendId, setModeListFriend } = useContext(FriendContext);
 
   const displayName = friend.displayName || friend.fullName || friend.username || "Người dùng";
   const avatar = friend.avatar;
@@ -27,7 +25,7 @@ const FriendItem = ({
     <button
       className={styles.friendItem}
       onClick={() => {
-        setModeListFriend("chat");
+        setModeListFriend("chat" as ModeListFriend);
         setSelectFriendId(friend.id);
       }}
     >
@@ -41,7 +39,7 @@ const FriendItem = ({
 };
 
 export default function SidebarFriend() {
-  const { setModeListFriend, modeListFriend } = useContext(FriendContext);
+  const { setModeListFriend, modeListFriend, setSelectFriendId } = useContext(FriendContext);
   const accessToken = useAppStore((app) => app.accessToken);
 
   const { data: dataFriends, isLoading } = useQuery({
@@ -58,7 +56,10 @@ export default function SidebarFriend() {
     <div className={styles.layoutInner}>
       <Button
         type="link"
-        onClick={() => setModeListFriend("list")}
+        onClick={() => {
+          setModeListFriend("list" as ModeListFriend);
+          setSelectFriendId(null);
+        }}
         className={`${styles.buttonListFriend} ${modeListFriend === "list" ? styles.buttonListFriendActive : ""}`}
         icon={<List size={16} />}
       >
@@ -83,7 +84,7 @@ export default function SidebarFriend() {
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
         ) : (
           friends.map((friend) => (
-            <FriendItem key={friend.id} friend={friend} setModeListFriend={setModeListFriend} />
+            <FriendItem key={friend.id} friend={friend} />
           ))
         )}
       </div>

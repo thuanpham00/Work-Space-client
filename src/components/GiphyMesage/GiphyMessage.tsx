@@ -1,7 +1,7 @@
 import { gf } from "../../utils/giphy";
 import { useEffect, useRef, useState } from "react";
-import type { TypeDisplayMessage } from "../Composer/Composer";
 import styles from "./GyphyMessage.module.scss";
+import type { TypeDisplayMessage } from "../../types/message.type";
 
 interface GyphyProps {
   show: TypeDisplayMessage | null;

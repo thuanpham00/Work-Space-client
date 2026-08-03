@@ -11,10 +11,12 @@ import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
 import { useAppStore } from "../../store/store";
 import { path } from "../../utils/path";
+import { useCall } from "../../Hooks/useCall";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
+  useCall(); // đăng ký listener socket cho call
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const token = useAppStore((state) => state.accessToken);

@@ -1,8 +1,8 @@
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { useAppStore } from "../../store/store";
 import { type Dispatch, type SetStateAction } from "react";
-import type { TypeDisplayMessage } from "../Composer/Composer";
 import styles from "./EmojiMessage.module.scss";
+import type { TypeDisplayMessage } from "../../types/message.type";
 
 interface EmojiMessageProps {
   setContent: Dispatch<SetStateAction<string>>;
@@ -29,4 +29,3 @@ export default function EmojiMessage({ show, setContent }: EmojiMessageProps) {
     </div>
   );
 }
-

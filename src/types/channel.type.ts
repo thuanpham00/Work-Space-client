@@ -21,6 +21,11 @@ export type ChannelDM = {
     phone: string;
     gender: string;
     fullName: string;
+    privacySettings: {
+      showEmail: boolean;
+      showPhone: boolean;
+      showGender: boolean;
+      showBirthday: boolean;
+    };
   };
 };
-

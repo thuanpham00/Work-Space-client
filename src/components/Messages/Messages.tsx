@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { Avatar } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { formatMessageTime } from "../../utils/utils";
+import { compareMessageTime, formatMessageTime } from "../../utils/utils";
 import styles from "./Messages.module.scss";
 import type { Message } from "../../types/message.type";
 
@@ -35,7 +35,9 @@ const Messages = forwardRef<HTMLDivElement, Props>(
             const isSameUser = nextMessage?.sender?.id === msg.sender?.id;
             const isAttachments = msg.attachments && msg.attachments?.length > 0;
 
-            if (isSameUser) {
+            const isSameTime = compareMessageTime(msg.createdAt, nextMessage?.createdAt);
+
+            if (isSameUser && isSameTime) {
               return (
                 <div key={msg.id} className={styles.messageItemSameUser}>
                   <div className={styles.messageContentWrapper}>

@@ -1,9 +1,13 @@
+import { useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { ChannelDM } from "../../../../types/channel.type";
 import { formatDateString } from "../../../../utils/utils";
 import styles from "./InfoUser.module.scss";
+import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
 
 export default function InfoUser({ channelDMDetail }: { channelDMDetail: ChannelDM }) {
+  const modalRef = useRef<FullProfileModalRef>(null);
+
   return (
     <aside className={styles.profileSidebar}>
       <div className={styles.profileBanner} style={{ backgroundColor: "#2a4d38" }}></div>
@@ -31,9 +35,7 @@ export default function InfoUser({ channelDMDetail }: { channelDMDetail: Channel
 
         <div className={styles.profileSection}>
           <h4 className={styles.sectionHeader}>Thành viên chung</h4>
-          <p className={styles.sectionText}>
-            {/* {mockUser.mutualFriends} Bạn Chung • {mockUser.mutualServers} Máy Chủ Chung */}
-          </p>
+          <p className={styles.sectionText}>1</p>
         </div>
 
         <div className={styles.profileSection}>
@@ -41,8 +43,12 @@ export default function InfoUser({ channelDMDetail }: { channelDMDetail: Channel
           <p className={styles.sectionText}>{formatDateString(channelDMDetail.friend.createdAt)}</p>
         </div>
 
-        <button className={styles.fullProfileBtn}>Xem hồ sơ đầy đủ</button>
+        <button className={styles.fullProfileBtn} onClick={() => modalRef.current?.openModal()}>
+          Xem hồ sơ đầy đủ
+        </button>
       </div>
+
+      <FullProfileModal ref={modalRef} channelDMDetail={channelDMDetail} />
     </aside>
   );
 }

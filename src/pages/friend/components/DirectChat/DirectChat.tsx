@@ -20,6 +20,7 @@ export default function DirectChat() {
   const { selectFriendId, selectChannelId } = useContext(FriendContext);
   const accessToken = useAppStore((app) => app.accessToken);
   const socket = useAppStore((app) => app.socket);
+  // const me = useAppStore((app) => app.user);
 
   const [query, setQuery] = useState<QueryBase>({
     limit: LIMIT,
@@ -80,7 +81,6 @@ export default function DirectChat() {
     if (!socket) return;
 
     socket.on("receive_message", (msg: any) => {
-      console.log("receive_message", msg);
       setMessages((prev) => [msg, ...prev]);
       setTimeout(scrollToBottom, 50); // Cuộn mượt về scrollTop = 0
     });
@@ -106,6 +106,20 @@ export default function DirectChat() {
     }
   };
 
+  // const handleStartCall = (isVideo: boolean) => {
+  //   if (!me || !channelDMDetail?.friend) return;
+  //   callService.startCall({
+  //     conversationId: channelDMDetail.id,
+  //     caller: { id: me.id, name: me.fullName, avatar: me.avatar },
+  //     receiver: {
+  //       id: channelDMDetail.friend.id,
+  //       name: channelDMDetail.friend.fullName,
+  //       avatar: channelDMDetail.friend.avatar,
+  //     },
+  //     isVideo,
+  //   });
+  // };
+
   if (!channelDMDetail)
     return (
       <div className={styles.loading}>
@@ -122,10 +136,18 @@ export default function DirectChat() {
           <span className={styles.statusIndicator}></span>
         </div>
         <div className={styles.headerRight}>
-          <button className={styles.iconButton} title="Bắt đầu cuộc gọi thoại">
+          <button
+            className={styles.iconButton}
+            title="Bắt đầu cuộc gọi thoại"
+            // onClick={() => handleStartCall(false)}
+          >
             <Phone size={20} />
           </button>
-          <button className={styles.iconButton} title="Bắt đầu cuộc gọi video">
+          <button
+            className={styles.iconButton}
+            title="Bắt đầu cuộc gọi video"
+            // onClick={() => handleStartCall(true)}
+          >
             <Video size={20} />
           </button>
           <button className={styles.iconButton} title="Tin nhắn đã ghim">
@@ -151,6 +173,8 @@ export default function DirectChat() {
 
         <InfoUser channelDMDetail={channelDMDetail} />
       </div>
+
+      {/* <CallModal /> */}
     </div>
   );
 }

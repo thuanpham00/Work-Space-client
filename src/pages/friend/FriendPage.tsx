@@ -17,7 +17,7 @@ export const FriendContext = createContext<{
   setSelectChannelId: (value: string | null) => void;
 }>({
   modeListFriend: "list",
-  setModeListFriend: (_value: ModeListFriend) => {},
+  setModeListFriend: (_value: ModeListFriend | null) => {},
   selectFriendId: null,
   setSelectFriendId: (_value: string | null) => {},
   selectChannelId: null,

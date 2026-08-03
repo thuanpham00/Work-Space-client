@@ -9,6 +9,14 @@ export const generateSocket = (accessToken: string) => {
   });
 };
 
+// so sánh 2 tin nhắn nếu 2 tin nhắn có thời gian gửi dưới 1 phút gần nhau thì trả về true
+export const compareMessageTime = (createdAt1: string, createdAt2: string) => {
+  const time1 = new Date(createdAt1);
+  const time2 = new Date(createdAt2);
+  const diff = time1.getTime() - time2.getTime();
+  return diff < 60000;
+};
+
 export const formatMessageTime = (dateString: string | number | Date) => {
   if (!dateString) return "";
   const date = new Date(dateString);
