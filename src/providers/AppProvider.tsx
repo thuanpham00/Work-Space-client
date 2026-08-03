@@ -1,11 +1,11 @@
 import { ConfigProvider, theme as antdTheme } from "antd";
-import { useAppStore } from "../store/store";
 import type { ReactNode } from "react";
+import { useBaseStore } from "../store/baseStore";
 
 type Props = { children: ReactNode };
 
 const AppProvider = ({ children }: Props) => {
-  const isDarkMode = useAppStore((s) => s.isDarkMode);
+  const isDarkMode = useBaseStore((s) => s.isDarkMode);
 
   return (
     <ConfigProvider

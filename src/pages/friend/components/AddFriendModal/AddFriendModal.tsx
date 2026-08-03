@@ -7,10 +7,10 @@ import { useMutation, useQuery } from "react-query";
 import { userAPI } from "../../../../apis/user.api";
 import type { ListUserParamsType, UserType } from "../../../../types/user.type";
 import { useDebounce } from "../../../../Hooks/useDebounce";
-import { useAppStore } from "../../../../store/store";
 import { X } from "lucide-react";
 import { friendApi } from "../../../../apis/friend.api";
 import { queryClient } from "../../../../main";
+import { useBaseStore } from "../../../../store/baseStore";
 
 export interface AddFriendRef {
   handleOpen: () => void;
@@ -23,7 +23,7 @@ interface AddFriendModalProps {
 
 export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps>(
   ({ onClose, onSubmitOk }, ref) => {
-    const isDarkMode = useAppStore((s) => s.isDarkMode);
+    const isDarkMode = useBaseStore((s) => s.isDarkMode);
     const [visible, setVisible] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
 

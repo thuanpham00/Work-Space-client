@@ -1,7 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Suspense } from "react";
 import { Navigate, Outlet, useLocation, useRoutes, useSearchParams } from "react-router-dom";
-import { useAppStore } from "../store/store";
 import AuthLayout from "../layouts/AuthLayout";
 import { path } from "../utils/path";
 import LoginPage from "../pages/Auth/LoginPage";
@@ -10,15 +9,16 @@ import MainLayout from "../layouts/MainLayout/MainLayout";
 import FriendPage from "../pages/Friend/FriendPage";
 import Workspace from "../pages/Workspace/Workspace";
 import SettingAccount from "../pages/SettingAccount/SettingAccount";
+import { useUserStore } from "../store/userStore";
 
 const ProjectRouter = () => {
-  const isLogin = useAppStore((state) => state.accessToken);
+  const isLogin = useUserStore((state) => state.accessToken);
   const { pathname } = useLocation();
   return isLogin ? <Outlet /> : <Navigate to={`/login?redirect_url=${encodeURIComponent(pathname)}`} />;
 };
 
 const RejectRouter = () => {
-  const isLogin = useAppStore((state) => state.accessToken);
+  const isLogin = useUserStore((state) => state.accessToken);
   const [searchParams] = useSearchParams();
   if (!isLogin) {
     return <Outlet />;

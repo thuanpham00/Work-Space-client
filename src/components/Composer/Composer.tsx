@@ -2,14 +2,14 @@ import { Smile, Send, FileChartColumn } from "lucide-react";
 import styles from "./Composer.module.scss";
 import EmojiMessage from "../EmojiMessage/EmojiMessage";
 import { useState, useRef, useEffect } from "react";
-import { useAppStore } from "../../store/store";
 import { messageType, type MessageType, type TypeDisplayMessage } from "../../types/message.type";
 import GifPicker from "../GiphyMesage/GiphyMessage";
 import { AiOutlineGif } from "react-icons/ai";
+import { useBaseStore } from "../../store/baseStore";
 
 export default function Composer({ channelId }: { channelId: string }) {
   const [inputValue, setInputValue] = useState("");
-  const socket = useAppStore((app) => app.socket);
+  const socket = useBaseStore((app) => app.socket);
   const [typeMessage, setTypeMessage] = useState<MessageType>(messageType.TEXT);
 
   const [typeDisplayMessage, setTypeDisplayMessage] = useState<TypeDisplayMessage | null>(null);

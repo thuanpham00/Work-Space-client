@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import AppProvider from "./providers/AppProvider";
 import useRouter from "./routes/useRouter";
-import { useAppStore } from "./store/store";
 import { generateSocket } from "./utils/utils";
+import { useUserStore } from "./store/userStore";
+import { useBaseStore } from "./store/baseStore";
 
 const App = () => {
   const router = useRouter();
-  const accessToken = useAppStore((app) => app.accessToken);
-  const socket = useAppStore((app) => app.socket);
-  const setSocket = useAppStore((app) => app.setSocket);
+  const accessToken = useUserStore((app) => app.accessToken);
+  const socket = useBaseStore((app) => app.socket);
+  const setSocket = useBaseStore((app) => app.setSocket);
 
   useEffect(() => {
     if (!socket) return;

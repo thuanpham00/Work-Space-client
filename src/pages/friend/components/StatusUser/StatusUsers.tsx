@@ -11,15 +11,15 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { getAccessTokenFromLS } from "../../../../utils/auth";
 import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { queryClient } from "../../../../main";
-import { FriendContext } from "../../FriendPage";
 import type { FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
+import { useChannelStore } from "../../../../store/channelStore";
 
 export const StatusList = {
   ONLINE: "ONLINE",
@@ -48,7 +48,9 @@ function FriendRow({
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
 }) {
-  const { setSelectFriendId, setModeListFriend, setSelectChannelId } = useContext(FriendContext);
+  const setFriendId = useChannelStore((app) => app.setFriendId);
+  const setChannelId = useChannelStore((app) => app.setChannelId);
+  const setModeListFriend = useChannelStore((app) => app.setModeListFriend);
 
   const avatar = friend.avatar || "";
   const displayName = friend.displayName || friend.fullName || friend.username || "";
@@ -59,8 +61,8 @@ function FriendRow({
     <div
       className={styles.friendRow}
       onClick={() => {
-        setSelectFriendId(friend.id);
-        setSelectChannelId(null);
+        setFriendId(friend.id);
+        setChannelId(null);
         setModeListFriend("chat");
       }}
     >
@@ -94,8 +96,8 @@ function FriendRow({
           <>
             <Button
               onClick={() => {
-                setSelectFriendId(friend.id);
-                setSelectChannelId(null);
+                setFriendId(friend.id);
+                setChannelId(null);
                 setModeListFriend("chat");
               }}
               type="text"

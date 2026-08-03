@@ -1,10 +1,8 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Phone, Video, Pin, Search, AtSign } from "lucide-react";
 import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
-import { FriendContext } from "../../FriendPage";
 import { useQuery } from "react-query";
-import { useAppStore } from "../../../../store/store";
 import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelDM } from "../../../../types/channel.type";
 import type { QueryBase } from "../../../../types/query.type";
@@ -12,14 +10,19 @@ import { type Message } from "../../../../types/message.type";
 import { Spin } from "antd";
 import Messages from "../../../../components/Messages/Messages";
 import Composer from "../../../../components/Composer/Composer";
+import { useUserStore } from "../../../../store/userStore";
+import { useBaseStore } from "../../../../store/baseStore";
+import { useChannelStore } from "../../../../store/channelStore";
 
 const PAGE = 1;
 const LIMIT = 50;
 
 export default function DirectChat() {
-  const { selectFriendId, selectChannelId } = useContext(FriendContext);
-  const accessToken = useAppStore((app) => app.accessToken);
-  const socket = useAppStore((app) => app.socket);
+  const accessToken = useUserStore((app) => app.accessToken);
+  const socket = useBaseStore((app) => app.socket);
+  const friendId = useChannelStore((app) => app.friendId);
+  const channelId = useChannelStore((app) => app.channelId);
+  const setChannelId = useChannelStore((app) => app.setChannelId);
   // const me = useAppStore((app) => app.user);
 
   const [query, setQuery] = useState<QueryBase>({
@@ -35,13 +38,18 @@ export default function DirectChat() {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const { data: dataChannelDM } = useQuery({
-    queryKey: ["channelDM", selectFriendId, accessToken],
-    queryFn: () => channelApi.getDirectMessageChannelDetail(selectFriendId),
-    enabled: Boolean(selectFriendId),
+    queryKey: ["channelDM", friendId, accessToken],
+    queryFn: () => channelApi.getDirectMessageChannelDetail(friendId),
+    enabled: Boolean(friendId),
     staleTime: 60 * 1000 * 5,
   });
   const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
-  const channelId = channelDMDetail?.id || selectChannelId;
+
+  useEffect(() => {
+    if (channelDMDetail?.id !== channelId) {
+      setChannelId(channelDMDetail?.id);
+    }
+  }, [channelId, channelDMDetail?.id]);
 
   const { data: dataMessage } = useQuery({
     queryKey: ["messageChannel", channelId, query, accessToken],
@@ -58,7 +66,7 @@ export default function DirectChat() {
     setMessages([]); // clear old messages
     setQuery({ page: PAGE, limit: LIMIT }); // reset pagination
     setPagination({ page: PAGE, total_page: 0 });
-  }, [selectFriendId, selectChannelId]);
+  }, [friendId, channelId]);
 
   useEffect(() => {
     if (!conversationListData) return;

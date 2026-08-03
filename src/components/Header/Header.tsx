@@ -3,19 +3,23 @@ import { UserOutlined, SettingOutlined, LogoutOutlined, SunOutlined, MoonOutline
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
-import { useAppStore } from "../../store/store";
-import { setIsDarkModeToLS } from "../../utils/auth";
+import { clearLS } from "../../utils/auth";
 import { userAPI } from "../../apis/user.api";
 import { path } from "../../utils/path";
+import { useBaseStore } from "../../store/baseStore";
+import { useUserStore } from "../../store/userStore";
+import { useChannelStore } from "../../store/channelStore";
 
 const { Header: HeaderAntd } = Layout;
 
 export default function Header() {
   const navigate = useNavigate();
-  const isDarkMode = useAppStore((state) => state.isDarkMode);
-  const reset = useAppStore((state) => state.reset);
-  const setIsDarkMode = useAppStore((state) => state.setIsDarkMode);
-  const token = useAppStore((state) => state.accessToken);
+  const isDarkMode = useBaseStore((state) => state.isDarkMode);
+  const setIsDarkMode = useBaseStore((state) => state.setIsDarkMode);
+  const resetBaseStore = useBaseStore((state) => state.reset);
+  const resetUserStore = useUserStore((state) => state.reset);
+  const resetChannelStore = useChannelStore((state) => state.reset);
+  const token = useUserStore((state) => state.accessToken);
 
   const { data } = useQuery({
     queryKey: ["me", token],
@@ -31,13 +35,15 @@ export default function Header() {
       return userAPI.logout();
     },
     onSuccess: () => {
-      reset();
+      resetBaseStore();
+      resetUserStore();
+      resetChannelStore();
+      clearLS();
       navigate("/auth/login");
     },
   });
 
   const toggleDarkMode = () => {
-    setIsDarkModeToLS(!isDarkMode);
     setIsDarkMode(!isDarkMode);
   };
 

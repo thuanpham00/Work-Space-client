@@ -4,19 +4,20 @@ import { path } from "../../utils/path";
 import settings from "../../settings.json";
 import type { LoginBodyType } from "../../types/auth.type";
 import { useMutation } from "react-query";
-import { useAppStore } from "../../store/store";
 import { useEffect, useState } from "react";
 import styles from "./auth.module.scss";
 import { userAPI } from "../../apis/user.api";
 import logo from "../../assets/image/chat.png";
 import { generateSocket } from "../../utils/utils";
 import { socketService } from "../../services/SocketServices";
+import { useUserStore } from "../../store/userStore";
+import { useBaseStore } from "../../store/baseStore";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
-  const setUser = useAppStore((state) => state.setUser);
-  const setAccessToken = useAppStore((state) => state.setAccessToken);
-  const setSocket = useAppStore((state) => state.setSocket);
+  const setUser = useUserStore((state) => state.setUser);
+  const setAccessToken = useUserStore((state) => state.setAccessToken);
+  const setSocket = useBaseStore((state) => state.setSocket);
 
   const { state } = useLocation();
   const navigate = useNavigate();

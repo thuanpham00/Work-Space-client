@@ -1,8 +1,8 @@
 import EmojiPicker, { Theme } from "emoji-picker-react";
-import { useAppStore } from "../../store/store";
 import { type Dispatch, type SetStateAction } from "react";
 import styles from "./EmojiMessage.module.scss";
 import type { TypeDisplayMessage } from "../../types/message.type";
+import { useBaseStore } from "../../store/baseStore";
 
 interface EmojiMessageProps {
   setContent: Dispatch<SetStateAction<string>>;
@@ -10,7 +10,7 @@ interface EmojiMessageProps {
 }
 
 export default function EmojiMessage({ show, setContent }: EmojiMessageProps) {
-  const isDark = useAppStore((state) => state.isDarkMode);
+  const isDark = useBaseStore((state) => state.isDarkMode);
   return (
     <div className={`${styles.emojiWrapper} ${show === "emoji" ? styles.show : styles.hide}`}>
       <EmojiPicker

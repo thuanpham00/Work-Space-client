@@ -17,10 +17,11 @@ export default function InfoUser({ channelDMDetail }: { channelDMDetail: Channel
           <AvatarFallback
             src={channelDMDetail.friend.avatar}
             alt={channelDMDetail.friend.username}
-            size={50}
+            size={60}
             status={channelDMDetail.friend.status as any}
             showStatus={true}
-            statusStyle={{ bottom: "-16px", right: "-14px" }}
+            statusStyle={{ bottom: "-1px", right: "4px" }}
+            className={styles.avatarOverride}
           />
         </div>
       </div>

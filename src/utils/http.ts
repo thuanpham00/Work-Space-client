@@ -1,11 +1,11 @@
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
 import { message } from "antd";
-import { useAppStore } from "../store/store";
 import { config } from "./config";
-import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setUserToLS } from "./auth";
+import { clearLS, getAccessTokenFromLS, setAccessTokenToLS } from "./auth";
 import type { AuthResponse, MessageResponse, SuccessResponse } from "../types/utils.type";
 import { isAxiosExpiredTokenError, isError401 } from "./error";
+import { useUserStore } from "../store/userStore";
 
 class http {
   instance: AxiosInstance;
@@ -40,11 +40,8 @@ class http {
         if (response.config.url === "/users/login") {
           const data = response.data as AuthResponse;
           this.accessToken = data.data.access_token;
-          setAccessTokenToLS(this.accessToken);
-          setUserToLS(data.data.user);
         }
         if (response.config.url === "/users/logout") {
-          clearLS();
           this.accessToken = "";
         }
         return response;
@@ -99,14 +96,14 @@ class http {
         this.accessToken = access_token;
         this.refreshTokenRequest = null;
         setAccessTokenToLS(access_token);
-        useAppStore.getState().setAccessToken(access_token);
+        useUserStore.getState().setAccessToken(access_token);
         return access_token;
       })
       .catch((err) => {
         clearLS();
         this.accessToken = "";
         this.refreshTokenRequest = null;
-        useAppStore.getState().setAccessToken(null);
+        useUserStore.getState().setAccessToken(null);
         throw err;
       });
   }

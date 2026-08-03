@@ -6,8 +6,8 @@ import ChangePasswordPage from "./Components/ChangePasswordPage";
 import SettingDisplayPage from "./Components/SettingDisplayPage";
 import InfoUserPage from "./Components/InfoUserPage";
 import { useQuery } from "react-query";
-import { useAppStore } from "../../store/store";
 import { userAPI } from "../../apis/user.api";
+import { useUserStore } from "../../store/userStore";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -35,7 +35,7 @@ const items: MenuItem[] = [
 
 export default function SettingAccount() {
   const [activeKey, setActiveKey] = useState<string>("info");
-  const token = useAppStore((state) => state.accessToken);
+  const token = useUserStore((state) => state.accessToken);
 
   // nếu token thay đổi thì gọi lại api để lấy thông tin user
   const { data } = useQuery({

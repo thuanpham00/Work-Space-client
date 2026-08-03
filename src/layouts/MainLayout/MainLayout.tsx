@@ -9,9 +9,9 @@ import { workspaceAPI } from "../../apis/workspace.api";
 import { useMemo } from "react";
 import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
-import { useAppStore } from "../../store/store";
 import { path } from "../../utils/path";
 import { useCall } from "../../Hooks/useCall";
+import { useUserStore } from "../../store/userStore";
 
 const { Sider, Content } = Layout;
 
@@ -19,7 +19,7 @@ export default function MainLayout() {
   useCall(); // đăng ký listener socket cho call
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const token = useAppStore((state) => state.accessToken);
+  const token = useUserStore((state) => state.accessToken);
 
   // gọi api lấy ds workspace của user và workspace user tham gia
   const { data: dataWorkspace } = useQuery({
@@ -89,7 +89,7 @@ export default function MainLayout() {
         />
         <div className="shrink-0 mb-2! flex justify-center">
           <Tooltip title="Cài đặt" placement="right">
-            <Avatar icon={<Settings size={16}/>} onClick={() => navigate(path.settingAccount)} />
+            <Avatar icon={<Settings size={16} />} onClick={() => navigate(path.settingAccount)} />
           </Tooltip>
         </div>
       </Sider>
