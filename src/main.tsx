@@ -11,7 +11,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false, // Không tự động refetch khi focus lại cửa sổ, bất kể dữ liệu còn fresh hay đã stale.
-      retry: 0, // gọi lại api khi thất bại (0 lần)
+      retry: 3, // gọi lại api khi thất bại (3 lần)
     },
   },
 });

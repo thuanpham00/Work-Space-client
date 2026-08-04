@@ -67,6 +67,4 @@ export const clearLS = () => {
   localStorage.removeItem("channel_id");
   localStorage.removeItem("server_id");
   localStorage.removeItem("mode_list_friend");
-  const ClearLSEvent = new Event("ClearLS");
-  LocalStorageEventTarget.dispatchEvent(ClearLSEvent); // phát sự kiện
 };

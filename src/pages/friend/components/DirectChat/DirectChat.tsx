@@ -23,7 +23,6 @@ export default function DirectChat() {
   const friendId = useChannelStore((app) => app.friendId);
   const channelId = useChannelStore((app) => app.channelId);
   const setChannelId = useChannelStore((app) => app.setChannelId);
-  // const me = useAppStore((app) => app.user);
 
   const [query, setQuery] = useState<QueryBase>({
     limit: LIMIT,

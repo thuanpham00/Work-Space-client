@@ -1,18 +1,16 @@
 import { Button, Spin } from "antd";
 import styles from "./SidebarFriend.module.scss";
 import { List, Plus } from "lucide-react";
-import { type ModeListFriend } from "../../FriendPage";
 import { useQuery } from "react-query";
 import { friendApi } from "../../../../apis/friend.api";
 import { StatusList } from "../StatusUser/StatusUsers";
 import type { FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
-import { useChannelStore } from "../../../../store/channelStore";
+import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
 
 const FriendItem = ({ friend }: { friend: FriendResponse }) => {
-  const setModeListFriend = useChannelStore((app) => app.setModeListFriend);
-  const setFriendId = useChannelStore((app) => app.setFriendId);
+  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
 
   const displayName = friend.displayName || friend.fullName || friend.username || "Người dùng";
   const avatar = friend.avatar;
@@ -22,8 +20,7 @@ const FriendItem = ({ friend }: { friend: FriendResponse }) => {
     <button
       className={styles.friendItem}
       onClick={() => {
-        setModeListFriend("chat" as ModeListFriend);
-        setFriendId(friend.id);
+        chooseChannelFriend(friend.id, modeListFriend.chat);
       }}
     >
       <AvatarFallback src={avatar} alt={displayName} status={status as any} showStatus={true} />
@@ -36,11 +33,9 @@ const FriendItem = ({ friend }: { friend: FriendResponse }) => {
 };
 
 export default function SidebarFriend() {
-  const setFriendId = useChannelStore((app) => app.setFriendId);
-  const setChannelId = useChannelStore((app) => app.setChannelId);
-  const setModeListFriend = useChannelStore((app) => app.setModeListFriend);
+  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
 
-  const modeListFriend = useChannelStore((app) => app.modeListFriend);
+  const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
 
   const { data: dataFriends, isLoading } = useQuery({
@@ -58,11 +53,9 @@ export default function SidebarFriend() {
       <Button
         type="link"
         onClick={() => {
-          setModeListFriend("list" as ModeListFriend);
-          setFriendId(null);
-          setChannelId(null);
+          chooseChannelFriend(null, modeListFriend.list, null);
         }}
-        className={`${styles.buttonListFriend} ${modeListFriend === "list" ? styles.buttonListFriendActive : ""}`}
+        className={`${styles.buttonListFriend} ${modeListFriendState === "list" ? styles.buttonListFriendActive : ""}`}
         icon={<List size={16} />}
       >
         Danh sách bạn bè

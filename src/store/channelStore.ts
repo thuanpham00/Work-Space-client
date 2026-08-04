@@ -8,28 +8,28 @@ import {
   setFriendIdToLS,
   setModeListFriendToLS,
 } from "../utils/auth";
-import type { ModeListFriend } from "../pages/Friend/FriendPage";
+
+export const modeListFriend = {
+  list: "list",
+  chat: "chat",
+} as const;
+
+export type ModeListFriend = (typeof modeListFriend)[keyof typeof modeListFriend];
 
 type AppStoreType = {
   friendId: string | null;
-  setFriendId: (friendId: string | null) => void;
   channelId: string | null;
-  setChannelId: (channelId: string | null) => void;
   serverId: string | null;
-  setServerId: (serverId: string | null) => void;
-
   modeListFriend: ModeListFriend;
-  setModeListFriend: (mode: ModeListFriend) => void;
 
+  setChannelId: (channelId: string | null) => void;
+  setServerId: (serverId: string | null) => void;
   reset: () => void;
+  chooseChannelFriend: (friendId: string, mode: ModeListFriend, channelId?: string | null) => void;
 };
 
 export const useChannelStore = create<AppStoreType>((set) => ({
   friendId: getFriendIdFromLS(),
-  setFriendId: (friendId: string | null) => {
-    set({ friendId });
-    setFriendIdToLS(friendId);
-  },
 
   channelId: getChannelIdFromLS(),
   setChannelId: (channelId: string | null) => {
@@ -44,9 +44,12 @@ export const useChannelStore = create<AppStoreType>((set) => ({
   },
 
   modeListFriend: getModeListFriendFromLS() as ModeListFriend,
-  setModeListFriend: (modeListFriend: ModeListFriend) => {
-    set({ modeListFriend });
+
+  chooseChannelFriend: (friendId: string, modeListFriend: ModeListFriend, channelId?: string | null) => {
+    set({ friendId, modeListFriend });
+    setFriendIdToLS(friendId);
     setModeListFriendToLS(modeListFriend);
+    setChannelIdToLS(channelId);
   },
 
   reset: () => {

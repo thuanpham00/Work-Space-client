@@ -19,7 +19,7 @@ import { useDebounce } from "../../../../Hooks/useDebounce";
 import { queryClient } from "../../../../main";
 import type { FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
-import { useChannelStore } from "../../../../store/channelStore";
+import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 
 export const StatusList = {
   ONLINE: "ONLINE",
@@ -48,9 +48,7 @@ function FriendRow({
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
 }) {
-  const setFriendId = useChannelStore((app) => app.setFriendId);
-  const setChannelId = useChannelStore((app) => app.setChannelId);
-  const setModeListFriend = useChannelStore((app) => app.setModeListFriend);
+  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
 
   const avatar = friend.avatar || "";
   const displayName = friend.displayName || friend.fullName || friend.username || "";
@@ -61,9 +59,7 @@ function FriendRow({
     <div
       className={styles.friendRow}
       onClick={() => {
-        setFriendId(friend.id);
-        setChannelId(null);
-        setModeListFriend("chat");
+        chooseChannelFriend(friend.id, modeListFriend.chat);
       }}
     >
       <div className={styles.friendIdentity}>
@@ -96,9 +92,7 @@ function FriendRow({
           <>
             <Button
               onClick={() => {
-                setFriendId(friend.id);
-                setChannelId(null);
-                setModeListFriend("chat");
+                chooseChannelFriend(friend.id, modeListFriend.chat);
               }}
               type="text"
               size="small"

@@ -35,10 +35,10 @@ export default function Header() {
       return userAPI.logout();
     },
     onSuccess: () => {
+      clearLS();
       resetBaseStore();
       resetUserStore();
       resetChannelStore();
-      clearLS();
       navigate("/auth/login");
     },
   });
