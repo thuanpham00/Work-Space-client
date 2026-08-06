@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { forwardRef } from "react";
 import { Avatar } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const Messages = forwardRef<HTMLDivElement, Props>(
-  ({ messages, pagination, fetchConversationDataMore }, ref) => {
+  ({ messages, pagination, fetchConversationDataMore }, _) => {
     return (
       <div className={styles.messagesList} id="scrollableDiv">
         <InfiniteScroll

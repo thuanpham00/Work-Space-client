@@ -1,6 +1,6 @@
 export type ChannelDM = {
   id: string;
-  workspaceId: any;
+  workspaceId: string;
   name: string;
   description: string;
   type: string;
@@ -12,8 +12,8 @@ export type ChannelDM = {
     password: string;
     username: string;
     displayName: string;
-    avatar: any;
-    bio: any;
+    avatar: string;
+    bio: string;
     status: string;
     createdAt: string;
     updatedAt: string;
@@ -29,3 +29,14 @@ export type ChannelDM = {
     };
   };
 };
+
+export interface Channel {
+  id: string;
+  workspaceId: string;
+  name: string;
+  description: string;
+  type: string;
+  isPrivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

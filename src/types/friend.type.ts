@@ -16,7 +16,6 @@ export interface FriendResponse {
 export const statusUser = {
   ONLINE: "ONLINE",
   OFFLINE: "OFFLINE",
-  AWAY: "AWAY",
   BUSY: "BUSY",
 } as const;
 

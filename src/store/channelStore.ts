@@ -3,10 +3,11 @@ import {
   getChannelIdFromLS,
   getFriendIdFromLS,
   getModeListFriendFromLS,
-  getServerIdFromLS,
+  getWorkspaceIdFromLS,
   setChannelIdToLS,
   setFriendIdToLS,
   setModeListFriendToLS,
+  setWorkspaceIdToLS,
 } from "../utils/auth";
 
 export const modeListFriend = {
@@ -17,46 +18,48 @@ export const modeListFriend = {
 export type ModeListFriend = (typeof modeListFriend)[keyof typeof modeListFriend];
 
 type AppStoreType = {
-  friendId: string | null;
-  channelId: string | null;
-  serverId: string | null;
+  friendId: string;
+  channelId: string;
+  workspaceId: string;
   modeListFriend: ModeListFriend;
 
-  setChannelId: (channelId: string | null) => void;
-  setServerId: (serverId: string | null) => void;
+  setChannelId: (channelId: string) => void;
+  setWorkspaceId: (workspaceId: string) => void;
   reset: () => void;
-  chooseChannelFriend: (friendId: string, mode: ModeListFriend, channelId?: string | null) => void;
+  chooseChannelFriend: (friendId: string, mode: ModeListFriend) => void;
 };
 
 export const useChannelStore = create<AppStoreType>((set) => ({
   friendId: getFriendIdFromLS(),
 
   channelId: getChannelIdFromLS(),
-  setChannelId: (channelId: string | null) => {
+  setChannelId: (channelId: string) => {
     set({ channelId });
     setChannelIdToLS(channelId);
   },
 
-  serverId: getServerIdFromLS(),
-  setServerId: (serverId: string | null) => {
-    set({ serverId });
-    setChannelIdToLS(serverId);
+  workspaceId: getWorkspaceIdFromLS(),
+  setWorkspaceId: (workspaceId: string) => {
+    set({ workspaceId });
+    setWorkspaceIdToLS(workspaceId);
   },
 
   modeListFriend: getModeListFriendFromLS() as ModeListFriend,
 
-  chooseChannelFriend: (friendId: string, modeListFriend: ModeListFriend, channelId?: string | null) => {
+  chooseChannelFriend: (friendId: string, modeListFriend: ModeListFriend) => {
     set({ friendId, modeListFriend });
     setFriendIdToLS(friendId);
     setModeListFriendToLS(modeListFriend);
-    setChannelIdToLS(channelId);
+    if (modeListFriend === "list") {
+      setChannelIdToLS("");
+    }
   },
 
   reset: () => {
     set({
-      friendId: null,
-      channelId: null,
-      serverId: null,
+      friendId: "",
+      channelId: "",
+      workspaceId: "",
       modeListFriend: getModeListFriendFromLS() as ModeListFriend,
     });
   },

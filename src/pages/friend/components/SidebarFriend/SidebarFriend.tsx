@@ -4,7 +4,7 @@ import { List, Plus } from "lucide-react";
 import { useQuery } from "react-query";
 import { friendApi } from "../../../../apis/friend.api";
 import { StatusList } from "../StatusUser/StatusUsers";
-import type { FriendResponse } from "../../../../types/friend.type";
+import type { FriendResponse, StatusUser } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
@@ -23,7 +23,7 @@ const FriendItem = ({ friend }: { friend: FriendResponse }) => {
         chooseChannelFriend(friend.id, modeListFriend.chat);
       }}
     >
-      <AvatarFallback src={avatar} alt={displayName} status={status as any} showStatus={true} />
+      <AvatarFallback src={avatar} alt={displayName} status={status as StatusUser} showStatus={true} />
 
       <div className={styles.friendInfo}>
         <span className={styles.friendItemName}>{displayName}</span>
@@ -53,7 +53,7 @@ export default function SidebarFriend() {
       <Button
         type="link"
         onClick={() => {
-          chooseChannelFriend(null, modeListFriend.list, null);
+          chooseChannelFriend("", modeListFriend.list);
         }}
         className={`${styles.buttonListFriend} ${modeListFriendState === "list" ? styles.buttonListFriendActive : ""}`}
         icon={<List size={16} />}
@@ -65,9 +65,9 @@ export default function SidebarFriend() {
 
       <div className="flex items-center justify-between mb-3! w-full px-2">
         <h2 className={styles.layoutInnerTitleChat}>Tin nhắn trực tiếp</h2>
-        <button className={styles.addChatButton} title="Bắt đầu cuộc trò chuyện">
+        <Button type="link" className="p-0!" title="Bắt đầu cuộc trò chuyện">
           <Plus size={16} />
-        </button>
+        </Button>
       </div>
 
       <div className={styles.layoutList}>

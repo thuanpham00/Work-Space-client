@@ -1,0 +1,17 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.workSpace {
+  display: flex;
+  height: 100%;
+}
+
+.workSpaceSidebar {
+  width: 20%;
+  border-right: 1px solid var(--color-bg-secondary);
+}
+
+.workSpaceContent {
+  width: 80%;
+  border-right: 1px solid var(--color-bg-secondary);
+}

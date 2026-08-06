@@ -24,12 +24,12 @@ export const getChannelIdFromLS = () => {
   return localStorage.getItem("channel_id") || "";
 };
 
-export const setServerIdToLS = (serverId: string) => {
-  return localStorage.setItem("server_id", serverId);
+export const setWorkspaceIdToLS = (workspaceId: string) => {
+  return localStorage.setItem("workspace_id", workspaceId);
 };
 
-export const getServerIdFromLS = () => {
-  return localStorage.getItem("server_id") || "";
+export const getWorkspaceIdFromLS = () => {
+  return localStorage.getItem("workspace_id") || "";
 };
 
 export const setModeListFriendToLS = (mode: string) => {

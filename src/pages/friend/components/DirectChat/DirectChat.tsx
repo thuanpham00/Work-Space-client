@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { Phone, Video, Pin, Search, AtSign } from "lucide-react";
 import styles from "./DirectChat.module.scss";
@@ -38,28 +41,28 @@ export default function DirectChat() {
 
   const { data: dataChannelDM } = useQuery({
     queryKey: ["channelDM", friendId, accessToken],
-    queryFn: () => channelApi.getDirectMessageChannelDetail(friendId),
+    queryFn: () => channelApi.getDirectMessageChannelDetail(friendId as string),
     enabled: Boolean(friendId),
     staleTime: 60 * 1000 * 5,
   });
   const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
 
   useEffect(() => {
-    if (channelDMDetail?.id !== channelId) {
+    if (channelDMDetail?.id) {
       setChannelId(channelDMDetail?.id);
     }
-  }, [channelId, channelDMDetail?.id]);
+  }, [channelDMDetail?.id, setChannelId]);
 
   const { data: dataMessage } = useQuery({
     queryKey: ["messageChannel", channelId, query, accessToken],
-    queryFn: () => channelApi.getMessagesChannel(channelId, query),
+    queryFn: () => channelApi.getMessagesChannel(channelId as string, query),
     enabled: Boolean(channelId),
     staleTime: 60 * 1000 * 5,
   });
 
   const conversationListData = dataMessage?.data?.data?.messages as Message[];
-  const page = dataMessage?.data?.data?.page;
-  const total_page = dataMessage?.data?.data?.total_page;
+  const page = dataMessage?.data?.data?.page as number;
+  const total_page = dataMessage?.data?.data?.total_page as number;
 
   useEffect(() => {
     setMessages([]); // clear old messages
@@ -175,7 +178,7 @@ export default function DirectChat() {
             pagination={pagination}
             fetchConversationDataMore={fetchConversationDataMore}
           />
-          <Composer channelId={channelId} />
+          <Composer channelId={channelId as string} />
         </div>
 
         <InfoUser channelDMDetail={channelDMDetail} />

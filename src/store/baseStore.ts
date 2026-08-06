@@ -23,7 +23,7 @@ export const useBaseStore = create<AppStoreType>((set) => ({
   setIsDarkMode: (isDarkMode: boolean) => {
     document.documentElement.classList.toggle("dark", isDarkMode);
     set({ isDarkMode });
-    setIsDarkModeToLS(!isDarkMode);
+    setIsDarkModeToLS(isDarkMode);
   },
 
   socket: null,

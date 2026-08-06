@@ -4,6 +4,10 @@ import Http from "../utils/http";
 
 export const workspaceAPI = {
   getWorkspaces: () => {
-    return Http.get<SuccessResponse<{ workspaces: WorkspaceType[]; total: number }>>("/users/workspaces");
+    return Http.get<SuccessResponse<{ workspaces: WorkspaceType[]; total: number }>>("/workspaces");
+  },
+
+  getWorkspaceById: (workspaceId: string) => {
+    return Http.get<SuccessResponse<{ workspace: WorkspaceType }>>(`/workspaces/${workspaceId}`);
   },
 };

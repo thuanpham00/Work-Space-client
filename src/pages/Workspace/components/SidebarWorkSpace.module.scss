@@ -1,0 +1,121 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.swSidebar {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
+  color: var(--color-text);
+  padding: 12px 8px;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+.swTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+}
+
+.swTitle {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.swAction {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.swList {
+  overflow: auto;
+  height: calc(100vh - 60px);
+  padding-right: 6px;
+
+  @include custom-scrollbar;
+}
+
+.swGroup {
+  margin-bottom: 8px;
+}
+
+.swGroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+}
+
+.swCaret {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  transform: rotate(0deg);
+  transition: transform 0.18s ease;
+}
+
+/* modifier applied as separate class to work with CSS Modules */
+.swCaretOpen {
+  transform: rotate(180deg);
+}
+
+.swGroupTitle {
+  font-weight: 600;
+}
+
+.swChannels {
+  list-style: none;
+  margin: 4px 0 0 0;
+  padding: 0 0 0 6px;
+}
+
+.swChannel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  color: var(--color-text);
+  border-radius: 6px;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sw-channel:hover {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--color-text);
+}
+
+/* modifier as separate class for CSS Modules */
+.swSelected {
+  background: var(--color-primary);
+  color: var(--color-text);
+}
+
+.swHash {
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.swName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

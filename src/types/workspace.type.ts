@@ -1,3 +1,5 @@
+import type { Channel } from "./channel.type";
+
 export type WorkspaceType = {
   id: string;
   name: string;
@@ -6,4 +8,5 @@ export type WorkspaceType = {
   ownerId: string;
   createdAt: string;
   updatedAt: string;
+  channels?: Channel[];
 };

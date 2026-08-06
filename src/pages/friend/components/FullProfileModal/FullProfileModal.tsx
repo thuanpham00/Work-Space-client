@@ -5,6 +5,7 @@ import { MessageSquare, UserPlus, MoreHorizontal } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
 import styles from "./FullProfileModal.module.scss";
+import type { StatusUser } from "../../../../types/friend.type";
 
 export interface FullProfileModalRef {
   openModal: () => void;
@@ -18,7 +19,6 @@ interface FullProfileModalProps {
 export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfileModalProps>(
   ({ channelDMDetail }, ref) => {
     const [visible, setVisible] = useState(false);
-    console.log("channelDMDetail", channelDMDetail);
 
     useImperativeHandle(ref, () => ({
       openModal: () => setVisible(true),
@@ -60,7 +60,7 @@ export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfil
                 src={friend.avatar}
                 alt={friend.username}
                 size={60}
-                status={friend.status as any}
+                status={friend.status as StatusUser}
                 showStatus={true}
                 statusStyle={{
                   bottom: "5px",

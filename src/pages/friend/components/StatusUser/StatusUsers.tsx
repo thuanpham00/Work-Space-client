@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, message } from "antd";
 import styles from "./StatusUsers.module.scss";
 import {

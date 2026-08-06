@@ -1,11 +1,12 @@
 import type { CSSProperties } from "react";
 import styles from "./AvatarFallback.module.scss";
+import type { StatusUser } from "../../types/friend.type";
 
 interface AvatarFallbackProps {
   src?: string | null;
   alt: string;
   size?: number;
-  status?: "ONLINE" | "BUSY" | "OFFLINE";
+  status?: StatusUser;
   showStatus?: boolean;
   className?: string;
   /** inline style cho status dot - dùng thay classNameStatus khi cần override position */
