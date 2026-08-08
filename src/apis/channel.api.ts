@@ -1,4 +1,4 @@
-import type { ChannelDM } from "../types/channel.type";
+import type { Channel, ChannelBody, ChannelDM } from "../types/channel.type";
 import type { QueryBase } from "../types/query.type";
 import type { SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
@@ -17,5 +17,9 @@ export const channelApi = {
         params,
       },
     );
+  },
+
+  create: (data: ChannelBody) => {
+    return Http.post<SuccessResponse<{ channel: Channel }>>("/channels", data);
   },
 };

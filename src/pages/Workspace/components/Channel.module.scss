@@ -1,0 +1,127 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.loading {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+/* Header Styles */
+.chatHeader {
+  height: 48px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--color-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: var(--color-bg-secondary);
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.atIcon {
+  color: var(--color-text-secondary);
+}
+
+.headerName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: $radius-full;
+  background-color: #22c55e;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast;
+
+  &:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  background-color: var(--color-bg-secondary);
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  padding: 4px 28px 4px 8px;
+  font-size: 13px;
+  width: 144px;
+  color: var(--color-text);
+  transition: width $transition-normal;
+
+  &:focus {
+    width: 240px;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  right: 8px;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* Chat Body Layout */
+.chatBody {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Messages Pane */
+.messagesPane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}

@@ -40,3 +40,12 @@ export interface Channel {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ChannelBody {
+  workspaceId: string;
+  name: string;
+  type: string;
+  categoryId: string;
+  description: string;
+  isPrivate: boolean;
+}

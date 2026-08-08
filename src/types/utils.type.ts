@@ -18,3 +18,5 @@ export type AuthResponse = SuccessResponse<{
   access_token: string;
   user: UserType;
 }>;
+
+export type ModalStatus = "create" | "update" | "view";

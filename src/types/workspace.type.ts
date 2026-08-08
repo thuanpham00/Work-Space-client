@@ -4,9 +4,19 @@ export type WorkspaceType = {
   id: string;
   name: string;
   description: string;
-  avatar: string;
+  avatar: null;
   ownerId: string;
   createdAt: string;
   updatedAt: string;
-  channels?: Channel[];
+  categories: CategoryWorkspace[];
+};
+
+export type CategoryWorkspace = {
+  id: string;
+  workspaceId: string;
+  name: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+  channels: Channel[];
 };

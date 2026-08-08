@@ -27,9 +27,10 @@ type AppStoreType = {
   setWorkspaceId: (workspaceId: string) => void;
   reset: () => void;
   chooseChannelFriend: (friendId: string, mode: ModeListFriend) => void;
+  chooseChannelWorkspace: (workspaceId: string, channelId: string) => void;
 };
 
-export const useChannelStore = create<AppStoreType>((set) => ({
+export const useChannelStore = create<AppStoreType>((set, get) => ({
   friendId: getFriendIdFromLS(),
 
   channelId: getChannelIdFromLS(),
@@ -47,12 +48,19 @@ export const useChannelStore = create<AppStoreType>((set) => ({
   modeListFriend: getModeListFriendFromLS() as ModeListFriend,
 
   chooseChannelFriend: (friendId: string, modeListFriend: ModeListFriend) => {
-    set({ friendId, modeListFriend });
+    set({ friendId, modeListFriend, channelId: "", workspaceId: "" });
     setFriendIdToLS(friendId);
     setModeListFriendToLS(modeListFriend);
-    if (modeListFriend === "list") {
-      setChannelIdToLS("");
-    }
+    setChannelIdToLS("");
+    setWorkspaceIdToLS("");
+  },
+
+  chooseChannelWorkspace: (workspaceId: string, channelId: string) => {
+    set({ channelId, workspaceId, friendId: "", modeListFriend: "list" });
+    setChannelIdToLS(channelId);
+    setWorkspaceIdToLS(workspaceId);
+    setFriendIdToLS("");
+    setModeListFriendToLS("list");
   },
 
   reset: () => {

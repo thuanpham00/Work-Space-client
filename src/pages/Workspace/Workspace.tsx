@@ -3,7 +3,8 @@ import SidebarWorkSpace from "./components/SidebarWorkSpace";
 import styles from "./Workspace.module.scss";
 import { workspaceAPI } from "../../apis/workspace.api";
 import { useQuery } from "react-query";
-import type { WorkspaceType } from "../../types/workspace.type";
+import { Spin } from "antd";
+import ChannelChat from "./components/ChannelChat";
 
 export type ModeListFriend = "list" | "chat";
 
@@ -24,10 +25,18 @@ export default function WorkspacePage() {
     <>
       <div className={styles.workSpace}>
         <div className={styles.workSpaceSidebar}>
-          <SidebarWorkSpace data={dataWorkspaceDetail as WorkspaceType} />
+          {dataWorkspaceDetail && id ? (
+            <SidebarWorkSpace data={dataWorkspaceDetail} workspaceId={id} />
+          ) : (
+            <div className={styles.loading}>
+              <Spin size="large" tip="Loading..." />
+            </div>
+          )}
         </div>
 
-        <div className={styles.workSpaceContent}>122</div>
+        <div className={styles.workSpaceContent}>
+          <ChannelChat />
+        </div>
       </div>
     </>
   );

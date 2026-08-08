@@ -2,8 +2,11 @@
 @use "../../../styles/mixins" as *;
 
 .swSidebar {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
   color: var(--color-text);
   padding: 12px 8px;
@@ -21,6 +24,7 @@
 
 .swTitle {
   font-weight: 600;
+  font-size: 16px;
   color: var(--color-text);
 }
 
@@ -35,8 +39,9 @@
 }
 
 .swList {
+  flex: 1;
+  min-height: 0;
   overflow: auto;
-  height: calc(100vh - 60px);
   padding-right: 6px;
 
   @include custom-scrollbar;
@@ -55,15 +60,6 @@
   cursor: pointer;
   user-select: none;
   font-size: 13px;
-}
-
-.swCaret {
-  display: inline-block;
-  width: 16px;
-  text-align: center;
-  color: var(--color-text-secondary);
-  transform: rotate(0deg);
-  transition: transform 0.18s ease;
 }
 
 /* modifier applied as separate class to work with CSS Modules */
@@ -112,10 +108,45 @@
   display: inline-block;
   width: 20px;
   text-align: center;
+  font-size: 16px;
   color: var(--color-text-secondary);
 }
 
 .swName {
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.swGroupActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.swPrimaryAction {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: #fff;
+}
+
+.swTopicAction {
+  background: var(--color-primary);
+}
+
+.swTopicAction:hover {
+  background: var(--color-primary-hover) !important;
+}
+
+.swChannelAction {
+  background: var(--color-success);
+}
+
+.swChannelAction:hover {
+  background: #0ea371 !important;
 }

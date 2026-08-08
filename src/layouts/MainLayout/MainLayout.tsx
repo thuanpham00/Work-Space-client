@@ -10,14 +10,17 @@ import { useMemo } from "react";
 import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
-import { useCall } from "../../Hooks/useCall";
 import { useUserStore } from "../../store/userStore";
+import { modeListFriend, useChannelStore } from "../../store/channelStore";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
-  useCall(); // đăng ký listener socket cho call
+  // useCall(); // đăng ký listener socket cho call
   const navigate = useNavigate();
+  const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
+  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
+
   const { pathname } = useLocation();
   const token = useUserStore((state) => state.accessToken);
 
@@ -65,6 +68,22 @@ export default function MainLayout() {
     ];
   }, [listWorkspaces, navigate]);
 
+  const handleClickWorkspace = (key: string) => {
+    if (key === "friends") {
+      navigate("/friends");
+      chooseChannelFriend("", modeListFriend.list);
+    } else {
+      const workspace = listWorkspaces.find((ws: WorkspaceType) => ws.id === key);
+
+      if (workspace) {
+        const workspaceId = workspace.id;
+        const channelFirstId = workspace.categories[0].channels[0].id;
+        chooseChannelWorkspace(workspaceId, channelFirstId);
+        navigate(`/workspaces/${key}`);
+      }
+    }
+  };
+
   return (
     <Layout className={styles.layout}>
       <Sider trigger={null} collapsible className={styles.sider} theme="dark" width={80}>
@@ -77,13 +96,7 @@ export default function MainLayout() {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKeys}
-          onClick={({ key }) => {
-            if (key === "friends") {
-              navigate("/friends");
-            } else {
-              navigate(`/workspaces/${key}`);
-            }
-          }}
+          onClick={({ key }) => handleClickWorkspace(key)}
           className={styles.menu}
           items={menu}
         />

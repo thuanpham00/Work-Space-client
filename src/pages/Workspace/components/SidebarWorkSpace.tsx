@@ -1,102 +1,114 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import styles from "./SidebarWorkSpace.module.scss";
 import type { WorkspaceType } from "../../../types/workspace.type";
 import { Button } from "antd";
-import { Plus } from "lucide-react";
-
-type Group = {
-  title: string;
-  channels: string[];
-};
-
-const groups: Group[] = [
-  {
-    title: "BMD",
-    channels: [
-      "official",
-      "dev",
-      "bmd-training",
-      "bmd-frontend",
-      "yeu-cau-deploy",
-      "yêu-cầu-frontend",
-      "yêu-cầu-backend",
-      "yêu-cầu-qc",
-      "bmd-task",
-    ],
-  },
-  {
-    title: "Project",
-    channels: [
-      "apjsc",
-      "285-kaf",
-      "302-ichimoku",
-      "303-intage",
-      "309-qlsxcc",
-      "320-minh-global",
-      "369-abn",
-      "noi-bo-erp",
-    ],
-  },
-  {
-    title: "Console",
-    channels: ["bmd-report", "khach-hang-thao-tac", "reopen-log"],
-  },
-];
+import { ChartBarStacked, Pencil, Ungroup } from "lucide-react";
+import { CategoryChannelModal } from "./CategoryChannelModal";
+import { queryClient } from "../../../main";
+import { ChannelModal } from "./ChannelModal";
+import { useChannelStore } from "../../../store/channelStore";
 
 interface SidebarWorkSpaceProps {
   data: WorkspaceType;
+  workspaceId: string;
 }
 
-export default function SidebarWorkSpace({ data }: SidebarWorkSpaceProps) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
-    const init: Record<string, boolean> = {};
-    groups.forEach((g) => (init[g.title] = true));
-    return init;
-  });
-  const [selected, setSelected] = useState<string>("bmd-report");
+export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpaceProps) {
+  const modalCategoryChannelRef = useRef<CategoryChannelModal>(null);
+  const modalChannelRef = useRef<ChannelModal>(null);
+  const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
+
+  const groups = useMemo(
+    () => data?.categories.sort((a, b) => a.position - b.position) ?? [],
+    [data?.categories],
+  );
+  const [selected, setSelected] = useState<string>("");
+
+  const firstChannelId = useMemo(() => {
+    return groups.flatMap((group) => group.channels)[0]?.id ?? "";
+  }, [groups]);
+
+  const activeChannelId = selected || firstChannelId;
+
   if (!data) return null;
+
+  const refreshDataWorkspaceDetail = () => {
+    queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
+  };
 
   return (
     <aside className={styles.swSidebar}>
       <div className={styles.swTop}>
         <div className={styles.swTitle}>{data.name}</div>
 
-        <Button type="link" className="p-0!" title="Thêm chủ đề mới">
-          <Plus size={16} />
-        </Button>
+        <div className={styles.swGroupActions}>
+          <Button
+            type="primary"
+            className={`${styles.swPrimaryAction} ${styles.swTopicAction}`}
+            title="Thêm chủ đề mới"
+            onClick={() => modalCategoryChannelRef.current?.handleCreate(data.id)}
+          >
+            <ChartBarStacked size={16} />
+          </Button>
+
+          <Button
+            type="primary"
+            className={`${styles.swPrimaryAction} ${styles.swChannelAction}`}
+            title="Thêm kênh chat"
+            onClick={() => modalChannelRef.current?.handleCreate(data.id)}
+          >
+            <Ungroup size={14} />
+          </Button>
+        </div>
       </div>
 
       <div className={styles.swList}>
         {groups.map((group) => (
-          <div className={styles.swGroup} key={group.title}>
-            <div
-              className={styles.swGroupHeader}
-              onClick={() => setExpanded((s) => ({ ...s, [group.title]: !s[group.title] }))}
-            >
-              <span className={`${styles.swCaret} ${expanded[group.title] ? styles.swCaretOpen : ""}`}>
-                ▾
-              </span>
-              <span className={styles.swGroupTitle}>{group.title}</span>
+          <div className={styles.swGroup} key={group.id}>
+            <div className={styles.swGroupHeader}>
+              <span className={styles.swGroupTitle}>{group.name}</span>
+
+              <Button
+                type="link"
+                className="p-0!"
+                title="Chỉnh sửa chủ đề"
+                onClick={() => modalCategoryChannelRef.current?.handleUpdate(group)}
+              >
+                <Pencil size={14} />
+              </Button>
             </div>
 
-            {expanded[group.title] && (
-              <ul className={styles.swChannels}>
-                {group.channels.map((ch) => (
-                  <li
-                    key={ch}
-                    className={`${styles.swChannel} ${selected === ch ? styles.swSelected : ""}`}
-                    onClick={() => setSelected(ch)}
-                    title={ch}
-                  >
-                    <span className={styles.swHash}>#</span>
-                    <span className={styles.swName}>{ch}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ul className={styles.swChannels}>
+              {group.channels.map((ch) => (
+                <li
+                  key={ch.id}
+                  className={`${styles.swChannel} ${activeChannelId === ch.id ? styles.swSelected : ""}`}
+                  onClick={() => {
+                    setSelected(ch.id);
+                    chooseChannelWorkspace(data.id, ch.id);
+                  }}
+                  title={ch.name}
+                >
+                  <span className={styles.swHash}>#</span>
+                  <span className={styles.swName}>{ch.name}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
       </div>
+
+      <CategoryChannelModal
+        ref={modalCategoryChannelRef}
+        onSubmitOk={() => refreshDataWorkspaceDetail()}
+        onClose={() => {}}
+      />
+
+      <ChannelModal
+        ref={modalChannelRef}
+        onSubmitOk={() => refreshDataWorkspaceDetail()}
+        onClose={() => {}}
+      />
     </aside>
   );
 }

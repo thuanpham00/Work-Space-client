@@ -79,11 +79,21 @@ function FriendRow({
               type="primary"
               size="small"
               icon={<Check size={14} />}
-              onClick={() => onAccept(friend.id, displayName)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAccept(friend.id, displayName);
+              }}
             >
               Chấp nhận
             </Button>
-            <Button size="small" icon={<X size={14} />} onClick={() => onReject(friend.id, displayName)}>
+            <Button
+              size="small"
+              icon={<X size={14} />}
+              onClick={(e) => {
+                e.stopPropagation();
+                onReject(friend.id, displayName);
+              }}
+            >
               Từ chối
             </Button>
           </>
