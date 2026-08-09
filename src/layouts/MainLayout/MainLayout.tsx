@@ -11,15 +11,12 @@ import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
 import { useUserStore } from "../../store/userStore";
-import { modeListFriend, useChannelStore } from "../../store/channelStore";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
   // useCall(); // đăng ký listener socket cho call
   const navigate = useNavigate();
-  const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
-  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
 
   const { pathname } = useLocation();
   const token = useUserStore((state) => state.accessToken);
@@ -71,16 +68,8 @@ export default function MainLayout() {
   const handleClickWorkspace = (key: string) => {
     if (key === "friends") {
       navigate("/friends");
-      chooseChannelFriend("", modeListFriend.list);
     } else {
-      const workspace = listWorkspaces.find((ws: WorkspaceType) => ws.id === key);
-
-      if (workspace) {
-        const workspaceId = workspace.id;
-        const channelFirstId = workspace.categories[0].channels[0].id;
-        chooseChannelWorkspace(workspaceId, channelFirstId);
-        navigate(`/workspaces/${key}`);
-      }
+      navigate(`/workspaces/${key}`);
     }
   };
 

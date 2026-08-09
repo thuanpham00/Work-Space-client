@@ -1,0 +1,56 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.friendItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  text-align: left;
+  margin-bottom: 5px;
+  padding: 3px 3px 3px 6px;
+}
+
+.friendItemActive {
+  background: var(--color-primary);
+  color: var(--color-text);
+}
+
+.friendInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  min-width: 0;
+  flex: 1;
+}
+
+.friendItemName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  transition: color $transition-fast;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  line-height: 1.2;
+}
+
+.friendItemUserName {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text);
+  transition: color $transition-fast;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  line-height: 1.2;
+}

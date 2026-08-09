@@ -30,7 +30,7 @@ type AppStoreType = {
   chooseChannelWorkspace: (workspaceId: string, channelId: string) => void;
 };
 
-export const useChannelStore = create<AppStoreType>((set, get) => ({
+export const useChannelStore = create<AppStoreType>((set) => ({
   friendId: getFriendIdFromLS(),
 
   channelId: getChannelIdFromLS(),

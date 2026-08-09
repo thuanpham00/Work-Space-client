@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { Phone, Video, Pin, Search, AtSign } from "lucide-react";
+import { Phone, Video, Pin, Search, AtSign, PanelRight } from "lucide-react";
 import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
 import { useQuery } from "react-query";
@@ -10,12 +10,12 @@ import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelDM } from "../../../../types/channel.type";
 import type { QueryBase } from "../../../../types/query.type";
 import { type Message } from "../../../../types/message.type";
-import { Spin } from "antd";
 import Messages from "../../../../components/Messages/Messages";
 import Composer from "../../../../components/Composer/Composer";
 import { useUserStore } from "../../../../store/userStore";
 import { useBaseStore } from "../../../../store/baseStore";
 import { useChannelStore } from "../../../../store/channelStore";
+import { Spin } from "antd";
 
 const PAGE = 1;
 const LIMIT = 50;
@@ -25,6 +25,8 @@ export default function DirectChat() {
   const socket = useBaseStore((app) => app.socket);
   const friendId = useChannelStore((app) => app.friendId);
   const channelId = useChannelStore((app) => app.channelId);
+  const [showInfoPannel, setShowInfoPannel] = useState(true);
+
   const setChannelId = useChannelStore((app) => app.setChannelId);
 
   const [query, setQuery] = useState<QueryBase>({
@@ -168,6 +170,13 @@ export default function DirectChat() {
             <input type="text" placeholder="Tìm kiếm" className={styles.searchInput} />
             <Search className={styles.searchIcon} size={15} />
           </div>
+
+          <button
+            className={`${styles.iconButton} ${showInfoPannel ? styles.active : ""}`}
+            onClick={() => setShowInfoPannel(!showInfoPannel)}
+          >
+            <PanelRight size={20} />
+          </button>
         </div>
       </header>
 
@@ -181,10 +190,12 @@ export default function DirectChat() {
           <Composer channelId={channelId as string} />
         </div>
 
-        <InfoUser channelDMDetail={channelDMDetail} />
+        <div
+          className={`transition-all ease-linear overflow-hidden duration-300 ${showInfoPannel ? `opacity-100 w-[25%]` : "opacity-0 pointer-events-none w-0"}`}
+        >
+          <InfoUser channelDMDetail={channelDMDetail} />
+        </div>
       </div>
-
-      {/* <CallModal /> */}
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import { Button, Checkbox, Col, Form, message, Row, Select } from "antd";
 import styles from "./InfoUserPage.module.scss";
-import { statusUser } from "../../../types/friend.type";
 import type { UserType } from "../../../types/user.type";
 import { useEffect } from "react";
 import type { UpdateUserBodyType } from "../../../types/auth.type";
 import { userAPI } from "../../../apis/user.api";
 import { useMutation } from "react-query";
 import { queryClient } from "../../../main";
+import { StatusUser } from "../../../types/friend.type";
 
 const { Option } = Select;
 
@@ -16,14 +16,14 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
   const handleReset = () => {
     form.setFieldsValue({
       status: infoUser.status,
-      privacySettings: JSON.parse(infoUser.privacySettings as string),
+      privacySettings: infoUser.privacySettings,
     });
   };
 
   useEffect(() => {
     if (infoUser) {
       form.setFieldValue("status", infoUser.status);
-      form.setFieldValue("privacySettings", infoUser.privacySettings as string);
+      form.setFieldValue("privacySettings", infoUser.privacySettings);
     }
   }, [infoUser]);
 
@@ -58,9 +58,9 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
           <Col span={24}>
             <Form.Item name="status" label="Trạng thái tài khoản">
               <Select style={{ width: "100%" }}>
-                <Option value={statusUser.ONLINE}>Online</Option>
-                <Option value={statusUser.OFFLINE}>Offline</Option>
-                <Option value={statusUser.BUSY}>Busy</Option>
+                <Option value={StatusUser.ONLINE}>Online</Option>
+                <Option value={StatusUser.OFFLINE}>Offline</Option>
+                <Option value={StatusUser.BUSY}>Busy</Option>
               </Select>
             </Form.Item>
           </Col>

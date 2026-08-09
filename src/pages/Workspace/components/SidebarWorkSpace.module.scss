@@ -47,10 +47,6 @@
   @include custom-scrollbar;
 }
 
-.swGroup {
-  margin-bottom: 8px;
-}
-
 .swGroupHeader {
   display: flex;
   align-items: center;
@@ -81,7 +77,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 4px;
   color: var(--color-text);
   border-radius: 6px;
   transition:

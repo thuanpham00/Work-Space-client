@@ -10,7 +10,10 @@ import { useDebounce } from "../../../../Hooks/useDebounce";
 import { X } from "lucide-react";
 import { friendApi } from "../../../../apis/friend.api";
 import { queryClient } from "../../../../main";
-import { useBaseStore } from "../../../../store/baseStore";
+import FriendCard from "../../../../components/FriendCard/FriendCard";
+import type { StatusUser } from "../../../../types/friend.type";
+import dayjs from "dayjs";
+import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 
 export interface AddFriendRef {
   handleOpen: () => void;
@@ -23,7 +26,6 @@ interface AddFriendModalProps {
 
 export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps>(
   ({ onClose, onSubmitOk }, ref) => {
-    const isDarkMode = useBaseStore((s) => s.isDarkMode);
     const [visible, setVisible] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
 
@@ -102,6 +104,8 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
 
     const selectedUser = dataUser?.data.data.user as UserType;
 
+    console.log("selectedUser", selectedUser);
+
     const handleClose = () => {
       onClose?.();
       setVisible(false);
@@ -138,23 +142,16 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
                 dataSource={listUser}
                 className={styles.list}
                 renderItem={(u) => {
-                  const isSelected = addressId === u.id;
                   return (
-                    <List.Item
-                      onClick={() => setAddressId(u.id)}
-                      style={{
-                        cursor: "pointer",
-                        background: isSelected ? (isDarkMode ? "#333" : "#f0f5ff") : undefined,
-                        padding: "8px 12px",
-                        borderRadius: 6,
-                        transition: "background-color 0.15s",
-                      }}
-                    >
-                      <List.Item.Meta
-                        className={styles.listItem}
-                        avatar={<Avatar src={u.avatar}>{u.username.charAt(0)}</Avatar>}
-                        title={u.username}
-                        description={u.fullName}
+                    <List.Item onClick={() => setAddressId(u.id)}>
+                      <FriendCard
+                        displayName={u.fullName}
+                        avatar={u.avatar}
+                        status={u.status as StatusUser}
+                        selectedFriend={addressId}
+                        friendId={u.id}
+                        showStatus={true}
+                        username={u.username}
                       />
                     </List.Item>
                   );
@@ -166,22 +163,52 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
             <div style={{ flex: "0 0 calc(35% - 16px)", paddingLeft: 16, borderLeft: "1px solid #f0f0f0" }}>
               {dataUser ? (
                 <div>
-                  <div style={{ textAlign: "center" }}>
-                    <Avatar size={88} src={selectedUser.avatar}>
-                      {selectedUser.fullName.charAt(0)}
-                    </Avatar>
+                  <div className="flex items-center justify-center flex-col">
+                    <AvatarFallback
+                      src={selectedUser.avatar}
+                      alt={selectedUser.fullName}
+                      size={80}
+                      showStatus={false}
+                      className={styles.avatarOverride}
+                    />
                     <h3 style={{ marginTop: 12, marginBottom: 4 }}>{selectedUser.fullName}</h3>
                     <div style={{ color: "#888" }}>@{selectedUser.username}</div>
                   </div>
                   <Divider style={{ margin: "16px 0" }} />
                   <p style={{ marginBottom: 8 }}>
+                    <b>Email:</b>{" "}
+                    {selectedUser.email
+                      ? selectedUser.privacySettings?.showEmail
+                        ? selectedUser.email
+                        : "********"
+                      : "-"}
+                  </p>
+                  <p style={{ marginBottom: 8 }}>
+                    <b>Phone:</b>{" "}
+                    {selectedUser.phone
+                      ? selectedUser.privacySettings?.showPhone
+                        ? selectedUser.phone
+                        : "********"
+                      : "-"}
+                  </p>
+                  <p style={{ marginBottom: 8 }}>
                     <b>Bio:</b> {selectedUser.bio ?? "-"}
                   </p>
                   <p style={{ marginBottom: 8 }}>
-                    <b>Email:</b> {selectedUser.email ?? "-"}
+                    <b>Birthday:</b>{" "}
+                    {selectedUser.dateOfBirth
+                      ? selectedUser.privacySettings?.showBirthday
+                        ? dayjs(selectedUser.dateOfBirth as string).format("DD/MM/YYYY")
+                        : "********"
+                      : "-"}
                   </p>
                   <p style={{ marginBottom: 8 }}>
-                    <b>Phone:</b> {selectedUser.phone ?? "-"}
+                    <b>Gender:</b>{" "}
+                    {selectedUser.gender
+                      ? selectedUser.privacySettings?.showGender
+                        ? selectedUser.gender
+                        : "********"
+                      : "-"}
                   </p>
                   <Divider style={{ margin: "16px 0" }} />
 

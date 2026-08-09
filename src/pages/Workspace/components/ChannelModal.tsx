@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox, Col, Form, Input, message, Modal, Row, Select, Switch } from "antd";
+import { Col, Form, Input, message, Modal, Row, Select, Switch } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useQuery } from "react-query";
@@ -128,7 +127,7 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Kênh Công khai" name="isPrivate" valuePropName="checked">
+            <Form.Item label="Kênh riêng tư" name="isPrivate" valuePropName="checked">
               <Switch />
             </Form.Item>
           </Col>

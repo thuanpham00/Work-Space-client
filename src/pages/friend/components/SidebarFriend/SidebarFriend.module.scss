@@ -2,7 +2,7 @@
 @use "../../../../styles/mixins" as *;
 
 .layoutInner {
-  padding: 10px $spacing-md 0;
+  padding: 10px 10px 0;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -82,29 +82,6 @@
   @include custom-scrollbar;
 }
 
-.friendItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-radius: $radius-sm;
-  cursor: pointer;
-  transition: background-color $transition-fast;
-  width: 100%;
-  border: none;
-  background: transparent;
-  outline: none;
-  text-align: left;
-  margin-bottom: 10px;
-
-  &:hover {
-    background: var(--color-bg-secondary);
-
-    .friendItemName {
-      color: var(--color-text);
-    }
-  }
-}
-
 .addChatButton {
   background: none;
   border: none;
@@ -123,26 +100,6 @@
     color: var(--color-text);
     background-color: var(--color-bg-secondary);
   }
-}
-
-.friendInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  min-width: 0;
-  flex: 1;
-}
-
-.friendItemName {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text);
-  transition: color $transition-fast;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  line-height: 1.2;
 }
 
 .friendSubtext {

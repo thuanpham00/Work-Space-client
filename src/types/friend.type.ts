@@ -7,16 +7,15 @@ export interface FriendResponse {
   id: string;
   username: string;
   displayName: string;
-  avatar: null;
+  avatar: string;
   status: string;
   fullName: string;
   createdAt: string;
 }
 
-export const statusUser = {
-  ONLINE: "ONLINE",
-  OFFLINE: "OFFLINE",
-  BUSY: "BUSY",
-} as const;
+export enum StatusUser {
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+  BUSY = "BUSY",
+}
 
-export type StatusUser = (typeof statusUser)[keyof typeof statusUser];

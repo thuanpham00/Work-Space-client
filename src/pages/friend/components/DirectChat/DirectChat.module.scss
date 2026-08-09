@@ -2,11 +2,7 @@
 @use "../../../../styles/mixins" as *;
 
 .loading {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include loading;
 }
 
 .chatContainer {
@@ -77,6 +73,14 @@
   &:hover {
     color: var(--color-text);
     background-color: var(--color-bg-secondary);
+  }
+
+  &.active {
+    color: var(--color-primary);
+
+    &:hover {
+      color: var(--color-primary);
+    }
   }
 }
 

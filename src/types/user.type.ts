@@ -1,24 +1,46 @@
 import type { Dayjs } from "dayjs";
 
-export type GenderType = "MALE" | "FEMALE" | "OTHER";
+export enum GenderType {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  OTHER = "OTHER",
+}
+
+export const genderTranslate = {
+  [GenderType.MALE]: "Nam",
+  [GenderType.FEMALE]: "Nữ",
+
+  [GenderType.OTHER]: "Khác",
+};
+
+export enum StatusRequest {
+  ONLINE = "ONLINE",
+  ACCEPTED = "ACCEPTED",
+  REQUESTED = "REQUEST_SENT",
+  RECEIVED = "REQUEST_RECEIVED",
+}
 
 export type UserType = {
   id: string;
   email: string;
-  password: string;
   username: string;
   displayName: string;
   avatar: string;
-  bio: string;
+  fullName: string;
   status: string;
+  bio: string;
   phone: string;
   dateOfBirth: string | Dayjs;
   createdAt: string;
   updatedAt: string;
   gender: GenderType;
-  fullName: string;
   receivedFriendRequests?: { status: string }[];
-  privacySettings: string;
+  privacySettings?: {
+    showEmail: boolean;
+    showPhone: boolean;
+    showBirthday: boolean;
+    showGender: boolean;
+  };
 };
 
 export type ListUserParamsType = {

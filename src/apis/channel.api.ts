@@ -4,6 +4,10 @@ import type { SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
 
 export const channelApi = {
+  getChannelDetail: (channelId: string) => {
+    return Http.get<SuccessResponse<{ channel: Channel }>>(`/channels/${channelId}`);
+  },
+
   getDirectMessageChannelDetail: (userId: string) => {
     return Http.get<SuccessResponse<{ channel: ChannelDM; total: number }>>(
       `/channels/direct-messages/${userId}`,

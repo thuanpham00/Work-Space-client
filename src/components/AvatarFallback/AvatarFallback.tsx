@@ -37,7 +37,7 @@ export default function AvatarFallback({
           {letter}
         </div>
       )}
-      {showStatus && <span className={`${styles.statusDot}  ${statusClass}`} style={statusStyle} />}
+      {showStatus && <span className={`${styles.statusDot} ${statusClass}`} style={statusStyle} />}
     </div>
   );
 }

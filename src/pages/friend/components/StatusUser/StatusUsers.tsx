@@ -21,21 +21,13 @@ import { queryClient } from "../../../../main";
 import type { FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
+import { StatusRequest } from "../../../../types/user.type";
 
-export const StatusList = {
-  ONLINE: "ONLINE",
-  ACCEPTED: "ACCEPTED",
-  REQUESTED: "REQUEST_SENT",
-  RECEIVED: "REQUEST_RECEIVED",
-} as const;
-
-export type Status = (typeof StatusList)[keyof typeof StatusList];
-
-const statusLabel: Record<Status, string> = {
-  [StatusList.ONLINE]: "Trực tuyến",
-  [StatusList.ACCEPTED]: "Tất cả",
-  [StatusList.REQUESTED]: "Đã gửi yêu cầu",
-  [StatusList.RECEIVED]: "Chờ xác nhận",
+const statusLabel: Record<StatusRequest, string> = {
+  [StatusRequest.ONLINE]: "Trực tuyến",
+  [StatusRequest.ACCEPTED]: "Tất cả",
+  [StatusRequest.REQUESTED]: "Đã gửi yêu cầu",
+  [StatusRequest.RECEIVED]: "Chờ xác nhận",
 };
 
 function FriendRow({
@@ -45,7 +37,7 @@ function FriendRow({
   onReject,
 }: {
   friend: FriendResponse;
-  status: Status;
+  status: StatusRequest;
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
 }) {
@@ -53,8 +45,8 @@ function FriendRow({
 
   const avatar = friend.avatar || "";
   const displayName = friend.displayName || friend.fullName || friend.username || "";
-  const isReceived = status === StatusList.RECEIVED;
-  const isRequested = status === StatusList.REQUESTED;
+  const isReceived = status === StatusRequest.RECEIVED;
+  const isRequested = status === StatusRequest.REQUESTED;
 
   return (
     <div
@@ -126,7 +118,7 @@ function FriendStatusPanel({
   onAccept,
   onReject,
 }: {
-  status: Status;
+  status: StatusRequest;
   friends: FriendResponse[];
   isLoading: boolean;
   search: string;
@@ -178,12 +170,12 @@ function FriendStatusPanel({
 }
 
 export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend: () => void }) {
-  const [type, setType] = useState<Status>(StatusList.ACCEPTED);
+  const [type, setType] = useState<StatusRequest>(StatusRequest.ACCEPTED);
   const [search, setSearch] = useState("");
   const accessToken = getAccessTokenFromLS();
 
   const onChange = (key: string) => {
-    setType(key as Status);
+    setType(key as StatusRequest);
   };
 
   const debouncedSearch = useDebounce(search, 500);
@@ -251,7 +243,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
 
   const items: TabsProps["items"] = [
     {
-      key: StatusList.ACCEPTED,
+      key: StatusRequest.ACCEPTED,
       label: (
         <div className="flex items-center gap-2">
           <UsersRound size={16} />
@@ -260,7 +252,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       ),
       children: (
         <FriendStatusPanel
-          status={StatusList.ACCEPTED}
+          status={StatusRequest.ACCEPTED}
           friends={friends}
           isLoading={isLoading}
           search={search}
@@ -271,7 +263,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       ),
     },
     {
-      key: StatusList.ONLINE,
+      key: StatusRequest.ONLINE,
       label: (
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -281,7 +273,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       children: <div>1</div>,
     },
     {
-      key: StatusList.REQUESTED,
+      key: StatusRequest.REQUESTED,
       label: (
         <div className="flex items-center gap-2">
           <Send size={16} /> <span>Đã gửi yêu cầu</span>
@@ -289,7 +281,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       ),
       children: (
         <FriendStatusPanel
-          status={StatusList.REQUESTED}
+          status={StatusRequest.REQUESTED}
           friends={friends}
           isLoading={isLoading}
           search={search}
@@ -300,7 +292,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       ),
     },
     {
-      key: StatusList.RECEIVED,
+      key: StatusRequest.RECEIVED,
       label: (
         <div className="flex items-center gap-2">
           <Loader size={16} />
@@ -309,7 +301,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       ),
       children: (
         <FriendStatusPanel
-          status={StatusList.RECEIVED}
+          status={StatusRequest.RECEIVED}
           friends={friends}
           isLoading={isLoading}
           search={search}

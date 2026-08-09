@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import styles from "./SidebarWorkSpace.module.scss";
 import type { WorkspaceType } from "../../../types/workspace.type";
 import { Button } from "antd";
-import { ChartBarStacked, Pencil, Ungroup } from "lucide-react";
+import { ChartBarStacked, Hash, Lock, Pencil, Ungroup } from "lucide-react";
 import { CategoryChannelModal } from "./CategoryChannelModal";
 import { queryClient } from "../../../main";
 import { ChannelModal } from "./ChannelModal";
@@ -89,7 +89,11 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
                   }}
                   title={ch.name}
                 >
-                  <span className={styles.swHash}>#</span>
+                  {ch.isPrivate ? (
+                    <Lock className={styles.swHash} size={18} />
+                  ) : (
+                    <Hash className={styles.swHash} size={18} />
+                  )}
                   <span className={styles.swName}>{ch.name}</span>
                 </li>
               ))}

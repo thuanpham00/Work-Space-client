@@ -3,8 +3,17 @@
 
 .list {
   @include custom-scrollbar;
+  :global(.ant-list-item) {
+    padding: 4px !important;
+    border: 0px;
+  }
 }
 
 .listItem {
   align-items: center !important;
+}
+
+.avatarOverride {
+  width: 80px !important;
+  height: 80px !important;
 }

@@ -39,6 +39,7 @@ export interface Channel {
   isPrivate: boolean;
   createdAt: string;
   updatedAt: string;
+  members?: MemberChannel[];
 }
 
 export interface ChannelBody {
@@ -48,4 +49,14 @@ export interface ChannelBody {
   categoryId: string;
   description: string;
   isPrivate: boolean;
+}
+
+export interface MemberChannel {
+  joinedAt: string;
+  userId: string;
+  email: string;
+  username: string;
+  displayName: string;
+  avatar: string;
+  status: string;
 }
