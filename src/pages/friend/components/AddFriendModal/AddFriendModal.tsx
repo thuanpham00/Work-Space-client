@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Avatar, Button, Divider, Empty, Input, List, message, Modal } from "antd";
+import { Button, Divider, Empty, Input, List, message, Modal } from "antd";
 import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
 import React, { useEffect, useImperativeHandle, useState } from "react";
 import styles from "./AddFriendModal.module.scss";
