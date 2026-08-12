@@ -48,8 +48,8 @@ export default function LoginPage() {
       message.success(res.data.message);
       setAccessToken(res.data.data.access_token);
       setUser(res.data.data.user);
-      setSocket(generateSocket(res.data.data.access_token)); // khởi tạo socket khi login thành công
-      socketService.connect(res.data.data.access_token); // socket riêng cho WebRTC call
+      // setSocket(generateSocket(res.data.data.access_token)); // khởi tạo socket khi login thành công
+      // socketService.connect(res.data.data.access_token); // socket riêng cho WebRTC call
 
       navigate("/");
     } catch (error) {

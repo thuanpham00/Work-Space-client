@@ -21,13 +21,29 @@ const App = () => {
     return () => {
       socket.off("connect");
     };
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
-    if (accessToken && !socket) {
-      setSocket(generateSocket(accessToken));
+    if (!accessToken || socket) return;
+
+    const newSocket = generateSocket(accessToken);
+    setSocket(newSocket);
+    socket?.connect();
+  }, [accessToken, socket, setSocket]);
+
+  useEffect(() => {
+    if (!socket || !accessToken) return;
+
+    socket.auth = {
+      ...socket.auth,
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    if (socket.connected) {
+      socket.disconnect();
+      socket.connect();
     }
-  }, [accessToken]);
+  }, [socket, accessToken]);
 
   return <AppProvider>{router}</AppProvider>;
 };

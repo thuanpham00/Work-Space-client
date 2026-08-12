@@ -6,6 +6,18 @@ export const generateSocket = (accessToken: string) => {
     auth: {
       Authorization: `Bearer ${accessToken}`,
     },
+    // Ưu tiên WebSocket, fallback về polling nếu cần
+    transports: ["websocket", "polling"],
+
+    // Tự reconnect khi mất mạng
+    reconnection: true, // Cho phép Socket.IO tự động kết nối lại khi mất kết nối.
+    reconnectionAttempts: Infinity, // Quy định Socket.IO thử reconnect bao nhiêu lần.
+    reconnectionDelay: 1000, // Thời gian chờ trước lần thử reconnect đầu tiên (milliseconds).
+    reconnectionDelayMax: 5000, // Thời gian chờ tối đa giữa các lần thử reconnect (milliseconds).
+
+    timeout: 10000, // Thời gian chờ kết nối ban đầu.
+
+    autoConnect: true, // Tự động kết nối khi khởi tạo.
   });
 };
 
