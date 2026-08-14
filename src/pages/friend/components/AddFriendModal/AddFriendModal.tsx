@@ -104,8 +104,6 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
 
     const selectedUser = dataUser?.data.data.user as UserType;
 
-    console.log("selectedUser", selectedUser);
-
     const handleClose = () => {
       onClose?.();
       setVisible(false);

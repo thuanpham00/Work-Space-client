@@ -23,6 +23,7 @@ const LIMIT = 50;
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);
   const socket = useBaseStore((app) => app.socket);
+  const isSocketConnected = useBaseStore((app) => app.isSocketConnected);
   const friendId = useChannelStore((app) => app.friendId);
   const channelId = useChannelStore((app) => app.channelId);
   const [showInfoPannel, setShowInfoPannel] = useState(true);
@@ -50,16 +51,16 @@ export default function DirectChat() {
   const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
 
   useEffect(() => {
-    if (channelDMDetail?.id) {
-      setChannelId(channelDMDetail?.id);
+    if (channelDMDetail?.id && !channelId) {
+      setChannelId(channelDMDetail.id);
     }
-  }, [channelDMDetail?.id, setChannelId]);
+  }, [channelDMDetail?.id, channelId, setChannelId]);
 
   const { data: dataMessage } = useQuery({
     queryKey: ["messageChannel", channelId, query, accessToken],
     queryFn: () => channelApi.getMessagesChannel(channelId as string, query),
     enabled: Boolean(channelId),
-    staleTime: 60 * 1000 * 5,
+    staleTime: 60 * 1000 * 1,
   });
 
   const conversationListData = dataMessage?.data?.data?.messages as Message[];
@@ -80,14 +81,14 @@ export default function DirectChat() {
   }, [conversationListData, page, total_page]);
 
   useEffect(() => {
-    if (!socket || !channelId) return;
+    if (!socket || !channelId || !isSocketConnected) return;
 
-    socket.emit("join_channel", channelId); // join vào channel để cùng nhận socket
+    socket.emit("join_channel", channelId);
 
     return () => {
       socket.emit("leave_channel", channelId);
     };
-  }, [socket, channelId]);
+  }, [socket, channelId, isSocketConnected]);
 
   useEffect(() => {
     if (!socket) return;

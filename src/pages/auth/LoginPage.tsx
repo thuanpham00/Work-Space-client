@@ -8,16 +8,12 @@ import { useEffect, useState } from "react";
 import styles from "./auth.module.scss";
 import { userAPI } from "../../apis/user.api";
 import logo from "../../assets/image/chat.png";
-import { generateSocket } from "../../utils/utils";
-import { socketService } from "../../services/SocketServices";
 import { useUserStore } from "../../store/userStore";
-import { useBaseStore } from "../../store/baseStore";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
   const setUser = useUserStore((state) => state.setUser);
   const setAccessToken = useUserStore((state) => state.setAccessToken);
-  const setSocket = useBaseStore((state) => state.setSocket);
 
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -48,9 +44,7 @@ export default function LoginPage() {
       message.success(res.data.message);
       setAccessToken(res.data.data.access_token);
       setUser(res.data.data.user);
-      // setSocket(generateSocket(res.data.data.access_token)); // khởi tạo socket khi login thành công
-      // socketService.connect(res.data.data.access_token); // socket riêng cho WebRTC call
-
+      
       navigate("/");
     } catch (error) {
       console.log(error);

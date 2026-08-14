@@ -25,9 +25,7 @@
 .messageItemSameUser {
   display: flex;
   align-items: flex-start;
-  padding: 2px 0;
-  // 40px (avatar width) + 16px (gap) = 56px — căn thẳng hàng với nội dung tin nhắn có avatar
-  padding-left: 56px;
+  padding-left: 44px;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.02);

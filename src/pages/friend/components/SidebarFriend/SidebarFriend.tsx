@@ -6,20 +6,12 @@ import { friendApi } from "../../../../apis/friend.api";
 import type { FriendResponse, StatusUser } from "../../../../types/friend.type";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
-import { useState } from "react";
 import FriendCard from "../../../../components/FriendCard/FriendCard";
 import { StatusRequest } from "../../../../types/user.type";
 
-const FriendItem = ({
-  friend,
-  selectedFriend,
-  setSelectedFriend,
-}: {
-  friend: FriendResponse;
-  selectedFriend: string;
-  setSelectedFriend: (friendId: string) => void;
-}) => {
+const FriendItem = ({ friend }: { friend: FriendResponse }) => {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
+  const friendId = useChannelStore((app) => app.friendId);
 
   const displayName = friend.displayName || friend.fullName || friend.username || "Người dùng";
   const avatar = friend.avatar;
@@ -29,7 +21,6 @@ const FriendItem = ({
     <button
       className="w-full"
       onClick={() => {
-        setSelectedFriend(friend.id);
         chooseChannelFriend(friend.id, modeListFriend.chat);
       }}
     >
@@ -37,8 +28,8 @@ const FriendItem = ({
         displayName={displayName}
         avatar={avatar}
         status={status as StatusUser}
-        selectedFriend={selectedFriend}
         friendId={friend.id}
+        selectedFriend={friendId}
         showStatus={true}
       />
     </button>
@@ -47,7 +38,6 @@ const FriendItem = ({
 
 export default function SidebarFriend() {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
-  const [selectedFriend, setSelectedFriend] = useState<string>("");
 
   const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
@@ -68,7 +58,6 @@ export default function SidebarFriend() {
         type="link"
         onClick={() => {
           chooseChannelFriend("", modeListFriend.list);
-          setSelectedFriend("");
         }}
         className={`${styles.buttonListFriend} ${modeListFriendState === "list" ? styles.buttonListFriendActive : ""}`}
         icon={<List size={16} />}
@@ -93,14 +82,7 @@ export default function SidebarFriend() {
         ) : friends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
         ) : (
-          friends.map((friend) => (
-            <FriendItem
-              key={friend.id}
-              friend={friend}
-              selectedFriend={selectedFriend}
-              setSelectedFriend={setSelectedFriend}
-            />
-          ))
+          friends.map((friend) => <FriendItem key={friend.id} friend={friend} />)
         )}
       </div>
     </div>

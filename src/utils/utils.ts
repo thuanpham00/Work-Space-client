@@ -17,7 +17,7 @@ export const generateSocket = (accessToken: string) => {
 
     timeout: 10000, // Thời gian chờ kết nối ban đầu.
 
-    autoConnect: true, // Tự động kết nối khi khởi tạo.
+    autoConnect: false, // Tự động kết nối khi khởi tạo.
   });
 };
 

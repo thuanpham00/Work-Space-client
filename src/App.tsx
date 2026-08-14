@@ -10,29 +10,28 @@ const App = () => {
   const accessToken = useUserStore((app) => app.accessToken);
   const socket = useBaseStore((app) => app.socket);
   const setSocket = useBaseStore((app) => app.setSocket);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on("connect", () => {
-      console.log("✅ Đã kết nối Socket với server! ID của tôi:", socket.id);
-    });
-
-    return () => {
-      socket.off("connect");
-    };
-  }, [socket]);
+  const setIsSocketConnected = useBaseStore((app) => app.setIsSocketConnected);
 
   useEffect(() => {
     if (!accessToken || socket) return;
 
     const newSocket = generateSocket(accessToken);
     setSocket(newSocket);
-    socket?.connect();
-  }, [accessToken, socket, setSocket]);
+  }, [accessToken, socket]);
 
   useEffect(() => {
     if (!socket || !accessToken) return;
+
+    const handleConnect = () => {
+      setIsSocketConnected(true);
+    };
+
+    const handleDisconnect = () => {
+      setIsSocketConnected(false);
+    };
+
+    socket.on("connect", handleConnect); // sự kiện mặc định của socket khi client kết nối tới server thành công
+    socket.on("disconnect", handleDisconnect);
 
     socket.auth = {
       ...socket.auth,
@@ -40,9 +39,15 @@ const App = () => {
     };
 
     if (socket.connected) {
-      socket.disconnect();
-      socket.connect();
+      handleConnect();
+    } else {
+      socket.connect(); // chủ động kết nối
     }
+
+    return () => {
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+    };
   }, [socket, accessToken]);
 
   return <AppProvider>{router}</AppProvider>;
