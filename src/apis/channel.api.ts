@@ -1,4 +1,5 @@
 import type { Channel, ChannelBody, ChannelDM } from "../types/channel.type";
+import type { Media } from "../types/media.type";
 import type { QueryBase } from "../types/query.type";
 import type { SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
@@ -25,5 +26,13 @@ export const channelApi = {
 
   create: (data: ChannelBody) => {
     return Http.post<SuccessResponse<{ channel: Channel }>>("/channels", data);
+  },
+
+  upload: (channelId: string, file: FormData) => {
+    return Http.post<SuccessResponse<Media>>(`/channels/${channelId}/upload`, file, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 };

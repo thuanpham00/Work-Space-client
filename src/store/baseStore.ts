@@ -9,9 +9,6 @@ type AppStoreType = {
   socket: Socket | null;
   setSocket: (socket: Socket | null) => void;
 
-  isSocketConnected: boolean;
-  setIsSocketConnected: (value: boolean) => void;
-
   reset: () => void;
 };
 
@@ -29,16 +26,12 @@ export const useBaseStore = create<AppStoreType>((set) => ({
     setIsDarkModeToLS(isDarkMode);
   },
 
-  isSocketConnected: false,
-  setIsSocketConnected: (value: boolean) => set({ isSocketConnected: value }),
-
   socket: null,
   setSocket: (socket: Socket | null) => set({ socket }),
 
   reset: () => {
     set({
       socket: null,
-      isSocketConnected: false,
     });
   },
 }));

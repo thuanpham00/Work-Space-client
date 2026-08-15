@@ -10,11 +10,14 @@
 
 .inputContainer {
   position: relative;
-  display: flex;
-  align-items: center;
   background-color: var(--color-bg);
   border-radius: $radius-sm;
   padding: 10px 16px;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
 

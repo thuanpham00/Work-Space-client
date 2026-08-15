@@ -4,6 +4,7 @@ import type {
   RegisterBodyType,
   UpdateUserBodyType,
 } from "../types/auth.type";
+import type { Media } from "../types/media.type";
 import type { ListUserParamsType, UserType } from "../types/user.type";
 import type { AuthResponse, SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
@@ -34,7 +35,7 @@ export const userAPI = {
   },
 
   uploadAvatar: (file: FormData) => {
-    return Http.post<SuccessResponse<{ url: string }>>("/users/upload", file, {
+    return Http.post<SuccessResponse<Media>>("/users/upload", file, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

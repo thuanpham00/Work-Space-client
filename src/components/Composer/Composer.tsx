@@ -1,4 +1,4 @@
-import { Smile, Send, FileChartColumn } from "lucide-react";
+import { Smile, Send, FileChartColumn, Plus, UploadIcon, ChartNoAxesCombined } from "lucide-react";
 import styles from "./Composer.module.scss";
 import EmojiMessage from "../EmojiMessage/EmojiMessage";
 import { useState, useRef, useEffect } from "react";
@@ -6,11 +6,14 @@ import { messageType, type MessageType, type TypeDisplayMessage } from "../../ty
 import GifPicker from "../GiphyMesage/GiphyMessage";
 import { AiOutlineGif } from "react-icons/ai";
 import { useBaseStore } from "../../store/baseStore";
+import { Button, Dropdown, type UploadFile } from "antd";
+import UploadMutipleFile, { type UploadMultipleFile } from "../UploadMultipleFile/UploadMultipleFile";
 
 export default function Composer({ channelId }: { channelId: string }) {
   const [inputValue, setInputValue] = useState("");
   const socket = useBaseStore((app) => app.socket);
   const [typeMessage, setTypeMessage] = useState<MessageType>(messageType.TEXT);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const [typeDisplayMessage, setTypeDisplayMessage] = useState<TypeDisplayMessage | null>(null);
   const actionBtnWrapperRef = useRef<HTMLDivElement>(null);
@@ -33,16 +36,18 @@ export default function Composer({ channelId }: { channelId: string }) {
     };
   }, [typeDisplayMessage]);
 
-  const handleSendMessage = (e?: React.FormEvent) => {
+  const handleSendMessage = (e?: React.FormEvent | React.KeyboardEvent) => {
     e?.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() && fileList.length === 0) return;
 
-    setInputValue("");
     socket?.emit("send_message", {
       channel_id: channelId,
       content: inputValue,
       message_type: typeMessage,
+      files: fileList,
     });
+    setInputValue("");
+    setFileList([]);
   };
 
   const handleSendGiphyMessage = (gif: any) => {
@@ -55,57 +60,88 @@ export default function Composer({ channelId }: { channelId: string }) {
     });
   };
 
+  const items = [
+    {
+      key: "upload",
+      label: "Tải Lên Tệp",
+      icon: <UploadIcon size={14} />,
+      onClick() {
+        uploadRef.current?.handleClick(channelId);
+      },
+    },
+    {
+      key: "poll",
+      label: "Tạo khảo sát",
+      icon: <ChartNoAxesCombined size={14} />,
+    },
+  ];
+
+  const uploadRef = useRef<UploadMultipleFile>(null);
+
   return (
     <div className={styles.inputForm}>
       <form onSubmit={handleSendMessage}>
         <div className={styles.inputContainer}>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder={`Nhắn `}
-            className={styles.chatInput}
+          <UploadMutipleFile
+            ref={uploadRef}
+            onSubmit={setFileList}
+            fileList={fileList}
+            setFileList={setFileList}
           />
-          <div className={styles.inputActions} ref={actionBtnWrapperRef}>
-            <button type="button" className={styles.actionBtn}>
-              <FileChartColumn size={20} />
-            </button>
 
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${typeDisplayMessage === "gif" ? styles.active : ""}`}
-              onClick={() => {
-                if (typeDisplayMessage === "gif") {
-                  setTypeDisplayMessage(null);
-                } else {
-                  setTypeDisplayMessage("gif");
-                }
-              }}
-            >
-              <AiOutlineGif size={20} />
-            </button>
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${typeDisplayMessage === "emoji" ? styles.active : ""}`}
-              onClick={() => {
-                if (typeDisplayMessage === "emoji") {
-                  setTypeDisplayMessage(null);
-                } else {
-                  setTypeDisplayMessage("emoji");
-                }
-              }}
-            >
-              <Smile size={20} />
-            </button>
-            {inputValue.trim() && (
-              <button type="submit" className={styles.sendBtn}>
-                <Send size={18} />
+          <div className={styles.inputWrapper}>
+            <Dropdown menu={{ items }} trigger={["click"]} placement="topLeft">
+              <Button type="link" icon={<Plus />} />
+            </Dropdown>
+
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder={`Nhắn `}
+              className={styles.chatInput}
+            />
+            <div className={styles.inputActions} ref={actionBtnWrapperRef}>
+              <button type="button" className={styles.actionBtn}>
+                <FileChartColumn size={20} />
               </button>
-            )}
 
-            <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} />
+              <button
+                type="button"
+                className={`${styles.actionBtn} ${typeDisplayMessage === "gif" ? styles.active : ""}`}
+                onClick={() => {
+                  if (typeDisplayMessage === "gif") {
+                    setTypeDisplayMessage(null);
+                  } else {
+                    setTypeDisplayMessage("gif");
+                  }
+                }}
+              >
+                <AiOutlineGif size={20} />
+              </button>
+              <button
+                type="button"
+                className={`${styles.actionBtn} ${typeDisplayMessage === "emoji" ? styles.active : ""}`}
+                onClick={() => {
+                  if (typeDisplayMessage === "emoji") {
+                    setTypeDisplayMessage(null);
+                  } else {
+                    setTypeDisplayMessage("emoji");
+                  }
+                }}
+              >
+                <Smile size={20} />
+              </button>
+              {(inputValue.trim() || fileList.length > 0) && (
+                <button type="submit" className={styles.sendBtn}>
+                  <Send size={18} />
+                </button>
+              )}
 
-            <GifPicker show={typeDisplayMessage} onSubmit={handleSendGiphyMessage} />
+              <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} />
+
+              <GifPicker show={typeDisplayMessage} onSubmit={handleSendGiphyMessage} />
+            </div>
           </div>
         </div>
       </form>

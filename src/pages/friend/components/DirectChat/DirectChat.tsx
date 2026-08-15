@@ -23,7 +23,6 @@ const LIMIT = 50;
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);
   const socket = useBaseStore((app) => app.socket);
-  const isSocketConnected = useBaseStore((app) => app.isSocketConnected);
   const friendId = useChannelStore((app) => app.friendId);
   const channelId = useChannelStore((app) => app.channelId);
   const [showInfoPannel, setShowInfoPannel] = useState(true);
@@ -81,14 +80,14 @@ export default function DirectChat() {
   }, [conversationListData, page, total_page]);
 
   useEffect(() => {
-    if (!socket || !channelId || !isSocketConnected) return;
+    if (!socket || !channelId) return;
 
     socket.emit("join_channel", channelId);
 
     return () => {
       socket.emit("leave_channel", channelId);
     };
-  }, [socket, channelId, isSocketConnected]);
+  }, [socket, channelId]);
 
   useEffect(() => {
     if (!socket) return;
@@ -118,20 +117,6 @@ export default function DirectChat() {
       });
     }
   };
-
-  // const handleStartCall = (isVideo: boolean) => {
-  //   if (!me || !channelDMDetail?.friend) return;
-  //   callService.startCall({
-  //     conversationId: channelDMDetail.id,
-  //     caller: { id: me.id, name: me.fullName, avatar: me.avatar },
-  //     receiver: {
-  //       id: channelDMDetail.friend.id,
-  //       name: channelDMDetail.friend.fullName,
-  //       avatar: channelDMDetail.friend.avatar,
-  //     },
-  //     isVideo,
-  //   });
-  // };
 
   if (!channelDMDetail)
     return (
