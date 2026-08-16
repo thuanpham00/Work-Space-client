@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Image, message, Upload } from "antd";
+import { Image, App, Upload } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { useMutation } from "react-query";
 import { channelApi } from "../../apis/channel.api";
@@ -28,6 +28,7 @@ const getBase64 = (file: FileType): Promise<string> =>
 const UploadMutipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Props, ref) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const { message } = App.useApp();
 
   const [channelId, setChannelId] = useState<string>("");
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Form, Input, message, Modal } from "antd";
+import { Form, Input, App, Modal } from "antd";
 import React, { useImperativeHandle, useState } from "react";
 import type { CategoryChannel, CategoryChannelBody } from "../../../types/CategoryChannel.type";
 import type { ModalStatus } from "../../../types/utils.type";
@@ -25,6 +25,7 @@ type FormCategory = {
 export const CategoryChannelModal = React.forwardRef(
   ({ onClose, onSubmitOk }: CategoryChannelModalProps, ref) => {
     const [form] = Form.useForm<FormCategory>();
+    const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [status, setStatus] = useState<ModalStatus>("create");

@@ -4,13 +4,14 @@
 .profileSidebar {
   width: 100%;
   background-color: var(--color-bg);
-  border-left: 1px solid var(--color-bg);
+  border-left: 1px solid var(--color-bg-secondary);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   height: 99%;
   flex-shrink: 0;
   overflow-y: auto;
+  @include custom-scrollbar;
 }
 
 .profileBanner {
@@ -37,10 +38,11 @@
 
 .profileDetails {
   margin-top: 10px;
-  padding: 28px 12px;
+  padding: 28px 12px 16px 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  border-bottom: 1px solid var(--color-bg-secondary, #2a2a2a);
 }
 
 .profileStatus {

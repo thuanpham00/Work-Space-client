@@ -1,0 +1,23 @@
+@use "../../../../../styles/variables" as *;
+
+.modalDesc {
+  font-size: 13px;
+  color: var(--color-text-secondary, #999);
+  margin: 0 0 16px 0;
+}
+
+.formField {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, #fff);
+  margin-bottom: 8px;
+}

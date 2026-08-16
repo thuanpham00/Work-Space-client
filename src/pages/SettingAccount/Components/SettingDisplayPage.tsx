@@ -1,4 +1,4 @@
-import { Button, Checkbox, Col, Form, message, Row, Select } from "antd";
+import { Button, Checkbox, Col, Form, Row, Select, App } from "antd";
 import styles from "./InfoUserPage.module.scss";
 import type { UserType } from "../../../types/user.type";
 import { useEffect } from "react";
@@ -12,6 +12,7 @@ const { Option } = Select;
 
 export default function SettingDisplayPage({ infoUser }: { infoUser: UserType }) {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   const handleReset = () => {
     form.setFieldsValue({

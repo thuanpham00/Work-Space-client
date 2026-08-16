@@ -1,4 +1,4 @@
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, App } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import settings from "../../settings.json";
@@ -12,6 +12,7 @@ import { useUserStore } from "../../store/userStore";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const setUser = useUserStore((state) => state.setUser);
   const setAccessToken = useUserStore((state) => state.setAccessToken);
 

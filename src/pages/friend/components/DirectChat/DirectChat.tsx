@@ -82,10 +82,21 @@ export default function DirectChat() {
   useEffect(() => {
     if (!socket || !channelId) return;
 
-    socket.emit("join_channel", channelId);
+    const joinChannel = () => {
+      socket.emit("join_channel", channelId);
+    };
+
+    if (socket.connected) {
+      joinChannel(); // đã kết nối thì join channel
+    }
+    // chưa kết nối thì lắng nghe sự kiện "connect" để join channel
+    socket.on("connect", joinChannel);
 
     return () => {
-      socket.emit("leave_channel", channelId);
+      socket.off("connect", joinChannel);
+      if (socket.connected) {
+        socket.emit("leave_channel", channelId);
+      }
     };
   }, [socket, channelId]);
 
@@ -176,9 +187,7 @@ export default function DirectChat() {
           <Composer channelId={channelId as string} />
         </div>
 
-        <div
-          className={`transition-all ease-linear overflow-hidden duration-300 ${showInfoPannel ? `opacity-100 w-[25%]` : "opacity-0 pointer-events-none w-0"}`}
-        >
+        <div className={`${styles.infoUser} ${showInfoPannel ? styles.showInfoUser : styles.hideInfoUser}`}>
           <InfoUser channelDMDetail={channelDMDetail} />
         </div>
       </div>

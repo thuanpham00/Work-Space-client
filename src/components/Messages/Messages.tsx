@@ -5,6 +5,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { compareMessageTime, formatMessageTime } from "../../utils/utils";
 import styles from "./Messages.module.scss";
 import type { Message } from "../../types/message.type";
+import { useUserStore } from "../../store/userStore";
 
 interface Props {
   messages: Message[];
@@ -17,6 +18,7 @@ interface Props {
 
 const Messages = forwardRef<HTMLDivElement, Props>(
   ({ messages, pagination, fetchConversationDataMore }, _) => {
+    const user = useUserStore((state) => state.user);
     return (
       <div className={styles.messagesList} id="scrollableDiv">
         <InfiniteScroll
@@ -35,12 +37,16 @@ const Messages = forwardRef<HTMLDivElement, Props>(
             const nextMessage = messages[index + 1];
             const isSameUser = nextMessage?.sender?.id === msg.sender?.id;
             const isAttachments = msg.attachments && msg.attachments?.length > 0;
+            const isMe = msg.sender?.id === user?.id;
 
             const isSameTime = compareMessageTime(msg.createdAt, nextMessage?.createdAt);
 
             if (isSameUser && isSameTime) {
               return (
-                <div key={msg.id} className={styles.messageItemSameUser}>
+                <div
+                  key={msg.id}
+                  className={`${styles.messageItemSameUser} ${isMe ? styles.messageItemMe : ""}`}
+                >
                   <div className={styles.messageContentWrapper}>
                     {msg.content && <div className={styles.messageText}>{msg.content}</div>}
                     {isAttachments && (
@@ -64,7 +70,7 @@ const Messages = forwardRef<HTMLDivElement, Props>(
             }
 
             return (
-              <div key={msg.id} className={styles.messageItem}>
+              <div key={msg.id} className={`${styles.messageItem}`}>
                 <Avatar
                   src={msg.sender?.avatar}
                   alt={msg.sender?.displayName}
@@ -79,7 +85,17 @@ const Messages = forwardRef<HTMLDivElement, Props>(
                     <span className={styles.messageTime}>{formatMessageTime(msg.createdAt)}</span>
                   </div>
 
-                  {msg.content && <div className={styles.messageText}>{msg.content}</div>}
+                  {msg.content && (
+                    <div
+                      className={styles.messageText}
+                      style={{
+                        backgroundColor: isMe ? "var(--color-primary)" : "var(--color-bg-secondary)",
+                        display: "inline-block",
+                      }}
+                    >
+                      {msg.content}
+                    </div>
+                  )}
                   {isAttachments && (
                     <div className={styles.messageAttachments}>
                       {msg.attachments.map((attachment) =>

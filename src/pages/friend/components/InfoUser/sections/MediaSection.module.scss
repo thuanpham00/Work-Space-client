@@ -1,0 +1,130 @@
+@use "../../../../../styles/variables" as *;
+
+.sectionBlock {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-bg-secondary, #2a2a2a);
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #999);
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+}
+
+.tabs {
+  :global(.ant-tabs-nav) {
+    margin-bottom: 12px;
+  }
+
+  :global(.ant-tabs-tab) {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+.mediaContent,
+.filesContent {
+  min-height: 100px;
+}
+
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.mediaItem {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  background-color: var(--color-bg-secondary, #2a2a2a);
+  transition: transform $transition-fast;
+
+  &:hover {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+}
+
+.mediaImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: $radius-sm;
+  background-color: var(--color-bg-secondary, #2a2a2a);
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: var(--color-bg-secondary, #353535);
+  }
+}
+
+.fileLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.fileIcon {
+  color: var(--color-text-secondary, #999);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.fileName {
+  font-size: 13px;
+  color: var(--color-text, #fff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: 11px;
+  color: var(--color-text-secondary, #999);
+}
+
+.downloadBtn {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--color-text-secondary, #999);
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  transition: all $transition-fast;
+
+  &:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}

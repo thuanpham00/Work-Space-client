@@ -1,0 +1,69 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--color-text, #fff);
+  font-size: 14px;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.menuLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.menuIcon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex-shrink: 0;
+  color: var(--color-text-secondary, #999);
+}
+
+.menuLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.menuValue {
+  font-size: 13px;
+  color: var(--color-text-secondary, #999);
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dangerItem {
+  color: #ed4245;
+
+  &:hover {
+    color: #ed4245;
+    opacity: 0.8;
+  }
+}
+
+.dangerIcon {
+  color: #ed4245;
+}

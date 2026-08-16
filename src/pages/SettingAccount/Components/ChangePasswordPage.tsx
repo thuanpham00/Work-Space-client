@@ -1,4 +1,4 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, App } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import styles from "./ChangePasswordPage.module.scss";
 import type { ChangePasswordBodyType } from "../../../types/auth.type";
@@ -13,6 +13,7 @@ interface ChangePasswordValues {
 
 export default function ChangePasswordPage() {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   const changePassword = useMutation({
     mutationFn: (data: ChangePasswordBodyType) => userAPI.changePassword(data),

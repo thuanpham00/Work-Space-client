@@ -1,0 +1,54 @@
+.sectionBlock {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-bg-secondary, #2a2a2a);
+}
+
+.sectionBlock:last-child {
+  border-bottom: none;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 8px 0;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover .chevron {
+    color: var(--color-text);
+  }
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.chevron {
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+
+  > .collapsibleInner {
+    overflow: hidden;
+    min-height: 0;
+  }
+}
+
+.collapsibleOpen {
+  grid-template-rows: 1fr;
+}

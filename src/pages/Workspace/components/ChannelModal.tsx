@@ -1,4 +1,4 @@
-import { Col, Form, Input, message, Modal, Row, Select, Switch } from "antd";
+import { Col, Form, Input, App, Modal, Row, Select, Switch } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useQuery } from "react-query";
@@ -18,6 +18,7 @@ interface ChannelModalProps {
 
 export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelModalProps, ref) => {
   const [form] = Form.useForm<ChannelBody>();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [workspaceId, setWorkspaceId] = useState("");

@@ -1,0 +1,7 @@
+@use "../../../../../styles/variables" as *;
+
+.modalDesc {
+  font-size: 13px;
+  color: var(--color-text-secondary, #999);
+  margin: 0 0 16px 0;
+}

@@ -1,10 +1,10 @@
 import {
+  App,
   Button,
   Col,
   DatePicker,
   Form,
   Input,
-  message,
   Radio,
   Row,
   Upload,
@@ -25,6 +25,7 @@ import { userAPI } from "../../../apis/user.api";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const avatarUrl = Form.useWatch("avatar", form);

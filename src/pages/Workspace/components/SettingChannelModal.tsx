@@ -1,4 +1,4 @@
-import { Col, Form, Input, message, Modal, Row } from "antd";
+import { Col, Form, Input, App, Modal, Row } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useImperativeHandle, useState } from "react";
 
@@ -15,6 +15,7 @@ interface SettingChannelModalProps {
 export const SettingChannelModal = React.forwardRef(
   ({ onClose, onSubmitOk }: SettingChannelModalProps, ref) => {
     const [form] = Form.useForm<any>();
+    const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [selectedSettingChannel, setSelectedSettingChannel] = useState<any>();

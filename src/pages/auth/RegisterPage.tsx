@@ -1,4 +1,4 @@
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, App } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import styles from "./auth.module.scss";
@@ -10,6 +10,7 @@ import logo from "../../assets/image/chat.png";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 

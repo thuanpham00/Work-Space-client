@@ -1,4 +1,4 @@
-import { ConfigProvider, theme as antdTheme } from "antd";
+import { ConfigProvider, theme as antdTheme, App as AntApp } from "antd";
 import type { ReactNode } from "react";
 import { useBaseStore } from "../store/baseStore";
 
@@ -19,7 +19,7 @@ const AppProvider = ({ children }: Props) => {
         }, // cấu hình 1 chỗ thì các component Antd khác sẽ tự theo // có thể set màu dựa tren isDarkMode
       }}
     >
-      <>{children}</>
+      <AntApp>{children}</AntApp>
     </ConfigProvider>
   );
 };
@@ -27,8 +27,14 @@ const AppProvider = ({ children }: Props) => {
 export default AppProvider;
 
 /**
- * 
+ *
  * algorithm điều khiển theme gốc của Antd
-   theme.css điều khiển CSS variables cho phần UI tự viết của bạn
-  _antd-theme.scss chỉ là lớp override bổ sung, nên nếu bạn dùng màu hardcode trong đó thì nó sẽ không tự theo dark mode nữa
+  theme.css điều khiển CSS variables cho phần UI tự viết của bạn
+ _antd-theme.scss chỉ là lớp override bổ sung, nên nếu bạn dùng màu hardcode trong đó thì nó sẽ không tự theo dark mode nữa
  */
+
+ /**
+  * import { App } from "antd";
+  const { message } = App.useApp();  // lấy instance gắn với ConfigProvider
+  message.success("Lưu thành công");   // dùng theme hiện tại
+  */

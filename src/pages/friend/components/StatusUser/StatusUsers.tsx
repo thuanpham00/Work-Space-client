@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, message } from "antd";
+import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, App } from "antd";
 import styles from "./StatusUsers.module.scss";
 import {
   Check,
@@ -170,6 +170,7 @@ function FriendStatusPanel({
 }
 
 export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend: () => void }) {
+  const { message } = App.useApp();
   const [type, setType] = useState<StatusRequest>(StatusRequest.ACCEPTED);
   const [search, setSearch] = useState("");
   const accessToken = getAccessTokenFromLS();

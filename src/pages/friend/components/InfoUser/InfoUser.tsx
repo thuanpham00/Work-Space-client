@@ -1,12 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { ChannelDM } from "../../../../types/channel.type";
-import { formatDateString } from "../../../../utils/utils";
 import styles from "./InfoUser.module.scss";
 import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
+import CustomizationSection from "./sections/CustomizationSection";
+import PrivacySection from "./sections/PrivacySection";
+import MediaSection from "./sections/MediaSection";
 
 export default function InfoUser({ channelDMDetail }: { channelDMDetail: ChannelDM }) {
   const modalRef = useRef<FullProfileModalRef>(null);
+  const [nickname, setNickname] = useState<string>(channelDMDetail.friend.fullName);
 
   return (
     <aside className={styles.profileSidebar}>
@@ -28,26 +31,20 @@ export default function InfoUser({ channelDMDetail }: { channelDMDetail: Channel
 
       <div className={styles.profileDetails}>
         <div className={styles.profileUserNames}>
-          <h2 className={styles.profileDisplayName}>{channelDMDetail.friend.fullName}</h2>
+          <h2 className={styles.profileDisplayName}>{nickname}</h2>
           <p className={styles.profileUsername}>@{channelDMDetail.friend.username}</p>
-        </div>
-
-        <div className={styles.divider}></div>
-
-        <div className={styles.profileSection}>
-          <h4 className={styles.sectionHeader}>Thành viên chung</h4>
-          <p className={styles.sectionText}>1</p>
-        </div>
-
-        <div className={styles.profileSection}>
-          <h4 className={styles.sectionHeader}>Gia nhập từ</h4>
-          <p className={styles.sectionText}>{formatDateString(channelDMDetail.friend.createdAt)}</p>
         </div>
 
         <button className={styles.fullProfileBtn} onClick={() => modalRef.current?.openModal()}>
           Xem hồ sơ đầy đủ
         </button>
       </div>
+
+      <CustomizationSection channelDMDetail={channelDMDetail} onNicknameChange={setNickname} />
+
+      <MediaSection />
+
+      <PrivacySection />
 
       <FullProfileModal ref={modalRef} channelDMDetail={channelDMDetail} />
     </aside>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Divider, Empty, Input, List, message, Modal } from "antd";
+import { Button, Divider, Empty, Input, List, App, Modal } from "antd";
 import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
 import React, { useEffect, useImperativeHandle, useState } from "react";
 import styles from "./AddFriendModal.module.scss";
@@ -28,6 +28,8 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
   ({ onClose, onSubmitOk }, ref) => {
     const [visible, setVisible] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
+
+    const { message } = App.useApp();
 
     const [search, setSearch] = useState("");
     const [sending, setSending] = useState(false);

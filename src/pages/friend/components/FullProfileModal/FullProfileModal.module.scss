@@ -179,10 +179,10 @@
     }
   }
   :global(.ant-tabs-tab-active .ant-tabs-tab-btn) {
-    color: var(--text-color-primary) !important;
+    color: var(--color-primary) !important;
   }
   :global(.ant-tabs-ink-bar) {
-    background: var(--text-color-primary);
+    background: var(--color-primary);
   }
 }
 

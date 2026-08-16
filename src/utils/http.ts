@@ -7,10 +7,11 @@ import type { AuthResponse, MessageResponse, SuccessResponse } from "../types/ut
 import { isAxiosExpiredTokenError, isError401 } from "./error";
 import { useUserStore } from "../store/userStore";
 
-class http {
+class Http {
   instance: AxiosInstance;
   public accessToken: string;
   private refreshTokenRequest: Promise<string> | null;
+
   constructor() {
     this.accessToken = getAccessTokenFromLS();
     this.refreshTokenRequest = null;
@@ -59,7 +60,7 @@ class http {
               ? this.refreshTokenRequest
               : this.handleRefreshToken();
 
-            // nếu không return ở đây nó sẽ chạy xuống bên dưới
+            // nếu không return � đây nó sẽ chạy xuống bên dưới
             return this.refreshTokenRequest.then((accessToken) => {
               if (error.response?.config.headers) {
                 return this.instance({
@@ -72,7 +73,6 @@ class http {
 
           if (isAxiosExpiredTokenError<MessageResponse>(error, "RefreshToken đã hết hạn!")) {
             // nếu refresh-token hết hạn thì nó clearLS
-            console.log("RefreshToken đã hết hạn!");
             this.accessToken = "";
             clearLS();
             message.error("Phiên làm việc hết hạn");
@@ -109,7 +109,8 @@ class http {
   }
 }
 
-export const httpRaw = new http();
+// SINGLE INSTANCE — chia sẻ giữa httpRaw và Http
+const httpInstance = new Http();
 
-const Http = new http().instance;
-export default Http;
+export const httpRaw = httpInstance;
+export default httpInstance.instance;
