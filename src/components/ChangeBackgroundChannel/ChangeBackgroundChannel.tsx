@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MenuItemSetting from "../MenuItemSetting/MenuItem";
 import { BgColorsOutlined } from "@ant-design/icons";
 import { App, Button, Modal } from "antd";
@@ -22,7 +22,7 @@ const PRESETS: ThemePreset[] = [
   { id: "yellow", type: "basic", color: "#FAA61A", name: "Vàng" },
   { id: "red", type: "basic", color: "#F04747", name: "Đỏ" },
   { id: "purple", type: "basic", color: "#9266CC", name: "Tím" },
-  { id: "dark", type: "basic", color: "#1E1F22", name: "Tối" },
+  { id: "primary", type: "basic", color: "#ef4815", name: "Mặc định" },
   {
     id: "winter-girl",
     type: "theme",
@@ -107,31 +107,26 @@ interface Applied {
 
 interface Props {
   onThemeChange?: (bgColor: string, accent: string, url: string) => void;
+  configChannel?: { backgroundUrl: string; backgroundColor: string; accent: string };
 }
 
-export default function ChangeBackgroundChannel({ onThemeChange }: Props) {
+export default function ChangeBackgroundChannel({ onThemeChange, configChannel }: Props) {
   const { message } = App.useApp();
   const [themeModalOpen, setThemeModalOpen] = useState(false);
-  const [applied, setApplied] = useState<Applied>({
-    url: "",
-    bgColor: DEFAULT_BG_COLOR,
-    accent: "#5865F2",
-    presetId: undefined,
-  });
-  const [pending, setPending] = useState<Applied>(applied);
-
-  useEffect(() => {
-    if (themeModalOpen) {
-      setPending(applied);
-    }
-  }, [themeModalOpen, applied]);
+  const [backgroundUrlDraft, setBackgroundUrlDraft] = useState<string>(configChannel?.backgroundUrl || "");
+  const [backgroundColorDraft, setBackgroundColorDraft] = useState<string>(
+    configChannel?.backgroundColor || "",
+  );
+  const [accentDraft, setAccentDraft] = useState<string>(configChannel?.accent || "");
 
   const handlePickPreset = (preset: ThemePreset) => {
     const next: Applied =
       preset.type === "theme" && preset.url
         ? { url: preset.url, bgColor: "", accent: preset.color, presetId: preset.id }
         : { url: "", bgColor: DEFAULT_BG_COLOR, accent: preset.color, presetId: preset.id };
-    setPending(next);
+    setBackgroundUrlDraft?.(next.url);
+    setBackgroundColorDraft?.(next.bgColor);
+    setAccentDraft?.(next.accent);
   };
 
   const handleOpenModal = () => {
@@ -139,15 +134,16 @@ export default function ChangeBackgroundChannel({ onThemeChange }: Props) {
   };
 
   const handleCancel = () => {
-    setPending(applied);
+    setBackgroundUrlDraft?.(configChannel?.backgroundUrl || ""); // lấy configDraft từ cha - giá trị gốc
+    setBackgroundColorDraft?.(configChannel?.backgroundColor || ""); // lấy configDraft từ cha
+    setAccentDraft?.(configChannel?.accent || "");
     setThemeModalOpen(false);
   };
 
   const handleConfirm = () => {
-    setApplied(pending);
     setThemeModalOpen(false);
     message.success("Đã đổi chủ đề đoạn chat");
-    onThemeChange?.(pending.bgColor, pending.accent, pending.url);
+    onThemeChange?.(backgroundUrlDraft || "", backgroundColorDraft || "", accentDraft || "");
   };
 
   return (
@@ -179,7 +175,7 @@ export default function ChangeBackgroundChannel({ onThemeChange }: Props) {
             <div className={styles.sectionLabel}>Chủ đề</div>
             <div className={styles.themeGrid}>
               {BG_PRESETS.map((preset) => {
-                const isActive = pending.presetId === preset.id;
+                const isActive = backgroundUrlDraft === preset.color;
                 return (
                   <div
                     key={preset.id}
@@ -203,7 +199,7 @@ export default function ChangeBackgroundChannel({ onThemeChange }: Props) {
             <div className={styles.sectionLabel}>Màu sắc</div>
             <div className={styles.colorGrid}>
               {BASIC_PRESETS.map((preset) => {
-                const isActive = pending.presetId === preset.id;
+                const isActive = accentDraft === preset.color;
                 return (
                   <div
                     key={preset.id}
@@ -226,9 +222,9 @@ export default function ChangeBackgroundChannel({ onThemeChange }: Props) {
               className={`${styles.preview}`}
               style={
                 {
-                  backgroundColor: pending.url ? undefined : pending.bgColor,
-                  backgroundImage: pending.url ? `url(${pending.url})` : undefined,
-                  "--accent": pending.accent,
+                  backgroundColor: backgroundUrlDraft || undefined,
+                  backgroundImage: backgroundUrlDraft || undefined ? `url(${backgroundUrlDraft})` : undefined,
+                  "--accent": accentDraft || undefined,
                 } as React.CSSProperties
               }
             >

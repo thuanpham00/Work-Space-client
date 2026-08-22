@@ -7,7 +7,19 @@ import CustomizationSection from "./sections/CustomizationSection";
 import PrivacySection from "./sections/PrivacySection";
 import MediaSection from "./sections/MediaSection";
 
-export default function InfoUser({ channelDMDetail }: { channelDMDetail: ChannelDM }) {
+interface InfoUserProps {
+  channelDMDetail: ChannelDM;
+  backgroundUrlDM: string;
+  backgroundColorDM: string;
+  accentDM: string;
+}
+
+export default function InfoUser({
+  channelDMDetail,
+  backgroundUrlDM,
+  backgroundColorDM,
+  accentDM,
+}: InfoUserProps) {
   const modalRef = useRef<FullProfileModalRef>(null);
   const [nickname, setNickname] = useState<string>(channelDMDetail.friend.fullName);
 
@@ -40,7 +52,13 @@ export default function InfoUser({ channelDMDetail }: { channelDMDetail: Channel
         </button>
       </div>
 
-      <CustomizationSection channelDMDetail={channelDMDetail} onNicknameChange={setNickname} />
+      <CustomizationSection
+        channelDMDetail={channelDMDetail}
+        onNicknameChange={setNickname}
+        backgroundUrlDM={backgroundUrlDM}
+        backgroundColorDM={backgroundColorDM}
+        accentDM={accentDM}
+      />
 
       <MediaSection />
 

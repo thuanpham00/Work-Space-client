@@ -3,7 +3,6 @@ import { UserOutlined, SettingOutlined, LogoutOutlined, SunOutlined, MoonOutline
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
-import { clearLS } from "../../utils/auth";
 import { userAPI } from "../../apis/user.api";
 import { path } from "../../utils/path";
 import { useBaseStore } from "../../store/baseStore";
@@ -35,7 +34,6 @@ export default function Header() {
       return userAPI.logout();
     },
     onSuccess: () => {
-      clearLS();
       resetBaseStore();
       resetUserStore();
       resetChannelStore();

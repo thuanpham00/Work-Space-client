@@ -48,6 +48,9 @@ export default function DirectChat() {
     staleTime: 60 * 1000 * 5,
   });
   const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
+  const backgroundUrlDM = channelDMDetail?.config?.backgroundUrl as string;
+  const backgroundColorDM = channelDMDetail?.config?.backgroundColor as string;
+  const accentDM = channelDMDetail?.config?.accent as string;
 
   useEffect(() => {
     if (channelDMDetail?.id && !channelId) {
@@ -178,17 +181,29 @@ export default function DirectChat() {
       </header>
 
       <div className={styles.chatBody}>
-        <div className={styles.messagesPane}>
+        <div
+          className={styles.messagesPane}
+          style={{
+            backgroundImage: backgroundUrlDM ? `url(${backgroundUrlDM})` : undefined,
+            backgroundColor: backgroundColorDM || undefined,
+          }}
+        >
           <Messages
             messages={messages}
             pagination={pagination}
             fetchConversationDataMore={fetchConversationDataMore}
+            accentDM={accentDM}
           />
           <Composer channelId={channelId as string} />
         </div>
 
         <div className={`${styles.infoUser} ${showInfoPannel ? styles.showInfoUser : styles.hideInfoUser}`}>
-          <InfoUser channelDMDetail={channelDMDetail} />
+          <InfoUser
+            channelDMDetail={channelDMDetail}
+            backgroundUrlDM={backgroundUrlDM}
+            backgroundColorDM={backgroundColorDM}
+            accentDM={accentDM}
+          />
         </div>
       </div>
     </div>

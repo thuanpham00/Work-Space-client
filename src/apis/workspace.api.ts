@@ -1,4 +1,4 @@
-import type { CategoryChannel, CategoryChannelBody } from "../types/CategoryChannel.type";
+import type { CategoryChannel, CategoryChannelBody } from "../types/categoryChannel.type";
 import type { SuccessResponse } from "../types/utils.type";
 import type { WorkspaceType } from "../types/workspace.type";
 import Http from "../utils/http";

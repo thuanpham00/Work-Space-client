@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getIsDarkModeFromLS, setIsDarkModeToLS } from "../utils/auth";
+import { persist } from "zustand/middleware";
 import { Socket } from "socket.io-client";
 
 type AppStoreType = {
@@ -12,26 +12,42 @@ type AppStoreType = {
   reset: () => void;
 };
 
-const initialDarkMode = getIsDarkModeFromLS();
+export const useBaseStore = create<AppStoreType>()(
+  persist(
+    (set) => ({
+      isDarkMode: false,
 
-if (initialDarkMode) {
-  document.documentElement.classList.add("dark");
-}
+      setIsDarkMode: (isDarkMode) => {
+        document.documentElement.classList.toggle("dark", isDarkMode);
+        set({ isDarkMode });
+      },
 
-export const useBaseStore = create<AppStoreType>((set) => ({
-  isDarkMode: initialDarkMode,
-  setIsDarkMode: (isDarkMode: boolean) => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    set({ isDarkMode });
-    setIsDarkModeToLS(isDarkMode);
-  },
-
-  socket: null,
-  setSocket: (socket: Socket | null) => set({ socket }),
-
-  reset: () => {
-    set({
       socket: null,
-    });
-  },
-}));
+
+      setSocket: (socket) => {
+        set({ socket });
+      },
+
+      reset: () => {
+        set({
+          socket: null,
+        });
+      },
+    }),
+    {
+      name: "base-storage",
+
+      // Chỉ persist isDarkMode
+      partialize: (state) => ({
+        isDarkMode: state.isDarkMode,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.isDarkMode) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      },
+    },
+  ),
+);

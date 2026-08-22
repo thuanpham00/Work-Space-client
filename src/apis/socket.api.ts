@@ -5,4 +5,9 @@ export const socketApi = {
   syncRefreshToken: (refreshToken: string) => {
     return Http.post<SuccessResponse<{ message: string }>>(`/socket/sync-refresh-token`, { refreshToken });
   },
+  syncRemoveRefreshToken: (refreshToken: string) => {
+    return Http.post<SuccessResponse<{ message: string }>>(`/socket/sync-remove-refresh-token`, {
+      refreshToken,
+    });
+  },
 };

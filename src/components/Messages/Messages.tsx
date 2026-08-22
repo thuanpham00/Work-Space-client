@@ -14,10 +14,11 @@ interface Props {
     total_page: number;
   };
   fetchConversationDataMore: () => void;
+  accentDM: string;
 }
 
 const Messages = forwardRef<HTMLDivElement, Props>(
-  ({ messages, pagination, fetchConversationDataMore }, _) => {
+  ({ messages, pagination, fetchConversationDataMore, accentDM }, _) => {
     const user = useUserStore((state) => state.user);
     return (
       <div className={styles.messagesList} id="scrollableDiv">
@@ -43,12 +44,16 @@ const Messages = forwardRef<HTMLDivElement, Props>(
 
             if (isSameUser && isSameTime) {
               return (
-                <div
-                  key={msg.id}
-                  className={`${styles.messageItemSameUser} ${isMe ? styles.messageItemMe : ""}`}
-                >
+                <div key={msg.id} className={`${styles.messageItemSameUser}`}>
                   <div className={styles.messageContentWrapper}>
-                    {msg.content && <div className={styles.messageText}>{msg.content}</div>}
+                    {msg.content && (
+                      <div
+                        className={styles.messageText}
+                        style={{ backgroundColor: isMe ? accentDM : "var(--color-bg-secondary)" }}
+                      >
+                        {msg.content}
+                      </div>
+                    )}
                     {isAttachments && (
                       <div className={styles.messageAttachments}>
                         {msg.attachments.map((attachment) =>
@@ -89,7 +94,7 @@ const Messages = forwardRef<HTMLDivElement, Props>(
                     <div
                       className={styles.messageText}
                       style={{
-                        backgroundColor: isMe ? "var(--color-primary)" : "var(--color-bg-secondary)",
+                        backgroundColor: isMe ? accentDM : "var(--color-bg-secondary)",
                         display: "inline-block",
                       }}
                     >

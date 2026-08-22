@@ -13,7 +13,6 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { getAccessTokenFromLS } from "../../../../utils/auth";
 import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
@@ -22,6 +21,7 @@ import type { FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { StatusRequest } from "../../../../types/user.type";
+import { useUserStore } from "../../../../store/userStore";
 
 const statusLabel: Record<StatusRequest, string> = {
   [StatusRequest.ONLINE]: "Trực tuyến",
@@ -173,7 +173,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
   const { message } = App.useApp();
   const [type, setType] = useState<StatusRequest>(StatusRequest.ACCEPTED);
   const [search, setSearch] = useState("");
-  const accessToken = getAccessTokenFromLS();
+  const accessToken = useUserStore((state) => state.accessToken);
 
   const onChange = (key: string) => {
     setType(key as StatusRequest);

@@ -2,10 +2,11 @@ import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
 import { message } from "antd";
 import { config } from "./config";
-import { clearLS, getAccessTokenFromLS, setAccessTokenToLS } from "./auth";
 import type { AuthResponse, MessageResponse, SuccessResponse } from "../types/utils.type";
 import { isAxiosExpiredTokenError, isError401 } from "./error";
 import { useUserStore } from "../store/userStore";
+import { useBaseStore } from "../store/baseStore";
+import { useChannelStore } from "../store/channelStore";
 
 class Http {
   instance: AxiosInstance;
@@ -13,7 +14,7 @@ class Http {
   private refreshTokenRequest: Promise<string> | null;
 
   constructor() {
-    this.accessToken = getAccessTokenFromLS();
+    this.accessToken = useUserStore.getState().accessToken;
     this.refreshTokenRequest = null;
     this.instance = axios.create({
       baseURL: config.baseURLServer, // kết nối tới server
@@ -74,11 +75,16 @@ class Http {
           if (isAxiosExpiredTokenError<MessageResponse>(error, "RefreshToken đã hết hạn!")) {
             // nếu refresh-token hết hạn thì nó clearLS
             this.accessToken = "";
-            clearLS();
-            message.error("Phiên làm việc hết hạn");
+            useUserStore.getState().reset();
+            useBaseStore.getState().reset();
+            useChannelStore.getState().reset();
           }
         }
-        message.error(error.response?.data?.message || "Đã có lỗi xảy ra");
+        let errorMessage = error.response?.data?.message || "Đã có lỗi xảy ra";
+        if (errorMessage.includes("RefreshToken đã hết hạn!")) {
+          errorMessage = "Phiên làm việc đã hết hạn, vui lòng đăng nhập lại";
+        }
+        message.error(errorMessage);
         return Promise.reject(error);
       },
     );
@@ -95,15 +101,15 @@ class Http {
         const { access_token } = res.data.data;
         this.accessToken = access_token;
         this.refreshTokenRequest = null;
-        setAccessTokenToLS(access_token);
         useUserStore.getState().setAccessToken(access_token);
         return access_token;
       })
       .catch((err) => {
-        clearLS();
         this.accessToken = "";
         this.refreshTokenRequest = null;
-        useUserStore.getState().setAccessToken(null);
+        useUserStore.getState().reset();
+        useBaseStore.getState().reset();
+        useChannelStore.getState().reset();
         throw err;
       });
   }

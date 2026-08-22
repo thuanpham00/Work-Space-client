@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Modal, Input, App } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import type { ChannelDM } from "../../../../../types/channel.type";
@@ -10,18 +10,27 @@ import ChangeBackgroundChannel from "../../../../../components/ChangeBackgroundC
 interface CustomizationSectionProps {
   channelDMDetail: ChannelDM;
   onNicknameChange?: (nickname: string) => void;
-  onThemeChange?: (bgColor: string, accent: string, url: string) => void;
+  backgroundUrlDM: string;
+  backgroundColorDM: string;
+  accentDM: string;
 }
 
 const CustomizationSection = ({
   channelDMDetail,
   onNicknameChange,
-  onThemeChange,
+  backgroundUrlDM,
+  backgroundColorDM,
+  accentDM,
 }: CustomizationSectionProps) => {
   const { message } = App.useApp();
   const [nicknameModalOpen, setNicknameModalOpen] = useState(false);
 
   const [nicknameDraft, setNicknameDraft] = useState<string>(channelDMDetail.friend.fullName);
+
+  const configChannel = useMemo(
+    () => ({ backgroundUrl: backgroundUrlDM, backgroundColor: backgroundColorDM, accent: accentDM }),
+    [backgroundUrlDM, backgroundColorDM, accentDM],
+  );
 
   const handleSaveNickname = () => {
     const trimmed = nicknameDraft.trim();
@@ -34,9 +43,15 @@ const CustomizationSection = ({
     message.success("Đã cập nhật biệt danh");
   };
 
+  const handleThemeChange = (backgroundUrl: string, backgroundColor: string, accent: string) => {
+    console.log("backgroundUrl", backgroundUrl);
+    console.log("backgroundColor", backgroundColor);
+    console.log("accent", accent);
+  };
+
   return (
     <CollapsibleSection title="Tuỳ chỉnh đoạn chat">
-      <ChangeBackgroundChannel onThemeChange={onThemeChange} />
+      <ChangeBackgroundChannel onThemeChange={handleThemeChange} configChannel={configChannel} />
 
       <MenuItemSetting
         icon={<EditOutlined />}

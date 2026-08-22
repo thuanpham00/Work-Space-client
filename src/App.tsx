@@ -6,9 +6,9 @@ import { useUserStore } from "./store/userStore";
 import { useBaseStore } from "./store/baseStore";
 import { socketApi } from "./apis/socket.api";
 import { useChannelStore } from "./store/channelStore";
-import { clearLS } from "./utils/auth";
 import { useNavigate } from "react-router-dom";
 import { httpRaw } from "./utils/http";
+import { message } from "antd";
 
 const App = () => {
   const router = useRouter();
@@ -54,7 +54,6 @@ const App = () => {
 
     const handleTokenRefresh = async (payload: { accessToken: string; refreshToken: string }) => {
       setAccessToken(payload.accessToken);
-      console.log("payload", payload);
 
       socket.auth = {
         ...socket.auth,
@@ -68,14 +67,22 @@ const App = () => {
       socket.connect();
     };
 
-    const handleAuthError = (payload: { message: string; code?: number; type?: string }) => {
+    const handleAuthError = async (payload: {
+      message: string;
+      code?: number;
+      type?: string;
+      refreshToken?: string;
+    }) => {
       // RT hết hạn/không hợp lệ → logout
       if (payload.type === "refresh_token_expired") {
-        clearLS();
         resetBaseStore();
         resetUserStore();
         resetChannelStore();
-        navigate("/auth/login");
+
+        // đồng bộ RT khỏi DB
+        await socketApi.syncRemoveRefreshToken(payload.refreshToken);
+        message.error("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+        navigate("/login");
       }
     };
 
@@ -86,7 +93,7 @@ const App = () => {
       socket.off("token_refresh", handleTokenRefresh);
       socket.off("auth_error", handleAuthError);
     };
-  }, [socket, setAccessToken, clearLS, resetBaseStore, resetUserStore, resetChannelStore, navigate]);
+  }, [socket, setAccessToken, resetBaseStore, resetUserStore, resetChannelStore, navigate]);
 
   return <AppProvider>{router}</AppProvider>;
 };
