@@ -1,14 +1,19 @@
+import { useMemo, useState } from "react";
 import { Settings, Crown } from "lucide-react";
-import styles from "./InfoChannel.module.scss";
-import type { Channel } from "../../../types/channel.type";
-import AvatarFallback from "../../../components/AvatarFallback/AvatarFallback";
 import { Button } from "antd";
+import styles from "./InfoChannel.module.scss";
+import type { Channel, MemberChannel, NicknameMember, ChannelNicknameUpdate, ChannelNicknamesBody } from "../../../types/channel.type";
+import AvatarFallback from "../../../components/AvatarFallback/AvatarFallback";
+import CollapsibleSection from "../../../components/CollapsibleSection/CollapsibleSection";
+import SettingNickName from "../../../components/SettingNickName/SettingNickName";
+import { useMutation } from "react-query";
+import { channelApi } from "../../../apis/channel.api";
+import { useUserStore } from "../../../store/userStore";
 
 interface InfoChannelProps {
   channelDetail: Channel;
 }
 
-// Data cứng mô phỏng danh sách thành viên trong channel
 const MOCK_ONLINE_MEMBERS = [
   {
     id: "1",
@@ -82,14 +87,54 @@ const MOCK_OFFLINE_MEMBERS = [
   },
 ];
 
+const mapMemberChannelToNicknameMember = (member: MemberChannel): NicknameMember => ({
+  userId: member.userId,
+  username: member.username,
+  displayName: member.displayName,
+  avatar: member.avatar,
+  status: member.status,
+});
+
+const mapMockMemberToNicknameMember = (member: (typeof MOCK_ONLINE_MEMBERS)[number]): NicknameMember => ({
+  userId: member.id,
+  username: member.username,
+  displayName: member.displayName,
+  avatar: member.avatar,
+  status: member.status,
+});
+
 export default function InfoChannel({ channelDetail }: InfoChannelProps) {
+  const currentUser = useUserStore((state) => state.user);
+  const [nicknames, setNicknames] = useState<Record<string, string>>({});
+
+  const members = useMemo<NicknameMember[]>(() => {
+    if (channelDetail.members?.length) {
+      return channelDetail.members.map(mapMemberChannelToNicknameMember);
+    }
+
+    return [...MOCK_ONLINE_MEMBERS, ...MOCK_OFFLINE_MEMBERS].map(mapMockMemberToNicknameMember);
+  }, [channelDetail.members]);
+
+  const updateNicknamesMutation = useMutation({
+    mutationFn: (data: ChannelNicknamesBody) => channelApi.updateNicknames(channelDetail.id, data),
+  });
+
   const handleOpenSettings = () => {
     console.log("Open channel settings modal");
   };
 
+  const handleSaveNicknames = async (updates: ChannelNicknameUpdate[]) => {
+    await updateNicknamesMutation.mutateAsync({ nicknames: updates });
+  };
+
+  const handleNicknamesSaved = (saved: Record<string, string>) => {
+    setNicknames((prev) => ({ ...prev, ...saved }));
+  };
+
+  const resolveDisplayName = (userId: string, fallback: string) => nicknames[userId] ?? fallback;
+
   return (
     <aside className={styles.infoChannelSidebar}>
-      {/* Header của Panel */}
       <div className={styles.panelHeader}>
         <span className={styles.panelTitle}>Thông tin kênh</span>
         <Button
@@ -102,7 +147,21 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
       </div>
 
       <div className={styles.scrollableContent}>
-        {/* Nhóm Trực tuyến */}
+        <div className={styles.customizationSection}>
+          <CollapsibleSection title="Tuỳ chỉnh đoạn chat">
+            <SettingNickName
+              channelId={channelDetail.id}
+              members={members}
+              initialNicknames={nicknames}
+              currentUserId={currentUser?.id}
+              variant="group"
+              onSave={handleSaveNicknames}
+              onSaved={handleNicknamesSaved}
+              loading={updateNicknamesMutation.isLoading}
+            />
+          </CollapsibleSection>
+        </div>
+
         <div className={styles.memberGroupSection}>
           <h3 className={styles.groupTitle}>Trực tuyến — {MOCK_ONLINE_MEMBERS.length}</h3>
           <ul className={styles.memberList}>
@@ -119,7 +178,9 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
                 </div>
                 <div className={styles.memberInfo}>
                   <div className={styles.nameRow}>
-                    <span className={styles.displayName}>{member.displayName}</span>
+                    <span className={styles.displayName}>
+                      {resolveDisplayName(member.id, member.displayName)}
+                    </span>
                     {member.isBot && <span className={styles.botBadge}>APP</span>}
                     {member.isOwner && <Crown size={14} className={styles.ownerIcon} />}
                   </div>
@@ -132,7 +193,6 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
           </ul>
         </div>
 
-        {/* Nhóm Ngoại tuyến */}
         <div className={styles.memberGroupSection}>
           <h3 className={styles.groupTitle}>Ngoại tuyến — {MOCK_OFFLINE_MEMBERS.length}</h3>
           <ul className={styles.memberList}>
@@ -149,7 +209,9 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
                 </div>
                 <div className={styles.memberInfo}>
                   <div className={styles.nameRow}>
-                    <span className={styles.displayName}>{member.displayName}</span>
+                    <span className={styles.displayName}>
+                      {resolveDisplayName(member.id, member.displayName)}
+                    </span>
                     {member.isBot && <span className={styles.botBadge}>APP</span>}
                   </div>
                 </div>

@@ -86,7 +86,7 @@ const Messages = forwardRef<HTMLDivElement, Props>(
 
                 <div className={styles.messageContentWrapper}>
                   <div className={styles.messageMeta}>
-                    <span className={styles.messageSender}>{msg.sender?.displayName}</span>
+                    <span className={styles.messageSender}>{isMe ? "Bạn" : msg.sender?.displayName}</span>
                     <span className={styles.messageTime}>{formatMessageTime(msg.createdAt)}</span>
                   </div>
 

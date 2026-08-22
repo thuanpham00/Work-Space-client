@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { ChannelDM } from "../../../../types/channel.type";
 import styles from "./InfoUser.module.scss";
@@ -6,12 +6,14 @@ import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/
 import CustomizationSection from "./sections/CustomizationSection";
 import PrivacySection from "./sections/PrivacySection";
 import MediaSection from "./sections/MediaSection";
+import { useUserStore } from "../../../../store/userStore";
 
 interface InfoUserProps {
   channelDMDetail: ChannelDM;
   backgroundUrlDM: string;
   backgroundColorDM: string;
   accentDM: string;
+  nickNames: any;
 }
 
 export default function InfoUser({
@@ -19,9 +21,12 @@ export default function InfoUser({
   backgroundUrlDM,
   backgroundColorDM,
   accentDM,
+  nickNames,
 }: InfoUserProps) {
   const modalRef = useRef<FullProfileModalRef>(null);
-  const [nickname, setNickname] = useState<string>(channelDMDetail.friend.fullName);
+  const userId = useUserStore((app) => app.user.id);
+  const nickName = channelDMDetail.nicknames.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
+  const displayName = nickName || channelDMDetail.friend.fullName;
 
   return (
     <aside className={styles.profileSidebar}>
@@ -43,8 +48,7 @@ export default function InfoUser({
 
       <div className={styles.profileDetails}>
         <div className={styles.profileUserNames}>
-          <h2 className={styles.profileDisplayName}>{nickname}</h2>
-          <p className={styles.profileUsername}>@{channelDMDetail.friend.username}</p>
+          <h2 className={styles.profileDisplayName}>{displayName}</h2>
         </div>
 
         <button className={styles.fullProfileBtn} onClick={() => modalRef.current?.openModal()}>
@@ -54,10 +58,10 @@ export default function InfoUser({
 
       <CustomizationSection
         channelDMDetail={channelDMDetail}
-        onNicknameChange={setNickname}
         backgroundUrlDM={backgroundUrlDM}
         backgroundColorDM={backgroundColorDM}
         accentDM={accentDM}
+        nickNames={nickNames}
       />
 
       <MediaSection />

@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { Phone, Video, Pin, Search, AtSign, PanelRight } from "lucide-react";
+import { Phone, Video, Pin, Search, PanelRight } from "lucide-react";
 import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
 import { useQuery } from "react-query";
 import { channelApi } from "../../../../apis/channel.api";
-import type { ChannelDM } from "../../../../types/channel.type";
+import type { ChannelDM, ChannelMemberNickname } from "../../../../types/channel.type";
 import type { QueryBase } from "../../../../types/query.type";
 import { type Message } from "../../../../types/message.type";
 import Messages from "../../../../components/Messages/Messages";
@@ -16,6 +16,7 @@ import { useUserStore } from "../../../../store/userStore";
 import { useBaseStore } from "../../../../store/baseStore";
 import { useChannelStore } from "../../../../store/channelStore";
 import { Spin } from "antd";
+import { queryClient } from "../../../../main";
 
 const PAGE = 1;
 const LIMIT = 50;
@@ -51,6 +52,7 @@ export default function DirectChat() {
   const backgroundUrlDM = channelDMDetail?.config?.backgroundUrl as string;
   const backgroundColorDM = channelDMDetail?.config?.backgroundColor as string;
   const accentDM = channelDMDetail?.config?.accent as string;
+  const nickNames = channelDMDetail?.nicknames as ChannelMemberNickname[];
 
   useEffect(() => {
     if (channelDMDetail?.id && !channelId) {
@@ -95,8 +97,15 @@ export default function DirectChat() {
     // chưa kết nối thì lắng nghe sự kiện "connect" để join channel
     socket.on("connect", joinChannel);
 
+    const handleChannelSettingsUpdated = () => {
+      queryClient.invalidateQueries({ queryKey: ["channelDM", friendId, accessToken] });
+    };
+
+    socket.on("channel_settings_updated", handleChannelSettingsUpdated);
+
     return () => {
       socket.off("connect", joinChannel);
+      socket.off("channel_settings_updated", handleChannelSettingsUpdated);
       if (socket.connected) {
         socket.emit("leave_channel", channelId);
       }
@@ -143,7 +152,6 @@ export default function DirectChat() {
     <div className={styles.chatContainer}>
       <header className={styles.chatHeader}>
         <div className={styles.headerLeft}>
-          <AtSign className={styles.atIcon} size={22} />
           <span className={styles.headerName}>{channelDMDetail.friend.fullName}</span>
           <span className={styles.statusIndicator}></span>
         </div>
@@ -184,8 +192,13 @@ export default function DirectChat() {
         <div
           className={styles.messagesPane}
           style={{
-            backgroundImage: backgroundUrlDM ? `url(${backgroundUrlDM})` : undefined,
+            backgroundImage: backgroundUrlDM
+              ? `linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(${backgroundUrlDM})`
+              : undefined,
             backgroundColor: backgroundColorDM || undefined,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
           }}
         >
           <Messages
@@ -203,6 +216,7 @@ export default function DirectChat() {
             backgroundUrlDM={backgroundUrlDM}
             backgroundColorDM={backgroundColorDM}
             accentDM={accentDM}
+            nickNames={nickNames}
           />
         </div>
       </div>

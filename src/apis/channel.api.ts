@@ -1,4 +1,11 @@
-import type { Channel, ChannelBody, ChannelDM } from "../types/channel.type";
+import type {
+  Channel,
+  ChannelBody,
+  ChannelConfig,
+  ChannelDM,
+  ChannelNicknamesBody,
+  ChannelSettingsBody,
+} from "../types/channel.type";
 import type { Media } from "../types/media.type";
 import type { QueryBase } from "../types/query.type";
 import type { SuccessResponse } from "../types/utils.type";
@@ -34,5 +41,16 @@ export const channelApi = {
         "Content-Type": "multipart/form-data",
       },
     });
+  },
+
+  updateSettings: (channelId: string, data: ChannelSettingsBody) => {
+    return Http.patch<SuccessResponse<{ channel: ChannelConfig }>>(`/channels/${channelId}/settings`, data);
+  },
+
+  updateNicknames: (channelId: string, data: ChannelNicknamesBody) => {
+    return Http.patch<SuccessResponse<{ nicknames: Record<string, string> }>>(
+      `/channels/${channelId}/nicknames`,
+      data,
+    );
   },
 };

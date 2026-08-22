@@ -52,6 +52,12 @@
   @include custom-scrollbar;
 }
 
+.customizationSection {
+  padding: 0 8px 12px;
+  border-bottom: 1px solid var(--color-bg-secondary);
+  margin-bottom: 16px;
+}
+
 .memberGroupSection {
   margin-bottom: 24px;
 }

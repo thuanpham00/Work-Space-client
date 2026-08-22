@@ -1,3 +1,5 @@
+import type { UserType } from "./user.type";
+
 export type ChannelDM = {
   id: string;
   workspaceId: string;
@@ -29,6 +31,7 @@ export type ChannelDM = {
     };
   };
   config: ChannelConfig;
+  nicknames: ChannelMemberNickname[];
 };
 
 export interface Channel {
@@ -69,5 +72,37 @@ export interface ChannelConfig {
   backgroundColor: string;
   accent: string;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChannelSettingsBody {
+  backgroundUrl: string;
+  backgroundColor: string;
+  accent: string;
+}
+
+export interface NicknameMember {
+  userId: string;
+  username: string;
+  displayName: string;
+  avatar: string;
+  status?: string;
+}
+
+export interface ChannelNicknameUpdate {
+  userId: string;
+  nickname: string;
+}
+
+export interface ChannelNicknamesBody {
+  nicknames: ChannelNicknameUpdate[];
+}
+
+export interface ChannelMemberNickname {
+  id: string;
+  channelId: string;
+  userId: string;
+  user: UserType;
+  nickname: string;
   updatedAt: string;
 }

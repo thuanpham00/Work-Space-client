@@ -1,7 +1,7 @@
 import { useState } from "react";
 import MenuItemSetting from "../MenuItemSetting/MenuItem";
 import { BgColorsOutlined } from "@ant-design/icons";
-import { App, Button, Modal } from "antd";
+import { Button, Modal } from "antd";
 import styles from "./ChangeBackgroundChannel.module.scss";
 
 const DEFAULT_BG_COLOR = "#09090b";
@@ -106,12 +106,11 @@ interface Applied {
 }
 
 interface Props {
-  onThemeChange?: (bgColor: string, accent: string, url: string) => void;
+  onSave?: (bgColor: string, accent: string, url: string) => void;
   configChannel?: { backgroundUrl: string; backgroundColor: string; accent: string };
 }
 
-export default function ChangeBackgroundChannel({ onThemeChange, configChannel }: Props) {
-  const { message } = App.useApp();
+export default function ChangeBackgroundChannel({ onSave, configChannel }: Props) {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [backgroundUrlDraft, setBackgroundUrlDraft] = useState<string>(configChannel?.backgroundUrl || "");
   const [backgroundColorDraft, setBackgroundColorDraft] = useState<string>(
@@ -142,8 +141,7 @@ export default function ChangeBackgroundChannel({ onThemeChange, configChannel }
 
   const handleConfirm = () => {
     setThemeModalOpen(false);
-    message.success("Đã đổi chủ đề đoạn chat");
-    onThemeChange?.(backgroundUrlDraft || "", backgroundColorDraft || "", accentDraft || "");
+    onSave?.(backgroundUrlDraft || "", backgroundColorDraft || "", accentDraft || "");
   };
 
   return (
@@ -175,7 +173,7 @@ export default function ChangeBackgroundChannel({ onThemeChange, configChannel }
             <div className={styles.sectionLabel}>Chủ đề</div>
             <div className={styles.themeGrid}>
               {BG_PRESETS.map((preset) => {
-                const isActive = backgroundUrlDraft === preset.color;
+                const isActive = backgroundUrlDraft === preset.url && accentDraft === preset.color;
                 return (
                   <div
                     key={preset.id}
@@ -199,7 +197,7 @@ export default function ChangeBackgroundChannel({ onThemeChange, configChannel }
             <div className={styles.sectionLabel}>Màu sắc</div>
             <div className={styles.colorGrid}>
               {BASIC_PRESETS.map((preset) => {
-                const isActive = accentDraft === preset.color;
+                const isActive = accentDraft === preset.color && backgroundUrlDraft === "";
                 return (
                   <div
                     key={preset.id}
