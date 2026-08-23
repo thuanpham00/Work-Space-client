@@ -1,3 +1,4 @@
+import type { Attachment } from "../types/attachment.type";
 import type {
   Channel,
   ChannelBody,
@@ -7,6 +8,7 @@ import type {
   ChannelSettingsBody,
 } from "../types/channel.type";
 import type { Media } from "../types/media.type";
+import type { Message } from "../types/message.type";
 import type { QueryBase } from "../types/query.type";
 import type { SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
@@ -23,12 +25,19 @@ export const channelApi = {
   },
 
   getMessagesChannel: (channelId: string, params: QueryBase) => {
-    return Http.get<SuccessResponse<{ messages: any; total_page: number; page: number; limit: number }>>(
-      `/channels/messages/${channelId}`,
-      {
-        params,
-      },
-    );
+    return Http.get<
+      SuccessResponse<{ messages: Message[]; total_page: number; page: number; limit: number }>
+    >(`/channels/messages/${channelId}`, {
+      params,
+    });
+  },
+
+  getAttachmentsChannel: (channelId: string, params: QueryBase) => {
+    return Http.get<
+      SuccessResponse<{ attachments: Attachment[]; total_page: number; page: number; limit: number }>
+    >(`/channels/attachments/${channelId}`, {
+      params,
+    });
   },
 
   create: (data: ChannelBody) => {

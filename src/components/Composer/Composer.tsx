@@ -15,6 +15,8 @@ export default function Composer({ channelId }: { channelId: string }) {
   const [typeMessage, setTypeMessage] = useState<MessageType>(messageType.TEXT);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  const uploadRef = useRef<UploadMultipleFile>(null);
+
   const [typeDisplayMessage, setTypeDisplayMessage] = useState<TypeDisplayMessage | null>(null);
   const actionBtnWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -75,8 +77,6 @@ export default function Composer({ channelId }: { channelId: string }) {
       icon: <ChartNoAxesCombined size={14} />,
     },
   ];
-
-  const uploadRef = useRef<UploadMultipleFile>(null);
 
   return (
     <div className={styles.inputForm}>

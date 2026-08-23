@@ -17,6 +17,7 @@ import { useBaseStore } from "../../../../store/baseStore";
 import { useChannelStore } from "../../../../store/channelStore";
 import { Spin } from "antd";
 import { queryClient } from "../../../../main";
+import type { Attachment } from "../../../../types/attachment.type";
 
 const PAGE = 1;
 const LIMIT = 50;
@@ -54,6 +55,10 @@ export default function DirectChat() {
   const accentDM = channelDMDetail?.config?.accent as string;
   const nickNames = channelDMDetail?.nicknames as ChannelMemberNickname[];
 
+  const userId = useUserStore((app) => app.user.id);
+  const nickName = nickNames?.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
+  const displayName = nickName || channelDMDetail?.friend.fullName;
+
   useEffect(() => {
     if (channelDMDetail?.id && !channelId) {
       setChannelId(channelDMDetail.id);
@@ -71,9 +76,18 @@ export default function DirectChat() {
   const page = dataMessage?.data?.data?.page as number;
   const total_page = dataMessage?.data?.data?.total_page as number;
 
+  const { data: dataAttachments } = useQuery({
+    queryKey: ["attachmentsChannel", channelId, query, accessToken],
+    queryFn: () => channelApi.getAttachmentsChannel(channelId as string, query),
+    enabled: Boolean(channelId),
+    staleTime: 60 * 1000 * 1,
+  });
+
+  const attachmentsData = dataAttachments?.data?.data?.attachments as Attachment[];
+
   useEffect(() => {
-    setMessages([]); // clear old messages
-    setQuery({ page: PAGE, limit: LIMIT }); // reset pagination
+    setMessages([]);
+    setQuery({ page: PAGE, limit: LIMIT });
     setPagination({ page: PAGE, total_page: 0 });
   }, [friendId, channelId]);
 
@@ -101,11 +115,19 @@ export default function DirectChat() {
       queryClient.invalidateQueries({ queryKey: ["channelDM", friendId, accessToken] });
     };
 
+    const handleChannelAttachmentsUpdated = () => {
+      queryClient.invalidateQueries({ queryKey: ["attachmentsChannel", channelId, query, accessToken] });
+    };
+
     socket.on("channel_settings_updated", handleChannelSettingsUpdated);
+    socket.on("channel_nicknames_updated", handleChannelSettingsUpdated);
+    socket.on("receive_attachments", handleChannelAttachmentsUpdated);
 
     return () => {
       socket.off("connect", joinChannel);
       socket.off("channel_settings_updated", handleChannelSettingsUpdated);
+      socket.off("channel_nicknames_updated", handleChannelSettingsUpdated);
+      socket.off("receive_attachments", handleChannelAttachmentsUpdated);
       if (socket.connected) {
         socket.emit("leave_channel", channelId);
       }
@@ -152,7 +174,7 @@ export default function DirectChat() {
     <div className={styles.chatContainer}>
       <header className={styles.chatHeader}>
         <div className={styles.headerLeft}>
-          <span className={styles.headerName}>{channelDMDetail.friend.fullName}</span>
+          <span className={styles.headerName}>{displayName}</span>
           <span className={styles.statusIndicator}></span>
         </div>
         <div className={styles.headerRight}>
@@ -217,6 +239,7 @@ export default function DirectChat() {
             backgroundColorDM={backgroundColorDM}
             accentDM={accentDM}
             nickNames={nickNames}
+            attachments={attachmentsData}
           />
         </div>
       </div>

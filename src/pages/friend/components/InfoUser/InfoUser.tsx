@@ -7,6 +7,7 @@ import CustomizationSection from "./sections/CustomizationSection";
 import PrivacySection from "./sections/PrivacySection";
 import MediaSection from "./sections/MediaSection";
 import { useUserStore } from "../../../../store/userStore";
+import type { Attachment } from "../../../../types/attachment.type";
 
 interface InfoUserProps {
   channelDMDetail: ChannelDM;
@@ -14,6 +15,7 @@ interface InfoUserProps {
   backgroundColorDM: string;
   accentDM: string;
   nickNames: any;
+  attachments: Attachment[];
 }
 
 export default function InfoUser({
@@ -22,6 +24,7 @@ export default function InfoUser({
   backgroundColorDM,
   accentDM,
   nickNames,
+  attachments,
 }: InfoUserProps) {
   const modalRef = useRef<FullProfileModalRef>(null);
   const userId = useUserStore((app) => app.user.id);
@@ -39,8 +42,7 @@ export default function InfoUser({
             alt={channelDMDetail.friend.username}
             size={60}
             status={channelDMDetail.friend.status as any}
-            showStatus={true}
-            statusStyle={{ bottom: "-1px", right: "4px" }}
+            showStatus={false}
             className={styles.avatarOverride}
           />
         </div>
@@ -64,7 +66,7 @@ export default function InfoUser({
         nickNames={nickNames}
       />
 
-      <MediaSection />
+      <MediaSection attachments={attachments}/>
 
       <PrivacySection />
 

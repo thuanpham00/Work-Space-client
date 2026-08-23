@@ -1,0 +1,89 @@
+@use "../../styles/variables" as *;
+
+.messageAttachments {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.imageAttachment {
+  border-radius: $radius-md;
+  overflow: hidden;
+  border: 1px solid var(--color-bg-secondary);
+  max-width: 300px;
+}
+
+.imageRoot {
+  display: block;
+  width: 100%;
+}
+
+.attachmentImg {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.fileAttachment {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-bg-secondary);
+  border-radius: $radius-md;
+  background-color: var(--color-bg-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--color-bg-secondary) 85%, var(--color-text) 8%);
+  }
+}
+
+.fileIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.fileName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileSize {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.downloadIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}

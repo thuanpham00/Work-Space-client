@@ -64,8 +64,6 @@ const UploadMutipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Props
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
 
-    console.log("files", files);
-
     if (!files) return;
 
     const selectedFiles = Array.from(files);
