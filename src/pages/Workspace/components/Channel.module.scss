@@ -11,7 +11,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg);
 }
 
 /* Header Styles */
@@ -23,7 +23,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg);
   z-index: 10;
 }
 
@@ -127,5 +127,5 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg);
 }

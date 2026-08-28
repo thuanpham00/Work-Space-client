@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/immutability */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState } from "react";
 import { Phone, Video, Pin, Search, Hash, Lock, PanelRight } from "lucide-react";
 import styles from "./Channel.module.scss";
@@ -13,16 +10,19 @@ import { useUserStore } from "../../../store/userStore";
 import { channelApi } from "../../../apis/channel.api";
 import { Spin } from "antd";
 import InfoChannel from "./InfoChannel";
+import type { ChannelMemberNickname } from "../../../types/channel.type";
 
 const PAGE = 1;
 const LIMIT = 50;
 
-interface WorkspaceProps {}
+interface WorkspaceProps {
+  //
+}
 
-export default function ChannelChat({}: WorkspaceProps) {
+export default function ChannelChat() {
   const channelId = useChannelStore((app) => app.channelId);
   const accessToken = useUserStore((app) => app.accessToken);
-  const [showInfoPannel, setShowInfoPannel] = useState(true);
+  const [showInfoPanel, setShowInfoPanel] = useState(true);
 
   const { data: dataChannel } = useQuery({
     queryKey: ["channelWorkspace", channelId, accessToken],
@@ -32,6 +32,10 @@ export default function ChannelChat({}: WorkspaceProps) {
   });
 
   const dataChannelDetail = dataChannel?.data?.data?.channel;
+  const accentChannel = dataChannelDetail?.config?.accent;
+  const backgroundUrlChannel = dataChannelDetail?.config?.backgroundUrl;
+  const backgroundColorChannel = dataChannelDetail?.config?.backgroundColor;
+  const nickNamesChannel = dataChannelDetail?.nicknames;
 
   const [query, setQuery] = useState<QueryBase>({
     limit: LIMIT,
@@ -97,8 +101,8 @@ export default function ChannelChat({}: WorkspaceProps) {
           </div>
 
           <button
-            className={`${styles.iconButton} ${showInfoPannel ? styles.active : ""}`}
-            onClick={() => setShowInfoPannel(!showInfoPannel)}
+            className={`${styles.iconButton} ${showInfoPanel ? styles.active : ""}`}
+            onClick={() => setShowInfoPanel(!showInfoPanel)}
           >
             <PanelRight size={20} />
           </button>
@@ -111,14 +115,21 @@ export default function ChannelChat({}: WorkspaceProps) {
             messages={[]}
             pagination={pagination}
             fetchConversationDataMore={fetchConversationDataMore}
+            accentDM=""
           />
           <Composer channelId={"123"} />
         </div>
 
         <div
-          className={`transition-all ease-linear overflow-hidden duration-300 ${showInfoPannel ? `opacity-100 w-[25%]` : "opacity-0 pointer-events-none w-0"}`}
+          className={`transition-all ease-linear overflow-hidden duration-300 ${showInfoPanel ? `opacity-100 w-[25%]` : "opacity-0 pointer-events-none w-0"}`}
         >
-          <InfoChannel channelDetail={dataChannelDetail} />
+          <InfoChannel
+            channelDetail={dataChannelDetail}
+            accentChannel={accentChannel as string}
+            backgroundUrlChannel={backgroundUrlChannel as string}
+            backgroundColorChannel={backgroundColorChannel as string}
+            nickNames={nickNamesChannel as ChannelMemberNickname[]}
+          />
         </div>
       </div>
     </div>

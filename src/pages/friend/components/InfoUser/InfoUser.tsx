@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { ChannelDM } from "../../../../types/channel.type";
@@ -27,7 +28,7 @@ export default function InfoUser({
   attachments,
 }: InfoUserProps) {
   const modalRef = useRef<FullProfileModalRef>(null);
-  const userId = useUserStore((app) => app.user.id);
+  const userId = useUserStore((app) => app.user?.id);
   const nickName = channelDMDetail.nicknames.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
   const displayName = nickName || channelDMDetail.friend.fullName;
 
@@ -66,7 +67,7 @@ export default function InfoUser({
         nickNames={nickNames}
       />
 
-      <MediaSection attachments={attachments}/>
+      <MediaSection attachments={attachments} />
 
       <PrivacySection />
 

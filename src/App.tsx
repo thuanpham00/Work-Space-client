@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/immutability */
 import { useEffect } from "react";
 import AppProvider from "./providers/AppProvider";
 import useRouter from "./routes/useRouter";
@@ -80,7 +82,7 @@ const App = () => {
         resetChannelStore();
 
         // đồng bộ RT khỏi DB
-        await socketApi.syncRemoveRefreshToken(payload.refreshToken);
+        await socketApi.syncRemoveRefreshToken(payload.refreshToken as string);
         message.error("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
         navigate("/login");
       }

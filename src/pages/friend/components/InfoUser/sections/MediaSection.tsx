@@ -19,7 +19,7 @@ const MediaSection = ({ attachments }: { attachments: Attachment[] }) => {
   const attachmentsMedia = useMemo(() => {
     if (attachments?.length === 0) return [];
     return attachments?.filter((attachment) => attachment.mimeType.startsWith("image/"));
-  }, [attachments, activeTab]);
+  }, [attachments]);
 
   const attachmentsFiles = useMemo(() => {
     if (attachments?.length === 0) return [];

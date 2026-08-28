@@ -27,7 +27,7 @@ export default function DirectChat() {
   const socket = useBaseStore((app) => app.socket);
   const friendId = useChannelStore((app) => app.friendId);
   const channelId = useChannelStore((app) => app.channelId);
-  const [showInfoPannel, setShowInfoPannel] = useState(true);
+  const [showInfoPanel, setShowInfoPanel] = useState(true);
 
   const setChannelId = useChannelStore((app) => app.setChannelId);
 
@@ -55,7 +55,7 @@ export default function DirectChat() {
   const accentDM = channelDMDetail?.config?.accent as string;
   const nickNames = channelDMDetail?.nicknames as ChannelMemberNickname[];
 
-  const userId = useUserStore((app) => app.user.id);
+  const userId = useUserStore((app) => app.user?.id);
   const nickName = nickNames?.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
   const displayName = nickName || channelDMDetail?.friend.fullName;
 
@@ -132,7 +132,7 @@ export default function DirectChat() {
         socket.emit("leave_channel", channelId);
       }
     };
-  }, [socket, channelId]);
+  }, [socket, channelId, friendId, accessToken, query]);
 
   useEffect(() => {
     if (!socket) return;
@@ -202,8 +202,8 @@ export default function DirectChat() {
           </div>
 
           <button
-            className={`${styles.iconButton} ${showInfoPannel ? styles.active : ""}`}
-            onClick={() => setShowInfoPannel(!showInfoPannel)}
+            className={`${styles.iconButton} ${showInfoPanel ? styles.active : ""}`}
+            onClick={() => setShowInfoPanel(!showInfoPanel)}
           >
             <PanelRight size={20} />
           </button>
@@ -232,7 +232,7 @@ export default function DirectChat() {
           <Composer channelId={channelId as string} />
         </div>
 
-        <div className={`${styles.infoUser} ${showInfoPannel ? styles.showInfoUser : styles.hideInfoUser}`}>
+        <div className={`${styles.infoUser} ${showInfoPanel ? styles.showInfoUser : styles.hideInfoUser}`}>
           <InfoUser
             channelDMDetail={channelDMDetail}
             backgroundUrlDM={backgroundUrlDM}

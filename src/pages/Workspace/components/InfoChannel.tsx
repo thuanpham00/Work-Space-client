@@ -1,17 +1,28 @@
 import { useMemo, useState } from "react";
-import { Settings, Crown } from "lucide-react";
+import { Settings } from "lucide-react";
 import { Button } from "antd";
 import styles from "./InfoChannel.module.scss";
-import type { Channel, MemberChannel, NicknameMember, ChannelNicknameUpdate, ChannelNicknamesBody } from "../../../types/channel.type";
-import AvatarFallback from "../../../components/AvatarFallback/AvatarFallback";
+import type {
+  Channel,
+  MemberChannel,
+  NicknameMember,
+  ChannelNicknameUpdate,
+  ChannelNicknamesBody,
+  ChannelMemberNickname,
+} from "../../../types/channel.type";
 import CollapsibleSection from "../../../components/CollapsibleSection/CollapsibleSection";
 import SettingNickName from "../../../components/SettingNickName/SettingNickName";
 import { useMutation } from "react-query";
 import { channelApi } from "../../../apis/channel.api";
 import { useUserStore } from "../../../store/userStore";
+import ChangeBackgroundChannel from "../../../components/ChangeBackgroundChannel/ChangeBackgroundChannel";
 
 interface InfoChannelProps {
   channelDetail: Channel;
+  accentChannel: string;
+  backgroundUrlChannel: string;
+  backgroundColorChannel: string;
+  nickNames: ChannelMemberNickname[];
 }
 
 const MOCK_ONLINE_MEMBERS = [
@@ -103,10 +114,13 @@ const mapMockMemberToNicknameMember = (member: (typeof MOCK_ONLINE_MEMBERS)[numb
   status: member.status,
 });
 
-export default function InfoChannel({ channelDetail }: InfoChannelProps) {
-  const currentUser = useUserStore((state) => state.user);
-  const [nicknames, setNicknames] = useState<Record<string, string>>({});
-
+export default function InfoChannel({
+  channelDetail,
+  accentChannel,
+  backgroundUrlChannel,
+  backgroundColorChannel,
+  nickNames,
+}: InfoChannelProps) {
   const members = useMemo<NicknameMember[]>(() => {
     if (channelDetail.members?.length) {
       return channelDetail.members.map(mapMemberChannelToNicknameMember);
@@ -127,11 +141,29 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
     await updateNicknamesMutation.mutateAsync({ nicknames: updates });
   };
 
-  const handleNicknamesSaved = (saved: Record<string, string>) => {
-    setNicknames((prev) => ({ ...prev, ...saved }));
+  // const resolveDisplayName = (userId: string, fallback: string) => nicknames[userId] ?? fallback;
+
+  const handleThemeChange = (backgroundUrl: string, backgroundColor: string, accent: string) => {
+    // updateSettingsMutation.mutate({ backgroundUrl, backgroundColor, accent });
   };
 
-  const resolveDisplayName = (userId: string, fallback: string) => nicknames[userId] ?? fallback;
+  const configChannel = useMemo(
+    () => ({
+      backgroundUrl: backgroundUrlChannel,
+      backgroundColor: backgroundColorChannel,
+      accent: accentChannel,
+    }),
+    [backgroundUrlChannel, backgroundColorChannel, accentChannel],
+  );
+
+  const nickNamesChannel = useMemo(() => {
+    return nickNames.map((nickname) => ({
+      userId: nickname.userId,
+      avatar: nickname.user.avatar,
+      fullName: nickname.user.fullName,
+      nickname: nickname.nickname,
+    }));
+  }, [nickNames]);
 
   return (
     <aside className={styles.infoChannelSidebar}>
@@ -146,23 +178,17 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
         />
       </div>
 
-      <div className={styles.scrollableContent}>
-        <div className={styles.customizationSection}>
-          <CollapsibleSection title="Tuỳ chỉnh đoạn chat">
-            <SettingNickName
-              channelId={channelDetail.id}
-              members={members}
-              initialNicknames={nicknames}
-              currentUserId={currentUser?.id}
-              variant="group"
-              onSave={handleSaveNicknames}
-              onSaved={handleNicknamesSaved}
-              loading={updateNicknamesMutation.isLoading}
-            />
-          </CollapsibleSection>
-        </div>
+      <CollapsibleSection title="Tuỳ chỉnh đoạn chat">
+        <ChangeBackgroundChannel onSave={handleThemeChange} configChannel={configChannel} />
 
-        <div className={styles.memberGroupSection}>
+        {nickNamesChannel.length > 0 && (
+          <SettingNickName members={nickNamesChannel} onSave={handleSaveNicknames} />
+        )}
+      </CollapsibleSection>
+      <div className={styles.scrollableContent}>
+        <div className={styles.customizationSection}></div>
+
+        {/* <div className={styles.memberGroupSection}>
           <h3 className={styles.groupTitle}>Trực tuyến — {MOCK_ONLINE_MEMBERS.length}</h3>
           <ul className={styles.memberList}>
             {MOCK_ONLINE_MEMBERS.map((member) => (
@@ -218,7 +244,7 @@ export default function InfoChannel({ channelDetail }: InfoChannelProps) {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
       </div>
     </aside>
   );

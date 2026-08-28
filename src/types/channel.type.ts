@@ -44,6 +44,8 @@ export interface Channel {
   createdAt: string;
   updatedAt: string;
   members?: MemberChannel[];
+  config: ChannelConfig;
+  nicknames: ChannelMemberNickname[];
 }
 
 export interface ChannelBody {

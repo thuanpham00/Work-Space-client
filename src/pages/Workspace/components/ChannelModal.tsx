@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Col, Form, Input, App, Modal, Row, Select, Switch } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";

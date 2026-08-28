@@ -33,7 +33,7 @@ export default function WorkspacePage() {
         chooseChannelWorkspace(id, firstChannel.id);
       }
     }
-  }, [id, workSpaceDetail]);
+  }, [id, workSpaceDetail, dataWorkspaceDetail, chooseChannelWorkspace]);
 
   return (
     <>
