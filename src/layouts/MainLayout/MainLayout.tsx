@@ -6,20 +6,23 @@ import { Settings, Users } from "lucide-react";
 import Header from "../../components/Header/Header";
 import { useQuery } from "react-query";
 import { workspaceAPI } from "../../apis/workspace.api";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { WorkspaceType } from "../../types/workspace.type";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
 import { useUserStore } from "../../store/userStore";
+import { useBaseStore } from "../../store/baseStore";
+import { useChannelStore } from "../../store/channelStore";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
-  // useCall(); // đăng ký listener socket cho call
   const navigate = useNavigate();
 
   const { pathname } = useLocation();
   const token = useUserStore((state) => state.accessToken);
+  const socket = useBaseStore((state) => state.socket);
+  const channelId = useChannelStore((state) => state.channelId);
 
   // gọi api lấy ds workspace của user và workspace user tham gia
   const { data: dataWorkspace } = useQuery({
@@ -72,6 +75,19 @@ export default function MainLayout() {
       navigate(`/workspaces/${key}`);
     }
   };
+
+  useEffect(() => {
+    if (!socket || !channelId) return;
+
+    socket.on("channel_unread", (data) => {
+      console.log("vào");
+      console.log(data);
+    });
+
+    return () => {
+      socket.off("channel_unread");
+    };
+  }, [socket, channelId]);
 
   return (
     <Layout className={styles.layout}>

@@ -58,8 +58,8 @@
 }
 
 .messageSender {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--color-text);
 }
 
@@ -69,11 +69,11 @@
 }
 
 .messageText {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-text);
   background-color: var(--color-bg-secondary);
-  padding: 8px 12px;
-  border-radius: 14px;
+  padding: 4px 6px;
+  border-radius: 10px;
   display: inline-block;
   line-height: 1.4;
   word-break: break-word;
