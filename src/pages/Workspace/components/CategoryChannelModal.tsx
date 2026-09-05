@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, App, Modal } from "antd";
 import React, { useImperativeHandle, useState } from "react";
-import type { CategoryChannel, CategoryChannelBody } from "../../../types/CategoryChannel.type";
 import type { ModalStatus } from "../../../types/utils.type";
 import { workspaceAPI } from "../../../apis/workspace.api";
 import type { Rule } from "antd/es/form";
+import type { CategoryChannel, CategoryChannelBody } from "../../../types/categoryChannel.type";
 
 const rules: Rule[] = [{ required: true }];
 
@@ -98,10 +98,11 @@ export const CategoryChannelModal = React.forwardRef(
         }}
         open={visible}
         title={status == "create" ? "Tạo chủ đề kênh chat" : "Cập nhật chủ đề kênh chat"}
-        style={{ top: 20 }}
+        style={{ top: 50 }}
         width={700}
         confirmLoading={loading}
         onOk={submitForm}
+        mask={{ closable: false }}
       >
         <Form layout="vertical" form={form}>
           <Form.Item label="Workspace ID" name="workspaceId" hidden>

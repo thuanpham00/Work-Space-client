@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Smile, Send, FileChartColumn, Plus, UploadIcon, ChartNoAxesCombined } from "lucide-react";
 import styles from "./Composer.module.scss";
 import EmojiMessage from "../EmojiMessage/EmojiMessage";
@@ -138,9 +139,9 @@ export default function Composer({ channelId }: { channelId: string }) {
                 </button>
               )}
 
-              <EmojiMessage setContent={setInputValue} show={typeDisplayMessage} />
+              <EmojiMessage setContent={setInputValue} show={typeDisplayMessage as TypeDisplayMessage} />
 
-              <GifPicker show={typeDisplayMessage} onSubmit={handleSendGiphyMessage} />
+              <GifPicker show={typeDisplayMessage as TypeDisplayMessage} onSubmit={handleSendGiphyMessage} />
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@
   transform: translateY(-58%);
   transition: opacity 0.3s ease-in-out;
   overflow: visible;
+  padding: 8px 0;
 
   &.show {
     opacity: 1;
@@ -26,8 +27,9 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   border: 1px solid var(--color-bg-secondary);
-  padding: 4px;
-  border-radius: 4px;
+  background-color: var(--color-bg);
+  padding: 6px 6px;
+  border-radius: 8px;
 
   @include custom-scrollbar;
 }

@@ -18,6 +18,7 @@ export type Message = {
 };
 
 export const messageType = {
+  CONFIG: "CONFIG",
   TEXT: "TEXT",
   FILE: "FILE",
   IMAGE: "IMAGE",

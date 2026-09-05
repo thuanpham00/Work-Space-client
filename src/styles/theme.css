@@ -34,8 +34,8 @@
   --color-neutral-950: #09090b;
 
   /* Semantic tokens - LIGHT (default) */
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f4f4f5;
+  --color-bg: #fafafa;
+  --color-bg-secondary: #e9e9f3;
   --color-text: #18181b;
   --color-text-secondary: #71717a;
 
@@ -57,8 +57,8 @@
    ========================================== */
 /* Nếu có class dark thì áp dụng các giá trị của dark mode. vì đã gán biến màu */
 .dark {
-  --color-bg: #09090b;
-  --color-bg-secondary: #18181b;
+  --color-bg: #1e1f22;
+  --color-bg-secondary: #2e2e2f;
   --color-text: #fafafa;
   --color-text-secondary: #a1a1aa;
 

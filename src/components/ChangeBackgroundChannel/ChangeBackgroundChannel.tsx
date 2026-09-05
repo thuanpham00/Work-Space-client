@@ -4,8 +4,6 @@ import { BgColorsOutlined } from "@ant-design/icons";
 import { Button, Modal } from "antd";
 import styles from "./ChangeBackgroundChannel.module.scss";
 
-const DEFAULT_BG_COLOR = "#09090b";
-
 type PresetType = "theme" | "basic";
 
 interface ThemePreset {
@@ -100,31 +98,26 @@ const BG_PRESETS = PRESETS.filter((p) => p.type === "theme");
 
 interface Applied {
   url: string;
-  bgColor: string;
   accent: string;
   presetId?: string;
 }
 
 interface Props {
-  onSave?: (bgColor: string, accent: string, url: string) => void;
-  configChannel?: { backgroundUrl: string; backgroundColor: string; accent: string };
+  onSave?: (url: string, accent: string) => void;
+  configChannel?: { backgroundUrl: string; accent: string };
 }
 
 export default function ChangeBackgroundChannel({ onSave, configChannel }: Props) {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [backgroundUrlDraft, setBackgroundUrlDraft] = useState<string>(configChannel?.backgroundUrl || "");
-  const [backgroundColorDraft, setBackgroundColorDraft] = useState<string>(
-    configChannel?.backgroundColor || "",
-  );
   const [accentDraft, setAccentDraft] = useState<string>(configChannel?.accent || "");
 
   const handlePickPreset = (preset: ThemePreset) => {
     const next: Applied =
       preset.type === "theme" && preset.url
-        ? { url: preset.url, bgColor: "", accent: preset.color, presetId: preset.id }
-        : { url: "", bgColor: DEFAULT_BG_COLOR, accent: preset.color, presetId: preset.id };
+        ? { url: preset.url, accent: preset.color, presetId: preset.id }
+        : { url: "", accent: preset.color, presetId: preset.id };
     setBackgroundUrlDraft?.(next.url);
-    setBackgroundColorDraft?.(next.bgColor);
     setAccentDraft?.(next.accent);
   };
 
@@ -134,14 +127,13 @@ export default function ChangeBackgroundChannel({ onSave, configChannel }: Props
 
   const handleCancel = () => {
     setBackgroundUrlDraft?.(configChannel?.backgroundUrl || ""); // lấy configDraft từ cha - giá trị gốc
-    setBackgroundColorDraft?.(configChannel?.backgroundColor || ""); // lấy configDraft từ cha
     setAccentDraft?.(configChannel?.accent || "");
     setThemeModalOpen(false);
   };
 
   const handleConfirm = () => {
     setThemeModalOpen(false);
-    onSave?.(backgroundUrlDraft || "", backgroundColorDraft || "", accentDraft || "");
+    onSave?.(backgroundUrlDraft || "", accentDraft || "");
   };
 
   return (
@@ -220,7 +212,6 @@ export default function ChangeBackgroundChannel({ onSave, configChannel }: Props
               className={`${styles.preview}`}
               style={
                 {
-                  backgroundColor: backgroundUrlDraft || undefined,
                   backgroundImage: backgroundUrlDraft || undefined ? `url(${backgroundUrlDraft})` : undefined,
                   "--accent": accentDraft || undefined,
                 } as React.CSSProperties

@@ -43,7 +43,7 @@ export interface Channel {
   isPrivate: boolean;
   createdAt: string;
   updatedAt: string;
-  members?: MemberChannel[];
+  members: MemberChannel[];
   config: ChannelConfig;
   nicknames: ChannelMemberNickname[];
 }
@@ -58,6 +58,7 @@ export interface ChannelBody {
 }
 
 export interface MemberChannel {
+  role: RoleMemberChannel;
   joinedAt: string;
   userId: string;
   email: string;
@@ -79,7 +80,6 @@ export interface ChannelConfig {
 
 export interface ChannelSettingsBody {
   backgroundUrl: string;
-  backgroundColor: string;
   accent: string;
 }
 
@@ -97,7 +97,7 @@ export interface ChannelNicknameUpdate {
 }
 
 export interface ChannelNicknamesBody {
-  nicknames: ChannelNicknameUpdate[];
+  nickname: ChannelNicknameUpdate;
 }
 
 export interface ChannelMemberNickname {
@@ -107,4 +107,9 @@ export interface ChannelMemberNickname {
   user: UserType;
   nickname: string;
   updatedAt: string;
+}
+
+export enum RoleMemberChannel {
+  ADMIN = "ADMIN",
+  MEMBER = "MEMBER",
 }

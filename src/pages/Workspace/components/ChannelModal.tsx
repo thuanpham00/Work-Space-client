@@ -91,6 +91,8 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
       width={700}
       confirmLoading={loading}
       onOk={submitForm}
+      centered
+      mask={{ closable: false }}
     >
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
@@ -99,7 +101,7 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
           </Form.Item>
 
           <Col span={12}>
-            <Form.Item label="Category" name="categoryId" rules={rules}>
+            <Form.Item label="Chủ đề" name="categoryId" rules={rules}>
               <Select
                 placeholder="Chọn chủ đề"
                 options={categories.map((category) => ({
@@ -111,19 +113,19 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Type" name="type" rules={rules}>
+            <Form.Item label="Loại" name="type" rules={rules}>
               <Input placeholder="" />
             </Form.Item>
           </Col>
 
           <Col span={24}>
-            <Form.Item label="Name" name="name" rules={rules}>
+            <Form.Item label="Tên kênh" name="name" rules={rules}>
               <Input placeholder="" />
             </Form.Item>
           </Col>
 
           <Col span={24}>
-            <Form.Item label="Description" name="description">
+            <Form.Item label="Mô tả" name="description">
               <Input.TextArea placeholder="" rows={3} />
             </Form.Item>
           </Col>

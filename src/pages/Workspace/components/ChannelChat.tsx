@@ -1,4 +1,7 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from "react";
 import { Phone, Video, Pin, Search, Hash, Lock, PanelRight } from "lucide-react";
 import styles from "./Channel.module.scss";
 import Messages from "../../../components/Messages/Messages";
@@ -9,20 +12,31 @@ import { useChannelStore } from "../../../store/channelStore";
 import { useUserStore } from "../../../store/userStore";
 import { channelApi } from "../../../apis/channel.api";
 import { Spin } from "antd";
-import InfoChannel from "./InfoChannel";
-import type { ChannelMemberNickname } from "../../../types/channel.type";
-
-const PAGE = 1;
-const LIMIT = 50;
-
-interface WorkspaceProps {
-  //
-}
+import InfoChannel from "./InfoChannel/InfoChannel";
+import type { ChannelMemberNickname, MemberChannel } from "../../../types/channel.type";
+import type { Message } from "../../../types/message.type";
+import { useBaseStore } from "../../../store/baseStore";
+import { queryClient } from "../../../main";
+import { LIMIT, PAGE } from "../../../constants/config";
+import type { Attachment } from "../../../types/attachment.type";
 
 export default function ChannelChat() {
   const channelId = useChannelStore((app) => app.channelId);
+  const socket = useBaseStore((app) => app.socket);
   const accessToken = useUserStore((app) => app.accessToken);
   const [showInfoPanel, setShowInfoPanel] = useState(true);
+
+  const [query, setQuery] = useState<QueryBase>({
+    limit: LIMIT,
+    page: PAGE,
+  });
+
+  const [pagination, setPagination] = useState({
+    page: PAGE,
+    total_page: 0,
+  });
+
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const { data: dataChannel } = useQuery({
     queryKey: ["channelWorkspace", channelId, accessToken],
@@ -36,16 +50,90 @@ export default function ChannelChat() {
   const backgroundUrlChannel = dataChannelDetail?.config?.backgroundUrl;
   const backgroundColorChannel = dataChannelDetail?.config?.backgroundColor;
   const nickNamesChannel = dataChannelDetail?.nicknames;
+  const membersChannel = (dataChannelDetail?.members || []) as MemberChannel[];
 
-  const [query, setQuery] = useState<QueryBase>({
-    limit: LIMIT,
-    page: PAGE,
+  const { data: dataMessage } = useQuery({
+    queryKey: ["messageChannel", channelId, query, accessToken],
+    queryFn: () => channelApi.getMessagesChannel(channelId as string, query),
+    enabled: Boolean(channelId),
+    staleTime: 60 * 1000 * 1,
   });
 
-  const [pagination, setPagination] = useState({
-    page: PAGE,
-    total_page: 0,
+  const conversationListData = dataMessage?.data?.data?.messages as Message[];
+  const page = dataMessage?.data?.data?.page as number;
+
+  const total_page = dataMessage?.data?.data?.total_page as number;
+
+  const { data: dataAttachments } = useQuery({
+    queryKey: ["attachmentsChannel", channelId, query, accessToken],
+    queryFn: () => channelApi.getAttachmentsChannel(channelId as string, query),
+    enabled: Boolean(channelId),
+    staleTime: 60 * 1000 * 1,
   });
+
+  const attachmentsData = (dataAttachments?.data?.data?.attachments || []) as Attachment[];
+
+  useEffect(() => {
+    setMessages([]);
+    setQuery({ page: PAGE, limit: LIMIT });
+    setPagination({ page: PAGE, total_page: 0 });
+  }, [channelId]);
+
+  useEffect(() => {
+    if (!conversationListData) return;
+    if (page === PAGE) setMessages(conversationListData);
+    else setMessages((prev) => [...prev, ...conversationListData]);
+    setPagination({ page, total_page });
+  }, [conversationListData, page, total_page]);
+
+  useEffect(() => {
+    if (!socket || !channelId) return;
+
+    const joinChannel = () => {
+      socket.emit("join_channel", channelId);
+    };
+
+    if (socket.connected) {
+      joinChannel(); // đã kết nối thì join channel
+    }
+    // chưa kết nối thì lắng nghe sự kiện "connect" để join channel
+    socket.on("connect", joinChannel);
+
+    const handleChannelSettingsUpdated = () => {
+      queryClient.invalidateQueries({ queryKey: ["channelWorkspace", channelId, accessToken] });
+    };
+
+    const handleChannelAttachmentsUpdated = () => {
+      queryClient.invalidateQueries({ queryKey: ["attachmentsChannel", channelId, query, accessToken] });
+    };
+
+    socket.on("channel_settings_updated", handleChannelSettingsUpdated);
+    socket.on("channel_nicknames_updated", handleChannelSettingsUpdated);
+    socket.on("receive_attachments", handleChannelAttachmentsUpdated);
+
+    socket.on("receive_message", (msg: any) => {
+      setMessages((prev) => [msg, ...prev]);
+      setTimeout(scrollToBottom, 50); // Cuộn mượt về scrollTop = 0
+    });
+
+    return () => {
+      socket.off("connect", joinChannel);
+      socket.off("channel_settings_updated", handleChannelSettingsUpdated);
+      socket.off("channel_nicknames_updated", handleChannelSettingsUpdated);
+      socket.off("receive_attachments", handleChannelAttachmentsUpdated);
+      socket.off("receive_message");
+      if (socket.connected) {
+        socket.emit("leave_channel", channelId);
+      }
+    };
+  }, [socket, channelId, accessToken, query]);
+
+  const scrollToBottom = () => {
+    const scrollableDiv = document.getElementById("scrollableDiv");
+    if (scrollableDiv) {
+      scrollableDiv.scrollTop = 0;
+    }
+  };
 
   const fetchConversationDataMore = () => {
     if (pagination.page < pagination.total_page) {
@@ -112,12 +200,18 @@ export default function ChannelChat() {
       <div className={styles.chatBody}>
         <div className={styles.messagesPane}>
           <Messages
-            messages={[]}
+            messages={messages}
             pagination={pagination}
             fetchConversationDataMore={fetchConversationDataMore}
-            accentDM=""
+            accentDM={accentChannel as string}
+            emptyState={{
+              mode: "group",
+              name: dataChannelDetail.name,
+              subtitle: dataChannelDetail.description,
+              isPrivate: dataChannelDetail.isPrivate,
+            }}
           />
-          <Composer channelId={"123"} />
+          <Composer channelId={channelId} />
         </div>
 
         <div
@@ -129,6 +223,8 @@ export default function ChannelChat() {
             backgroundUrlChannel={backgroundUrlChannel as string}
             backgroundColorChannel={backgroundColorChannel as string}
             nickNames={nickNamesChannel as ChannelMemberNickname[]}
+            attachments={attachmentsData}
+            members={membersChannel}
           />
         </div>
       </div>

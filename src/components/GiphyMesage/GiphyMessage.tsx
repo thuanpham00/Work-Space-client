@@ -1,46 +1,51 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { gf } from "../../utils/giphy";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./GyphyMessage.module.scss";
 import type { TypeDisplayMessage } from "../../types/message.type";
 
-interface GyphyProps {
+interface GiphyProps {
   show: TypeDisplayMessage | null;
   onSubmit: (gif: any) => void;
 }
 
 const LIMIT = 30;
 
-export default function GifPicker({ show, onSubmit }: GyphyProps) {
-  const [gifs, setGifs] = useState([]);
+export default function GifPicker({ show, onSubmit }: GiphyProps) {
+  const [gifs, setGifs] = useState<any[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const loadGifs = async (currentOffset: number) => {
-    if (loading || !hasMore) return;
+  const loadGifs = useCallback(
+    async (currentOffset: number) => {
+      if (loading || !hasMore) return;
 
-    setLoading(true);
+      setLoading(true);
 
-    const res = await gf.trending({
-      offset: currentOffset,
-      limit: LIMIT,
-    });
+      const res = await gf.trending({
+        offset: currentOffset,
+        limit: LIMIT,
+      });
 
-    setGifs((prev) => [...prev, ...res.data]);
+      setGifs((prev) => [...prev, ...res.data]);
 
-    setOffset(currentOffset + LIMIT);
+      setOffset(currentOffset + LIMIT);
 
-    if (res.data.length < LIMIT) {
-      setHasMore(false);
-    }
+      if (res.data.length < LIMIT) {
+        setHasMore(false);
+      }
 
-    setLoading(false);
-  };
+      setLoading(false);
+    },
+    [loading, hasMore],
+  );
 
   useEffect(() => {
     loadGifs(0);
-  }, []);
+  }, [loadGifs]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -59,12 +64,12 @@ export default function GifPicker({ show, onSubmit }: GyphyProps) {
     }
 
     return () => observer.disconnect();
-  }, [offset, loading, hasMore]);
+  }, [offset, loadGifs]);
 
   return (
     <div className={`${styles.wrapper} ${show === "gif" ? styles.show : styles.hide}`}>
       <div className={styles.gifGrid}>
-        {gifs.map((gif) => (
+        {gifs.map((gif: any) => (
           <img
             key={gif.id}
             src={gif.images.fixed_width.url}

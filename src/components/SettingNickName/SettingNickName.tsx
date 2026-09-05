@@ -1,20 +1,20 @@
 import { useCallback, useMemo, useState } from "react";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import MenuItemSetting from "../MenuItemSetting/MenuItem";
 import MemberNicknameRow from "./MemberNicknameRow";
 import type { ChannelNicknameUpdate } from "../../types/channel.type";
 import styles from "./SettingNickName.module.scss";
-import type { MemeberNickname } from "../../pages/Friend/components/InfoUser/sections/CustomizationSection";
+import type { MemberNickname } from "../CustomizeChannel/CustomizeChannel";
 
 interface SettingNickNameProps {
-  members: MemeberNickname[];
-  onSave: (payload: ChannelNicknameUpdate[]) => void | Promise<void>;
+  members: MemberNickname[];
+  onSave: (payload: ChannelNicknameUpdate) => void | Promise<void>;
 }
 
 export default function SettingNickName({ members, onSave }: SettingNickNameProps) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [draftNicknames, setDraftNicknames] = useState<MemeberNickname[]>([]);
+  const [draftNicknames, setDraftNicknames] = useState<MemberNickname[]>([]);
 
   const handleOpen = () => {
     setDraftNicknames(members.map((member) => ({ ...member })));
@@ -25,16 +25,15 @@ export default function SettingNickName({ members, onSave }: SettingNickNameProp
     setModalOpen(false);
   };
 
-  const handleNicknameChange = useCallback((userId: string, nickname: string) => {
-    setDraftNicknames((prev) =>
-      prev.map((member) => (member.userId === userId ? { ...member, nickname } : member)),
-    );
-  }, []);
-
-  const handleSave = async () => {
-    setModalOpen(false);
-    onSave(draftNicknames);
-  };
+  const handleNicknameChange = useCallback(
+    (userId: string, nickname: string) => {
+      setDraftNicknames((prev) =>
+        prev.map((member) => (member.userId === userId ? { ...member, nickname } : member)),
+      );
+      onSave({ userId, nickname });
+    },
+    [onSave],
+  );
 
   const memberRows = useMemo(
     () =>
@@ -62,13 +61,6 @@ export default function SettingNickName({ members, onSave }: SettingNickNameProp
         <p className={styles.modalDesc}>{"Đặt biệt danh riêng cho từng thành viên trong kênh."}</p>
 
         <div className={`${styles.memberList} ${styles.memberListGroup}`}>{memberRows}</div>
-
-        <div className={styles.actions}>
-          <Button onClick={handleCancel}>Huỷ</Button>
-          <Button type="primary" onClick={handleSave}>
-            Lưu
-          </Button>
-        </div>
       </Modal>
     </div>
   );

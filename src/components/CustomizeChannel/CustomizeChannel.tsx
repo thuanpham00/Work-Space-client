@@ -1,46 +1,44 @@
 import { useMemo } from "react";
 import { App } from "antd";
 import type {
+  Channel,
   ChannelDM,
   ChannelMemberNickname,
-  ChannelNicknameUpdate,
   ChannelNicknamesBody,
+  ChannelNicknameUpdate,
   ChannelSettingsBody,
-} from "../../../../../types/channel.type";
-import CollapsibleSection from "../../../../../components/CollapsibleSection/CollapsibleSection";
-import ChangeBackgroundChannel from "../../../../../components/ChangeBackgroundChannel/ChangeBackgroundChannel";
-import SettingNickName from "../../../../../components/SettingNickName/SettingNickName";
+} from "../../types/channel.type";
 import { useMutation } from "react-query";
-import { channelApi } from "../../../../../apis/channel.api";
+import { channelApi } from "../../apis/channel.api";
+import CollapsibleSection from "../CollapsibleSection/CollapsibleSection";
+import ChangeBackgroundChannel from "../ChangeBackgroundChannel/ChangeBackgroundChannel";
+import SettingNickName from "../SettingNickName/SettingNickName";
 
 interface CustomizationSectionProps {
-  channelDMDetail: ChannelDM;
-  onNicknamesSaved?: (nicknames: Record<string, string>) => void;
+  channelDMDetail: ChannelDM | Channel;
   backgroundUrlDM: string;
-  backgroundColorDM: string;
   accentDM: string;
   nickNames: ChannelMemberNickname[];
 }
 
-export type MemeberNickname = {
+export type MemberNickname = {
   userId: string;
   avatar: string;
   fullName: string;
   nickname: string;
 };
 
-const CustomizationSection = ({
+const CustomizeChannel = ({
   channelDMDetail,
   backgroundUrlDM,
-  backgroundColorDM,
   accentDM,
   nickNames,
 }: CustomizationSectionProps) => {
   const { message } = App.useApp();
 
   const configChannel = useMemo(
-    () => ({ backgroundUrl: backgroundUrlDM, backgroundColor: backgroundColorDM, accent: accentDM }),
-    [backgroundUrlDM, backgroundColorDM, accentDM],
+    () => ({ backgroundUrl: backgroundUrlDM, accent: accentDM }),
+    [backgroundUrlDM, accentDM],
   );
 
   const nickNamesChannel = useMemo(() => {
@@ -66,17 +64,12 @@ const CustomizationSection = ({
     },
   });
 
-  const handleThemeChange = (backgroundUrl: string, backgroundColor: string, accent: string) => {
-    updateSettingsMutation.mutate({ backgroundUrl, backgroundColor, accent });
+  const handleThemeChange = (backgroundUrl: string, accent: string) => {
+    updateSettingsMutation.mutate({ backgroundUrl, accent });
   };
 
-  const handleSaveNicknames = (updates: ChannelNicknameUpdate[]) => {
-    console.log(updates);
-    const payload = updates.map((update) => ({
-      userId: update.userId,
-      nickname: update.nickname,
-    }));
-    updateNicknamesMutation.mutate({ nicknames: payload });
+  const handleSaveNicknames = (updates: ChannelNicknameUpdate) => {
+    updateNicknamesMutation.mutate({ nickname: updates });
   };
 
   return (
@@ -90,4 +83,4 @@ const CustomizationSection = ({
   );
 };
 
-export default CustomizationSection;
+export default CustomizeChannel;

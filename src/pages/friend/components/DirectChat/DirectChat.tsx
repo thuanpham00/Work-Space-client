@@ -18,9 +18,7 @@ import { useChannelStore } from "../../../../store/channelStore";
 import { Spin } from "antd";
 import { queryClient } from "../../../../main";
 import type { Attachment } from "../../../../types/attachment.type";
-
-const PAGE = 1;
-const LIMIT = 50;
+import { LIMIT, PAGE } from "../../../../constants/config";
 
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);
@@ -49,9 +47,9 @@ export default function DirectChat() {
     enabled: Boolean(friendId),
     staleTime: 60 * 1000 * 5,
   });
+
   const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
   const backgroundUrlDM = channelDMDetail?.config?.backgroundUrl as string;
-  const backgroundColorDM = channelDMDetail?.config?.backgroundColor as string;
   const accentDM = channelDMDetail?.config?.accent as string;
   const nickNames = channelDMDetail?.nicknames as ChannelMemberNickname[];
 
@@ -123,29 +121,23 @@ export default function DirectChat() {
     socket.on("channel_nicknames_updated", handleChannelSettingsUpdated);
     socket.on("receive_attachments", handleChannelAttachmentsUpdated);
 
-    return () => {
-      socket.off("connect", joinChannel);
-      socket.off("channel_settings_updated", handleChannelSettingsUpdated);
-      socket.off("channel_nicknames_updated", handleChannelSettingsUpdated);
-      socket.off("receive_attachments", handleChannelAttachmentsUpdated);
-      if (socket.connected) {
-        socket.emit("leave_channel", channelId);
-      }
-    };
-  }, [socket, channelId, friendId, accessToken, query]);
-
-  useEffect(() => {
-    if (!socket) return;
-
     socket.on("receive_message", (msg: any) => {
       setMessages((prev) => [msg, ...prev]);
       setTimeout(scrollToBottom, 50); // Cuộn mượt về scrollTop = 0
     });
 
     return () => {
+      socket.off("connect", joinChannel);
+      socket.off("channel_settings_updated", handleChannelSettingsUpdated);
+      socket.off("channel_nicknames_updated", handleChannelSettingsUpdated);
+      socket.off("receive_attachments", handleChannelAttachmentsUpdated);
       socket.off("receive_message");
+
+      if (socket.connected) {
+        socket.emit("leave_channel", channelId);
+      }
     };
-  }, [socket]);
+  }, [socket, channelId, friendId, accessToken, query]);
 
   const scrollToBottom = () => {
     const scrollableDiv = document.getElementById("scrollableDiv");
@@ -217,7 +209,6 @@ export default function DirectChat() {
             backgroundImage: backgroundUrlDM
               ? `linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(${backgroundUrlDM})`
               : undefined,
-            backgroundColor: backgroundColorDM || undefined,
             backgroundPosition: "center",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
@@ -228,6 +219,13 @@ export default function DirectChat() {
             pagination={pagination}
             fetchConversationDataMore={fetchConversationDataMore}
             accentDM={accentDM}
+            emptyState={{
+              mode: "dm",
+              name: displayName,
+              subtitle: channelDMDetail.friend.username,
+              avatar: channelDMDetail.friend.avatar,
+              status: channelDMDetail.friend.status,
+            }}
           />
           <Composer channelId={channelId as string} />
         </div>
@@ -236,7 +234,6 @@ export default function DirectChat() {
           <InfoUser
             channelDMDetail={channelDMDetail}
             backgroundUrlDM={backgroundUrlDM}
-            backgroundColorDM={backgroundColorDM}
             accentDM={accentDM}
             nickNames={nickNames}
             attachments={attachmentsData}

@@ -1,9 +1,9 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Tabs, Image, Tooltip, Empty } from "antd";
 import { Download, FileText, FileImage, FileVideo, FileAudio, FileArchive } from "lucide-react";
-import styles from "./MediaSection.module.scss";
-import CollapsibleSection from "../../../../../components/CollapsibleSection/CollapsibleSection";
-import type { Attachment } from "../../../../../types/attachment.type";
+import styles from "./MediaChannel.module.scss";
+import type { Attachment } from "../../types/attachment.type";
+import CollapsibleSection from "../CollapsibleSection/CollapsibleSection";
 
 const getFileIcon = (mimeType: string): ReactNode => {
   if (mimeType.startsWith("image/")) return <FileImage size={18} />;
@@ -13,7 +13,7 @@ const getFileIcon = (mimeType: string): ReactNode => {
   return <FileText size={18} />;
 };
 
-const MediaSection = ({ attachments }: { attachments: Attachment[] }) => {
+const MediaChannel = ({ attachments }: { attachments: Attachment[] }) => {
   const [activeTab, setActiveTab] = useState("media");
 
   const attachmentsMedia = useMemo(() => {
@@ -101,4 +101,4 @@ const MediaSection = ({ attachments }: { attachments: Attachment[] }) => {
   );
 };
 
-export default MediaSection;
+export default MediaChannel;

@@ -2,12 +2,12 @@ import { useState } from "react";
 import { App, Input, Modal } from "antd";
 import AvatarFallback from "../AvatarFallback/AvatarFallback";
 import styles from "./SettingNickName.module.scss";
-import type { MemeberNickname } from "../../pages/Friend/components/InfoUser/sections/CustomizationSection";
+import type { MemberNickname } from "../CustomizeChannel/CustomizeChannel";
 
 const NICKNAME_MAX_LENGTH = 32;
 
 interface MemberNicknameRowProps {
-  member: MemeberNickname;
+  member: MemberNickname;
   onNicknameChange: (userId: string, nickname: string) => void;
 }
 
@@ -48,7 +48,9 @@ export default function MemberNicknameRow({ member, onNicknameChange }: MemberNi
         <div className={styles.memberFields}>
           <div className={styles.memberMeta}>
             <span className={styles.memberName}>{member.fullName}</span>
-            <span className={`${styles.memberNickname} ${!member.nickname ? styles.memberNicknameEmpty : ""}`}>
+            <span
+              className={`${styles.memberNickname} ${!member.nickname ? styles.memberNicknameEmpty : ""}`}
+            >
               {member.nickname || "Đặt biệt danh"}
             </span>
           </div>

@@ -15,7 +15,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 16px;
+  gap: 12px;
   padding: 4px 0 0;
 
   &:hover {
@@ -31,7 +31,7 @@
   margin-top: 4px;
   display: flex;
   align-items: flex-start;
-  padding-left: 44px;
+  padding-left: 50px;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.02);
@@ -47,12 +47,7 @@
 }
 
 .messageAvatar {
-  img {
-    width: 28px;
-    height: 28px;
-    border-radius: $radius-full;
-    object-fit: cover;
-  }
+  margin-top: 5px;
 }
 
 .messageMeta {
@@ -90,10 +85,15 @@
   color: #fff;
 }
 
-.messageAvatar {
-  width: 28px;
-  height: 28px;
-  border-radius: $radius-full;
-  object-fit: cover;
+.messagesListEmpty {
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.channelHead {
   flex-shrink: 0;
+  width: 100%;
+  padding: $spacing-lg 0 $spacing-xl;
+  display: flex;
+  justify-content: center;
 }

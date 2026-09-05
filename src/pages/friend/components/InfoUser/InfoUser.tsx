@@ -1,28 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
-import type { ChannelDM } from "../../../../types/channel.type";
+import type { ChannelDM, ChannelMemberNickname } from "../../../../types/channel.type";
 import styles from "./InfoUser.module.scss";
 import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
-import CustomizationSection from "./sections/CustomizationSection";
 import PrivacySection from "./sections/PrivacySection";
-import MediaSection from "./sections/MediaSection";
 import { useUserStore } from "../../../../store/userStore";
 import type { Attachment } from "../../../../types/attachment.type";
+import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
+import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
 
 interface InfoUserProps {
   channelDMDetail: ChannelDM;
   backgroundUrlDM: string;
-  backgroundColorDM: string;
   accentDM: string;
-  nickNames: any;
+  nickNames: ChannelMemberNickname[];
   attachments: Attachment[];
 }
 
 export default function InfoUser({
   channelDMDetail,
   backgroundUrlDM,
-  backgroundColorDM,
   accentDM,
   nickNames,
   attachments,
@@ -59,15 +57,14 @@ export default function InfoUser({
         </button>
       </div>
 
-      <CustomizationSection
+      <CustomizeChannel
         channelDMDetail={channelDMDetail}
         backgroundUrlDM={backgroundUrlDM}
-        backgroundColorDM={backgroundColorDM}
         accentDM={accentDM}
         nickNames={nickNames}
       />
 
-      <MediaSection attachments={attachments} />
+      <MediaChannel attachments={attachments} />
 
       <PrivacySection />
 
