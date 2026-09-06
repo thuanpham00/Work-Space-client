@@ -3,25 +3,29 @@ import styles from "./SidebarFriend.module.scss";
 import { List, Plus } from "lucide-react";
 import { useQuery } from "react-query";
 import { friendApi } from "../../../../apis/friend.api";
-import type { FriendResponse, StatusUser } from "../../../../types/friend.type";
+import type { FriendDMChannelResponse, FriendResponse, StatusUser } from "../../../../types/friend.type";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
 import FriendCard from "../../../../components/FriendCard/FriendCard";
 import { StatusRequest } from "../../../../types/user.type";
 
-const FriendItem = ({ friend }: { friend: FriendResponse }) => {
+const FriendItem = ({ friend }: { friend: FriendResponse | FriendDMChannelResponse }) => {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
   const friendId = useChannelStore((app) => app.friendId);
 
-  const displayName = friend.displayName || friend.fullName || friend.username || "Người dùng";
-  const avatar = friend.avatar;
-  const status = (friend?.status || "OFFLINE").toUpperCase();
+  const isTypeFriendDMChannel = typeof friend === "object" && "channelId" in friend;
+
+  const displayName = isTypeFriendDMChannel ? friend.friend.fullName || "" : friend.displayName || "";
+  const avatar = isTypeFriendDMChannel ? friend.friend.avatar || "" : friend.avatar || "";
+  const status = isTypeFriendDMChannel ? (friend.friend.status as StatusUser) : (friend.status as StatusUser);
 
   return (
     <button
       className="w-full"
       onClick={() => {
-        chooseChannelFriend(friend.id, modeListFriend.chat);
+        if (isTypeFriendDMChannel) {
+          chooseChannelFriend(friend.channelId, modeListFriend.chat);
+        }
       }}
     >
       <FriendCard
@@ -44,7 +48,7 @@ export default function SidebarFriend() {
 
   const { data: dataFriends, isLoading } = useQuery({
     queryKey: ["friends", accessToken],
-    queryFn: () => friendApi.getFriends({ status: StatusRequest.ACCEPTED, search: "" }),
+    queryFn: () => friendApi.getStatusFriends({ status: StatusRequest.ACCEPTED, search: "" }),
     staleTime: 1000 * 60 * 15, // 15 minutes
     keepPreviousData: true,
     enabled: Boolean(accessToken),

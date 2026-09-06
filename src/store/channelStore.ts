@@ -19,7 +19,7 @@ type AppStoreType = {
 
   reset: () => void;
 
-  chooseChannelFriend: (friendId: string, mode: ModeListFriend) => void;
+  chooseChannelFriend: (channelId: string, mode: ModeListFriend) => void;
 
   chooseChannelWorkspace: (workspaceId: string, channelId: string) => void;
 };
@@ -40,11 +40,10 @@ export const useChannelStore = create<AppStoreType>()(
         set({ workspaceId });
       },
 
-      chooseChannelFriend: (friendId, modeListFriend) => {
+      chooseChannelFriend: (channelId, modeListFriend) => {
         set({
-          friendId,
           modeListFriend,
-          channelId: "",
+          channelId,
           workspaceId: "",
         });
       },

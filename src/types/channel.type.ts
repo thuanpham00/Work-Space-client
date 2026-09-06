@@ -1,4 +1,4 @@
-import type { UserType } from "./user.type";
+import type { PrivacySettings, UserType } from "./user.type";
 
 export type ChannelDM = {
   id: string;
@@ -66,6 +66,12 @@ export interface MemberChannel {
   displayName: string;
   avatar: string;
   status: string;
+  fullName: string;
+  privacySettings?: PrivacySettings;
+  phone: string;
+  dateOfBirth: string;
+  gender: string;
+  createdAt: string
 }
 
 export interface ChannelConfig {

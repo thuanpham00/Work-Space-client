@@ -1,23 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, App } from "antd";
 import styles from "./StatusUsers.module.scss";
-import {
-  Check,
-  Loader,
-  MessageCircleMore,
-  MoreVertical,
-  Plus,
-  Search,
-  Send,
-  UsersRound,
-  X,
-} from "lucide-react";
+import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
 import { useState } from "react";
 import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { queryClient } from "../../../../main";
-import type { FriendResponse } from "../../../../types/friend.type";
+import type { FriendDMChannelResponse, FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { StatusRequest } from "../../../../types/user.type";
@@ -30,7 +20,32 @@ const statusLabel: Record<StatusRequest, string> = {
   [StatusRequest.RECEIVED]: "Chờ xác nhận",
 };
 
-function FriendRow({
+function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelResponse }) {
+  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
+
+  const avatar = channelFriend.friend.avatar || "";
+  const displayName = channelFriend.friend.fullName || channelFriend.friend.username || "";
+
+  return (
+    <div
+      className={styles.friendRow}
+      onClick={() => {
+        chooseChannelFriend(channelFriend.id, modeListFriend.chat);
+      }}
+    >
+      <div className={styles.friendIdentity}>
+        <AvatarFallback src={avatar} alt={displayName} showStatus={false} />
+
+        <div className={styles.friendMeta}>
+          <div className={styles.friendName}>{displayName}</div>
+          <div className={styles.friendSubtext}>{statusLabel[status]}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FriendStatusRow({
   friend,
   status,
   onAccept,
@@ -41,20 +56,13 @@ function FriendRow({
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
 }) {
-  const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
-
   const avatar = friend.avatar || "";
   const displayName = friend.displayName || friend.fullName || friend.username || "";
   const isReceived = status === StatusRequest.RECEIVED;
   const isRequested = status === StatusRequest.REQUESTED;
 
   return (
-    <div
-      className={styles.friendRow}
-      onClick={() => {
-        chooseChannelFriend(friend.id, modeListFriend.chat);
-      }}
-    >
+    <div className={styles.friendRow}>
       <div className={styles.friendIdentity}>
         <AvatarFallback src={avatar} alt={displayName} showStatus={false} />
 
@@ -91,19 +99,7 @@ function FriendRow({
           </>
         ) : isRequested ? (
           <Button size="small">Đã gửi</Button>
-        ) : (
-          <>
-            <Button
-              onClick={() => {
-                chooseChannelFriend(friend.id, modeListFriend.chat);
-              }}
-              type="text"
-              size="small"
-              icon={<MessageCircleMore size={16} />}
-            />
-            <Button type="text" size="small" icon={<MoreVertical size={16} />} />
-          </>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -111,21 +107,35 @@ function FriendRow({
 
 function FriendStatusPanel({
   status,
-  friends,
+  friends = [],
+  channelsFriends = [],
   isLoading,
   search,
   onSearchChange,
   onAccept,
   onReject,
+  type,
 }: {
   status: StatusRequest;
-  friends: FriendResponse[];
+  friends?: FriendResponse[];
+  channelsFriends?: FriendDMChannelResponse[];
   isLoading: boolean;
   search: string;
   onSearchChange: (value: string) => void;
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
+  type: "statusFriends" | "channelFriends";
 }) {
+  const hasList = type === "statusFriends" ? friends.length > 0 : channelsFriends.length > 0;
+  const isStatusFriends = type === "statusFriends";
+  if (!hasList) {
+    return (
+      <div className={styles.stateBox}>
+        <Empty description="Không có bạn bè trong mục này" />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.panel}>
       <div className={styles.searchBar}>
@@ -141,28 +151,30 @@ function FriendStatusPanel({
 
       <div className={styles.panelHeader}>
         <h3>{statusLabel[status]}</h3>
-        <span>{friends.length}</span>
+        <span>{isStatusFriends ? friends.length : channelsFriends.length}</span>
       </div>
 
       {isLoading ? (
         <div className={styles.stateBox}>
           <Spin />
         </div>
-      ) : friends.length === 0 ? (
-        <div className={styles.stateBox}>
-          <Empty description="Không có bạn bè trong mục này" />
-        </div>
       ) : (
         <div className={styles.friendList}>
-          {friends.map((friend) => (
-            <FriendRow
-              key={friend.id}
-              friend={friend}
-              status={status}
-              onAccept={onAccept}
-              onReject={onReject}
-            />
-          ))}
+          {type === "statusFriends" &&
+            friends.map((friend) => (
+              <FriendStatusRow
+                key={friend.id}
+                friend={friend}
+                status={status}
+                onAccept={onAccept}
+                onReject={onReject}
+              />
+            ))}
+
+          {type === "channelFriends" &&
+            channelsFriends?.map((channelFriend) => (
+              <FriendChannelRow key={channelFriend.channelId} channelFriend={channelFriend} />
+            ))}
         </div>
       )}
     </div>
@@ -182,15 +194,24 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
   const debouncedSearch = useDebounce(search, 500);
 
   // đưa các biến type, accessToken, debouncedSearch vào queryKey để khi các biến này thay đổi thì query sẽ được gọi lại // như dependencies của useEffect
-  const { data: dataFriends, isLoading } = useQuery({
+  const { data: dataFriendStatus, isLoading: isLoadingFriendStatus } = useQuery({
     queryKey: ["friends", type, accessToken, debouncedSearch],
-    queryFn: () => friendApi.getFriends({ status: type, search: debouncedSearch }),
+    queryFn: () => friendApi.getStatusFriends({ status: type, search: debouncedSearch }),
     staleTime: 1000 * 60 * 15, // 15 minutes
     keepPreviousData: true,
-    enabled: Boolean(accessToken),
+    enabled: Boolean(accessToken) && type !== StatusRequest.ONLINE && type !== StatusRequest.ACCEPTED,
   });
 
-  const friends = (dataFriends?.data.data.friends ?? []) as FriendResponse[];
+  const { data: dataChannelsFriends, isLoading: isLoadingChannelsFriends } = useQuery({
+    queryKey: ["friendsChannels", type, accessToken, debouncedSearch],
+    queryFn: () => friendApi.getChannelsFriends({ search: debouncedSearch }),
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    keepPreviousData: true,
+    enabled: Boolean(accessToken) && type === StatusRequest.ACCEPTED,
+  });
+
+  const friendsData = (dataFriendStatus?.data.data.friends ?? []) as FriendResponse[];
+  const channelsFriendsData = (dataChannelsFriends?.data.data.channels ?? []) as FriendDMChannelResponse[];
 
   const [confirmAcceptOpen, setConfirmAcceptOpen] = useState(false);
   const [confirmRejectOpen, setConfirmRejectOpen] = useState(false);
@@ -254,8 +275,9 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       children: (
         <FriendStatusPanel
           status={StatusRequest.ACCEPTED}
-          friends={friends}
-          isLoading={isLoading}
+          channelsFriends={channelsFriendsData}
+          type={"channelFriends"}
+          isLoading={isLoadingChannelsFriends}
           search={search}
           onSearchChange={setSearch}
           onAccept={handleAccept}
@@ -283,8 +305,9 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       children: (
         <FriendStatusPanel
           status={StatusRequest.REQUESTED}
-          friends={friends}
-          isLoading={isLoading}
+          friends={friendsData}
+          type={"statusFriends"}
+          isLoading={isLoadingFriendStatus}
           search={search}
           onSearchChange={setSearch}
           onAccept={handleAccept}
@@ -303,8 +326,9 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       children: (
         <FriendStatusPanel
           status={StatusRequest.RECEIVED}
-          friends={friends}
-          isLoading={isLoading}
+          friends={friendsData}
+          type={"statusFriends"}
+          isLoading={isLoadingFriendStatus}
           search={search}
           onSearchChange={setSearch}
           onAccept={handleAccept}

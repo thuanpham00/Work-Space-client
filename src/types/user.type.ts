@@ -35,16 +35,18 @@ export type UserType = {
   updatedAt: string;
   gender: GenderType;
   receivedFriendRequests?: { status: string }[];
-  privacySettings?: {
-    showEmail: boolean;
-    showPhone: boolean;
-    showBirthday: boolean;
-    showGender: boolean;
-  };
+  privacySettings?: PrivacySettings;
 };
 
 export type ListUserParamsType = {
   page: number;
   limit: number;
   search: string;
+};
+
+export type PrivacySettings = {
+  showEmail: boolean;
+  showPhone: boolean;
+  showBirthday: boolean;
+  showGender: boolean;
 };

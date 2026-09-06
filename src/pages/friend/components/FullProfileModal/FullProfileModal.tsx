@@ -1,11 +1,12 @@
 import React, { useImperativeHandle, useState } from "react";
 import { Modal, Tabs, Button } from "antd";
-import type { ChannelDM } from "../../../../types/channel.type";
+import type { Channel, MemberChannel } from "../../../../types/channel.type";
 import { MessageSquare, UserPlus, MoreHorizontal } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
 import styles from "./FullProfileModal.module.scss";
 import type { StatusUser } from "../../../../types/friend.type";
+import { useUserStore } from "../../../../store/userStore";
 
 export interface FullProfileModalRef {
   openModal: () => void;
@@ -13,19 +14,21 @@ export interface FullProfileModalRef {
 }
 
 interface FullProfileModalProps {
-  channelDMDetail: ChannelDM;
+  channelDMDetail: Channel;
 }
 
 export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfileModalProps>(
   ({ channelDMDetail }, ref) => {
     const [visible, setVisible] = useState(false);
+    const userId = useUserStore((app) => app.user?.id);
+    const infoReceiver = channelDMDetail?.members?.find((member) => member.userId !== userId);
 
     useImperativeHandle(ref, () => ({
       openModal: () => setVisible(true),
       closeModal: () => setVisible(false),
     }));
 
-    const friend = channelDMDetail?.friend;
+    const friend = infoReceiver as MemberChannel;
     if (!friend) return null;
 
     const items = [
@@ -99,7 +102,7 @@ export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfil
                   </div>
                 )}
 
-                {friend.phone && (
+                {friend?.phone && (
                   <div className={styles.infoBlock}>
                     <div className={styles.infoTitle}>Số điện thoại</div>
                     <div className={styles.infoText}>

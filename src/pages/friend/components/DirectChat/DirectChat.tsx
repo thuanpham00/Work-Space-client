@@ -7,7 +7,7 @@ import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
 import { useQuery } from "react-query";
 import { channelApi } from "../../../../apis/channel.api";
-import type { ChannelDM, ChannelMemberNickname } from "../../../../types/channel.type";
+import type { Channel, ChannelMemberNickname } from "../../../../types/channel.type";
 import type { QueryBase } from "../../../../types/query.type";
 import { type Message } from "../../../../types/message.type";
 import Messages from "../../../../components/Messages/Messages";
@@ -23,11 +23,9 @@ import { LIMIT, PAGE } from "../../../../constants/config";
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);
   const socket = useBaseStore((app) => app.socket);
-  const friendId = useChannelStore((app) => app.friendId);
   const channelId = useChannelStore((app) => app.channelId);
+  const userId = useUserStore((app) => app.user?.id);
   const [showInfoPanel, setShowInfoPanel] = useState(true);
-
-  const setChannelId = useChannelStore((app) => app.setChannelId);
 
   const [query, setQuery] = useState<QueryBase>({
     limit: LIMIT,
@@ -42,26 +40,21 @@ export default function DirectChat() {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const { data: dataChannelDM } = useQuery({
-    queryKey: ["channelDM", friendId, accessToken],
-    queryFn: () => channelApi.getDirectMessageChannelDetail(friendId as string),
-    enabled: Boolean(friendId),
+    queryKey: ["channelDM", channelId, accessToken],
+    queryFn: () => channelApi.getChannelDetail(channelId as string),
+    enabled: Boolean(channelId),
     staleTime: 60 * 1000 * 5,
   });
 
-  const channelDMDetail = dataChannelDM?.data?.data?.channel as ChannelDM;
+  const channelDMDetail = dataChannelDM?.data?.data?.channel as Channel;
+
+  const infoReceiver = channelDMDetail?.members?.find((member) => member.userId !== userId);
   const backgroundUrlDM = channelDMDetail?.config?.backgroundUrl as string;
   const accentDM = channelDMDetail?.config?.accent as string;
   const nickNames = channelDMDetail?.nicknames as ChannelMemberNickname[];
 
-  const userId = useUserStore((app) => app.user?.id);
   const nickName = nickNames?.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
-  const displayName = nickName || channelDMDetail?.friend.fullName;
-
-  useEffect(() => {
-    if (channelDMDetail?.id && !channelId) {
-      setChannelId(channelDMDetail.id);
-    }
-  }, [channelDMDetail?.id, channelId, setChannelId]);
+  const displayName = nickName || infoReceiver?.fullName;
 
   const { data: dataMessage } = useQuery({
     queryKey: ["messageChannel", channelId, query, accessToken],
@@ -87,7 +80,7 @@ export default function DirectChat() {
     setMessages([]);
     setQuery({ page: PAGE, limit: LIMIT });
     setPagination({ page: PAGE, total_page: 0 });
-  }, [friendId, channelId]);
+  }, [channelId]);
 
   useEffect(() => {
     if (!conversationListData) return;
@@ -110,7 +103,7 @@ export default function DirectChat() {
     socket.on("connect", joinChannel);
 
     const handleChannelSettingsUpdated = () => {
-      queryClient.invalidateQueries({ queryKey: ["channelDM", friendId, accessToken] });
+      queryClient.invalidateQueries({ queryKey: ["channelDM", accessToken] });
     };
 
     const handleChannelAttachmentsUpdated = () => {
@@ -137,7 +130,7 @@ export default function DirectChat() {
         socket.emit("leave_channel", channelId);
       }
     };
-  }, [socket, channelId, friendId, accessToken, query]);
+  }, [socket, channelId, accessToken, query]);
 
   const scrollToBottom = () => {
     const scrollableDiv = document.getElementById("scrollableDiv");
@@ -222,9 +215,9 @@ export default function DirectChat() {
             emptyState={{
               mode: "dm",
               name: displayName,
-              subtitle: channelDMDetail.friend.username,
-              avatar: channelDMDetail.friend.avatar,
-              status: channelDMDetail.friend.status,
+              subtitle: infoReceiver?.username,
+              avatar: infoReceiver?.avatar,
+              status: infoReceiver?.status,
             }}
           />
           <Composer channelId={channelId as string} />

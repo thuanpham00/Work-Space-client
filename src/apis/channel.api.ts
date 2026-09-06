@@ -18,12 +18,6 @@ export const channelApi = {
     return Http.get<SuccessResponse<{ channel: Channel }>>(`/channels/${channelId}`);
   },
 
-  getDirectMessageChannelDetail: (userId: string) => {
-    return Http.get<SuccessResponse<{ channel: ChannelDM; total: number }>>(
-      `/channels/direct-messages/${userId}`,
-    );
-  },
-
   getMessagesChannel: (channelId: string, params: QueryBase) => {
     return Http.get<
       SuccessResponse<{ messages: Message[]; total_page: number; page: number; limit: number }>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
-import type { ChannelDM, ChannelMemberNickname } from "../../../../types/channel.type";
+import type { Channel, ChannelMemberNickname } from "../../../../types/channel.type";
 import styles from "./InfoUser.module.scss";
 import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
 import PrivacySection from "./sections/PrivacySection";
@@ -11,7 +11,7 @@ import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeC
 import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
 
 interface InfoUserProps {
-  channelDMDetail: ChannelDM;
+  channelDMDetail: Channel;
   backgroundUrlDM: string;
   accentDM: string;
   nickNames: ChannelMemberNickname[];
@@ -28,7 +28,8 @@ export default function InfoUser({
   const modalRef = useRef<FullProfileModalRef>(null);
   const userId = useUserStore((app) => app.user?.id);
   const nickName = channelDMDetail.nicknames.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
-  const displayName = nickName || channelDMDetail.friend.fullName;
+  const infoReceiver = channelDMDetail.members?.find((member) => member.userId !== userId);
+  const displayName = nickName || infoReceiver?.fullName;
 
   return (
     <aside className={styles.profileSidebar}>
@@ -37,10 +38,10 @@ export default function InfoUser({
       <div className={styles.profileAvatarWrapper}>
         <div className={styles.profileAvatarContainer}>
           <AvatarFallback
-            src={channelDMDetail.friend.avatar}
-            alt={channelDMDetail.friend.username}
+            src={infoReceiver?.avatar}
+            alt={infoReceiver?.username}
             size={60}
-            status={channelDMDetail.friend.status as any}
+            status={infoReceiver?.status as any}
             showStatus={false}
             className={styles.avatarOverride}
           />
