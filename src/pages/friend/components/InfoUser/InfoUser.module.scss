@@ -17,6 +17,25 @@
   height: 100px;
   min-height: 100px;
   width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.05) 0%,
+      rgba(0, 0, 0, 0.25) 100%
+    );
+    pointer-events: none;
+  }
+}
+
+.profileBannerFallback {
+  background-color: var(--color-primary);
 }
 
 .profileAvatarWrapper {

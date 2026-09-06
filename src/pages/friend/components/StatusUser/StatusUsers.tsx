@@ -7,7 +7,7 @@ import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { queryClient } from "../../../../main";
-import type { FriendDMChannelResponse, FriendResponse } from "../../../../types/friend.type";
+import { StatusUser, type FriendDMChannelResponse, type FriendResponse } from "../../../../types/friend.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { StatusRequest } from "../../../../types/user.type";
@@ -20,17 +20,29 @@ const statusLabel: Record<StatusRequest, string> = {
   [StatusRequest.RECEIVED]: "Chờ xác nhận",
 };
 
+const userStatusLabel: Record<StatusUser, string> = {
+  [StatusUser.ONLINE]: "Trực tuyến",
+  [StatusUser.BUSY]: "Bận",
+  [StatusUser.OFFLINE]: "Offline",
+};
+
 function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelResponse }) {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
+  const friend = channelFriend.friend;
 
-  const avatar = channelFriend.friend.avatar || "";
-  const displayName = channelFriend.friend.fullName || channelFriend.friend.username || "";
+  if (!friend) return null;
+
+  const avatar = friend.avatar || "";
+  const displayName = friend.fullName || friend.username || "";
+  const subtext = friend.username
+    ? `@${friend.username}`
+    : userStatusLabel[friend.status as StatusUser] ?? "";
 
   return (
     <div
       className={styles.friendRow}
       onClick={() => {
-        chooseChannelFriend(channelFriend.id, modeListFriend.chat);
+        chooseChannelFriend(channelFriend.channelId, modeListFriend.chat);
       }}
     >
       <div className={styles.friendIdentity}>
@@ -38,7 +50,7 @@ function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelRes
 
         <div className={styles.friendMeta}>
           <div className={styles.friendName}>{displayName}</div>
-          <div className={styles.friendSubtext}>{statusLabel[status]}</div>
+          <div className={styles.friendSubtext}>{subtext}</div>
         </div>
       </div>
     </div>
@@ -126,9 +138,17 @@ function FriendStatusPanel({
   onReject: (friendId: string, name: string) => void;
   type: "statusFriends" | "channelFriends";
 }) {
-  const hasList = type === "statusFriends" ? friends.length > 0 : channelsFriends.length > 0;
-  const isStatusFriends = type === "statusFriends";
-  if (!hasList) {
+  const listLength = type === "statusFriends" ? friends.length : channelsFriends.length;
+
+  if (isLoading) {
+    return (
+      <div className={styles.stateBox}>
+        <Spin />
+      </div>
+    );
+  }
+
+  if (listLength === 0) {
     return (
       <div className={styles.stateBox}>
         <Empty description="Không có bạn bè trong mục này" />
@@ -151,32 +171,26 @@ function FriendStatusPanel({
 
       <div className={styles.panelHeader}>
         <h3>{statusLabel[status]}</h3>
-        <span>{isStatusFriends ? friends.length : channelsFriends.length}</span>
+        <span>{listLength}</span>
       </div>
 
-      {isLoading ? (
-        <div className={styles.stateBox}>
-          <Spin />
-        </div>
-      ) : (
-        <div className={styles.friendList}>
-          {type === "statusFriends" &&
-            friends.map((friend) => (
-              <FriendStatusRow
-                key={friend.id}
-                friend={friend}
-                status={status}
-                onAccept={onAccept}
-                onReject={onReject}
-              />
-            ))}
+      <div className={styles.friendList}>
+        {type === "statusFriends" &&
+          friends.map((friend) => (
+            <FriendStatusRow
+              key={friend.id}
+              friend={friend}
+              status={status}
+              onAccept={onAccept}
+              onReject={onReject}
+            />
+          ))}
 
-          {type === "channelFriends" &&
-            channelsFriends?.map((channelFriend) => (
-              <FriendChannelRow key={channelFriend.channelId} channelFriend={channelFriend} />
-            ))}
-        </div>
-      )}
+        {type === "channelFriends" &&
+          channelsFriends.map((channelFriend) => (
+            <FriendChannelRow key={channelFriend.channelId} channelFriend={channelFriend} />
+          ))}
+      </div>
     </div>
   );
 }
@@ -207,11 +221,14 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
     queryFn: () => friendApi.getChannelsFriends({ search: debouncedSearch }),
     staleTime: 1000 * 60 * 15, // 15 minutes
     keepPreviousData: true,
-    enabled: Boolean(accessToken) && type === StatusRequest.ACCEPTED,
+    enabled: Boolean(accessToken) && (type === StatusRequest.ACCEPTED || type === StatusRequest.ONLINE),
   });
 
   const friendsData = (dataFriendStatus?.data.data.friends ?? []) as FriendResponse[];
   const channelsFriendsData = (dataChannelsFriends?.data.data.channels ?? []) as FriendDMChannelResponse[];
+  const onlineChannelsFriends = channelsFriendsData.filter(
+    (channel) => channel.friend?.status === StatusUser.ONLINE,
+  );
 
   const [confirmAcceptOpen, setConfirmAcceptOpen] = useState(false);
   const [confirmRejectOpen, setConfirmRejectOpen] = useState(false);
@@ -241,6 +258,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       await acceptedFriend.mutateAsync(selectedFriend.id);
       message.success(`Đã đồng ý kết bạn với ${selectedFriend.name}`);
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+      queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
       setConfirmAcceptOpen(false);
       setSelectedFriend(null);
     } catch (error) {
@@ -255,6 +273,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
       await rejectedFriend.mutateAsync(selectedFriend.id);
       message.success(`Đã từ chối kết bạn với ${selectedFriend.name}`);
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+      queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
       setConfirmRejectOpen(false);
       setSelectedFriend(null);
     } catch (error) {
@@ -293,7 +312,18 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
           <span>Online</span>
         </div>
       ),
-      children: <div>1</div>,
+      children: (
+        <FriendStatusPanel
+          status={StatusRequest.ONLINE}
+          channelsFriends={onlineChannelsFriends}
+          type="channelFriends"
+          isLoading={isLoadingChannelsFriends}
+          search={search}
+          onSearchChange={setSearch}
+          onAccept={handleAccept}
+          onReject={handleReject}
+        />
+      ),
     },
     {
       key: StatusRequest.REQUESTED,

@@ -6,8 +6,8 @@ interface FriendCardProps {
   displayName: string;
   avatar: string;
   status: StatusUser;
-  selectedFriend: string;
-  friendId: string;
+  selectedChannel: string;
+  channelId: string;
   showStatus: boolean;
   username?: string;
 }
@@ -16,13 +16,13 @@ export default function FriendCard({
   displayName,
   avatar,
   status,
-  selectedFriend,
-  friendId,
+  selectedChannel,
+  channelId,
   username,
   showStatus = false,
 }: FriendCardProps) {
   return (
-    <div className={`${styles.friendItem} ${selectedFriend === friendId ? styles.friendItemActive : ""}`}>
+    <div className={`${styles.friendItem} ${selectedChannel === channelId ? styles.friendItemActive : ""}`}>
       <AvatarFallback src={avatar} alt={displayName} status={status as StatusUser} showStatus={showStatus} />
 
       <div className={styles.friendInfo}>

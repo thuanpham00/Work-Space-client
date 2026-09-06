@@ -103,7 +103,7 @@ export default function DirectChat() {
     socket.on("connect", joinChannel);
 
     const handleChannelSettingsUpdated = () => {
-      queryClient.invalidateQueries({ queryKey: ["channelDM", accessToken] });
+      queryClient.invalidateQueries({ queryKey: ["channelDM", channelId, accessToken] });
     };
 
     const handleChannelAttachmentsUpdated = () => {

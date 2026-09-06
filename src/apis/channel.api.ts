@@ -3,7 +3,6 @@ import type {
   Channel,
   ChannelBody,
   ChannelConfig,
-  ChannelDM,
   ChannelNicknamesBody,
   ChannelSettingsBody,
 } from "../types/channel.type";

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { Channel, ChannelMemberNickname } from "../../../../types/channel.type";
 import styles from "./InfoUser.module.scss";
@@ -31,9 +31,22 @@ export default function InfoUser({
   const infoReceiver = channelDMDetail.members?.find((member) => member.userId !== userId);
   const displayName = nickName || infoReceiver?.fullName;
 
+  const bannerStyle = useMemo(() => {
+    if (backgroundUrlDM) {
+      return { backgroundImage: `url(${backgroundUrlDM})` };
+    }
+    if (accentDM) {
+      return { backgroundColor: accentDM };
+    }
+    return undefined;
+  }, [backgroundUrlDM, accentDM]);
+
   return (
     <aside className={styles.profileSidebar}>
-      <div className={styles.profileBanner} style={{ backgroundColor: "#2a4d38" }}></div>
+      <div
+        className={`${styles.profileBanner} ${!backgroundUrlDM && !accentDM ? styles.profileBannerFallback : ""}`}
+        style={bannerStyle}
+      />
 
       <div className={styles.profileAvatarWrapper}>
         <div className={styles.profileAvatarContainer}>
@@ -69,7 +82,12 @@ export default function InfoUser({
 
       <PrivacySection />
 
-      <FullProfileModal ref={modalRef} channelDMDetail={channelDMDetail} />
+      <FullProfileModal
+        ref={modalRef}
+        channelDMDetail={channelDMDetail}
+        backgroundUrlDM={backgroundUrlDM}
+        accentDM={accentDM}
+      />
     </aside>
   );
 }

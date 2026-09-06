@@ -3,37 +3,33 @@ import styles from "./SidebarFriend.module.scss";
 import { List, Plus } from "lucide-react";
 import { useQuery } from "react-query";
 import { friendApi } from "../../../../apis/friend.api";
-import type { FriendDMChannelResponse, FriendResponse, StatusUser } from "../../../../types/friend.type";
+import type { FriendDMChannelResponse, StatusUser } from "../../../../types/friend.type";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
 import FriendCard from "../../../../components/FriendCard/FriendCard";
 import { StatusRequest } from "../../../../types/user.type";
 
-const FriendItem = ({ friend }: { friend: FriendResponse | FriendDMChannelResponse }) => {
+const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse }) => {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
-  const friendId = useChannelStore((app) => app.friendId);
+  const channelId = useChannelStore((app) => app.channelId);
 
-  const isTypeFriendDMChannel = typeof friend === "object" && "channelId" in friend;
-
-  const displayName = isTypeFriendDMChannel ? friend.friend.fullName || "" : friend.displayName || "";
-  const avatar = isTypeFriendDMChannel ? friend.friend.avatar || "" : friend.avatar || "";
-  const status = isTypeFriendDMChannel ? (friend.friend.status as StatusUser) : (friend.status as StatusUser);
+  const displayName = channelFriend.friend.fullName || "";
+  const avatar = channelFriend.friend.avatar || "";
+  const status = channelFriend.friend.status as StatusUser;
 
   return (
     <button
       className="w-full"
       onClick={() => {
-        if (isTypeFriendDMChannel) {
-          chooseChannelFriend(friend.channelId, modeListFriend.chat);
-        }
+        chooseChannelFriend(channelFriend.channelId, modeListFriend.chat);
       }}
     >
       <FriendCard
         displayName={displayName}
         avatar={avatar}
         status={status as StatusUser}
-        friendId={friend.id}
-        selectedFriend={friendId}
+        selectedChannel={channelId}
+        channelId={channelFriend.channelId}
         showStatus={true}
       />
     </button>
@@ -46,15 +42,15 @@ export default function SidebarFriend() {
   const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
 
-  const { data: dataFriends, isLoading } = useQuery({
-    queryKey: ["friends", accessToken],
-    queryFn: () => friendApi.getStatusFriends({ status: StatusRequest.ACCEPTED, search: "" }),
+  const { data: dataChannelsFriends, isLoading } = useQuery({
+    queryKey: ["friendsChannels", StatusRequest.ACCEPTED, accessToken, ""],
+    queryFn: () => friendApi.getChannelsFriends({ search: "" }),
     staleTime: 1000 * 60 * 15, // 15 minutes
     keepPreviousData: true,
     enabled: Boolean(accessToken),
   });
 
-  const friends = (dataFriends?.data.data.friends ?? []) as FriendResponse[];
+  const channelsFriends = (dataChannelsFriends?.data.data.channels ?? []) as FriendDMChannelResponse[];
 
   return (
     <div className={styles.layoutInner}>
@@ -83,10 +79,12 @@ export default function SidebarFriend() {
           <div className="flex items-center justify-center py-4 w-full">
             <Spin size="small" />
           </div>
-        ) : friends.length === 0 ? (
+        ) : channelsFriends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
         ) : (
-          friends.map((friend) => <FriendItem key={friend.id} friend={friend} />)
+          channelsFriends.map((channelFriend) => (
+            <FriendItem key={channelFriend.channelId} channelFriend={channelFriend} />
+          ))
         )}
       </div>
     </div>
