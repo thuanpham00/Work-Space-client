@@ -47,12 +47,11 @@ export default function DirectChat() {
   });
 
   const channelDMDetail = dataChannelDM?.data?.data?.channel as Channel;
-
-  const infoReceiver = channelDMDetail?.members?.find((member) => member.userId !== userId);
   const backgroundUrlDM = channelDMDetail?.config?.backgroundUrl as string;
   const accentDM = channelDMDetail?.config?.accent as string;
   const nickNames = channelDMDetail?.nicknames as ChannelMemberNickname[];
 
+  const infoReceiver = channelDMDetail?.members?.find((member) => member.userId !== userId);
   const nickName = nickNames?.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
   const displayName = nickName || infoReceiver?.fullName;
 
@@ -214,8 +213,8 @@ export default function DirectChat() {
             accentDM={accentDM}
             emptyState={{
               mode: "dm",
-              name: displayName,
-              subtitle: infoReceiver?.username,
+              name: displayName || "",
+              subtitle: infoReceiver?.username || "",
               avatar: infoReceiver?.avatar,
               status: infoReceiver?.status,
             }}

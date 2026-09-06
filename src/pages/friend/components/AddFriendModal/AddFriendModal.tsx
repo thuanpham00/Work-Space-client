@@ -1,19 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Divider, Empty, Input, List, App, Modal } from "antd";
-import { SearchOutlined, UserAddOutlined } from "@ant-design/icons";
-import React, { useEffect, useImperativeHandle, useState } from "react";
+import { Empty, Input, List, Modal } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import styles from "./AddFriendModal.module.scss";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { userAPI } from "../../../../apis/user.api";
-import type { ListUserParamsType, UserType } from "../../../../types/user.type";
+import type { ListUserParamsType } from "../../../../types/user.type";
 import { useDebounce } from "../../../../Hooks/useDebounce";
-import { X } from "lucide-react";
-import { friendApi } from "../../../../apis/friend.api";
+import { FriendStatusRow } from "../StatusUser/StatusUsers";
+import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
 import { queryClient } from "../../../../main";
-import FriendCard from "../../../../components/FriendCard/FriendCard";
-import type { StatusUser } from "../../../../types/friend.type";
-import dayjs from "dayjs";
-import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 
 export interface AddFriendRef {
   handleOpen: () => void;
@@ -27,15 +23,10 @@ interface AddFriendModalProps {
 export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps>(
   ({ onClose, onSubmitOk }, ref) => {
     const [visible, setVisible] = useState(false);
-    const [confirmVisible, setConfirmVisible] = useState(false);
-
-    const { message } = App.useApp();
-
     const [search, setSearch] = useState("");
-    const [sending, setSending] = useState(false);
     const [query, setQuery] = useState<ListUserParamsType>({ page: 1, limit: 10, search: "" });
-    const [addressId, setAddressId] = useState<string | null>(null);
-    const [typeStatus, setTypeStatus] = useState<"add" | "cancel">("add");
+    const [selectedUserId, setSelectedUserId] = useState("");
+    const profileModalRef = useRef<FullProfileModalRef>(null);
 
     useImperativeHandle(
       ref,
@@ -67,204 +58,68 @@ export const AddFriendModal = React.forwardRef<AddFriendRef, AddFriendModalProps
       }));
     }, [debouncedSearch]);
 
-    useEffect(() => {
-      if (listUser.length > 0) {
-        setAddressId(listUser[0].id);
-      }
-    }, [listUser]);
-
-    const addFriendMutation = useMutation({
-      mutationFn: (friendId: string) => friendApi.addFriend(friendId),
-    });
-
-    const handleSendRequest = async () => {
-      if (!addressId) return;
-      setSending(true);
-      try {
-        await addFriendMutation.mutateAsync(addressId);
-        message.success(
-          `Đã ${typeStatus === "add" ? "gửi lời mời kết bạn" : "hủy lời mời"} tới ${dataUser?.data.data.user.fullName}`,
-        );
-        setConfirmVisible(false);
-        refetch();
-        onSubmitOk?.();
-        queryClient.invalidateQueries({ queryKey: ["friends"] });
-      } catch (error) {
-        console.log(error);
-        message.error(`Có lỗi xảy ra khi ${typeStatus === "add" ? "gửi lời mời kết bạn" : "hủy lời mời"}`);
-      } finally {
-        setSending(false);
-      }
-    };
-
-    const { data: dataUser, refetch } = useQuery({
-      queryKey: ["infoUser", addressId],
-      queryFn: () => userAPI.infoUserStatus(addressId as string),
-      staleTime: 1000 * 60 * 5,
-      enabled: !!addressId,
-    });
-
-    const selectedUser = dataUser?.data.data.user as UserType;
-
     const handleClose = () => {
       onClose?.();
       setVisible(false);
-      setConfirmVisible(false);
       setSearch("");
-      setSending(false);
-      setAddressId(null);
-      setTypeStatus("add");
+      setSelectedUserId("");
+    };
+
+    const handleOpenProfile = (userId: string) => {
+      flushSync(() => {
+        setSelectedUserId(userId);
+      });
+      profileModalRef.current?.openModal();
+    };
+
+    const handleFriendRequestChange = () => {
+      queryClient.invalidateQueries({ queryKey: ["listUser"] });
+      onSubmitOk?.();
     };
 
     return (
-      <div>
+      <>
         <Modal
           onCancel={handleClose}
           open={visible}
           title="Thêm bạn bè"
           style={{ top: 20 }}
-          width={1200}
+          width={600}
           footer={null}
-          maskClosable={false}
+          mask={{ closable: false }}
         >
-          <div style={{ display: "flex", gap: 16, minHeight: 420 }}>
-            <div style={{ flex: "0 0 65%" }}>
-              <Input
-                prefix={<SearchOutlined />}
-                placeholder="Tìm kiếm theo tên hoặc username"
-                allowClear
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <div style={{ marginTop: 12, fontSize: 14, color: "#888" }}>Kết quả tìm thấy: {total}</div>
-              <List
-                style={{ marginTop: 12, maxHeight: 500, overflowY: "auto" }}
-                dataSource={listUser}
-                className={styles.list}
-                renderItem={(u) => {
-                  return (
-                    <List.Item onClick={() => setAddressId(u.id)}>
-                      <FriendCard
-                        displayName={u.fullName}
-                        avatar={u.avatar}
-                        status={u.status as StatusUser}
-                        selectedFriend={addressId}
-                        friendId={u.id}
-                        showStatus={true}
-                        username={u.username}
-                      />
-                    </List.Item>
-                  );
-                }}
-                locale={{ emptyText: <Empty description="Không tìm thấy user" /> }}
-              />
-            </div>
-
-            <div style={{ flex: "0 0 calc(35% - 16px)", paddingLeft: 16, borderLeft: "1px solid #f0f0f0" }}>
-              {dataUser ? (
-                <div>
-                  <div className="flex items-center justify-center flex-col">
-                    <AvatarFallback
-                      src={selectedUser.avatar}
-                      alt={selectedUser.fullName}
-                      size={80}
-                      showStatus={false}
-                      className={styles.avatarOverride}
-                    />
-                    <h3 style={{ marginTop: 12, marginBottom: 4 }}>{selectedUser.fullName}</h3>
-                    <div style={{ color: "#888" }}>@{selectedUser.username}</div>
-                  </div>
-                  <Divider style={{ margin: "16px 0" }} />
-                  <p style={{ marginBottom: 8 }}>
-                    <b>Email:</b>{" "}
-                    {selectedUser.email
-                      ? selectedUser.privacySettings?.showEmail
-                        ? selectedUser.email
-                        : "********"
-                      : "-"}
-                  </p>
-                  <p style={{ marginBottom: 8 }}>
-                    <b>Phone:</b>{" "}
-                    {selectedUser.phone
-                      ? selectedUser.privacySettings?.showPhone
-                        ? selectedUser.phone
-                        : "********"
-                      : "-"}
-                  </p>
-                  <p style={{ marginBottom: 8 }}>
-                    <b>Bio:</b> {selectedUser.bio ?? "-"}
-                  </p>
-                  <p style={{ marginBottom: 8 }}>
-                    <b>Birthday:</b>{" "}
-                    {selectedUser.dateOfBirth
-                      ? selectedUser.privacySettings?.showBirthday
-                        ? dayjs(selectedUser.dateOfBirth as string).format("DD/MM/YYYY")
-                        : "********"
-                      : "-"}
-                  </p>
-                  <p style={{ marginBottom: 8 }}>
-                    <b>Gender:</b>{" "}
-                    {selectedUser.gender
-                      ? selectedUser.privacySettings?.showGender
-                        ? selectedUser.gender
-                        : "********"
-                      : "-"}
-                  </p>
-                  <Divider style={{ margin: "16px 0" }} />
-
-                  {selectedUser.receivedFriendRequests && selectedUser.receivedFriendRequests.length > 0 ? (
-                    <>
-                      <Button
-                        block
-                        type="primary"
-                        loading={sending}
-                        onClick={() => {
-                          setTypeStatus("cancel");
-                          setConfirmVisible(true);
-                        }}
-                      >
-                        <X />
-                        Hủy lời mời
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      type="primary"
-                      icon={<UserAddOutlined />}
-                      block
-                      loading={sending}
-                      onClick={() => {
-                        setTypeStatus("add");
-                        setConfirmVisible(true);
-                      }}
-                    >
-                      Kết bạn
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <Empty description="Chọn user bên trái để xem chi tiết" style={{ marginTop: 80 }} />
+          <div className={styles.searchSection}>
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder="Tìm kiếm theo tên hoặc username"
+              allowClear
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className={styles.resultCount}>Kết quả tìm thấy: {total}</div>
+            <List
+              dataSource={listUser}
+              className={`${styles.list} ${styles.listWrapper}`}
+              renderItem={(u) => (
+                <List.Item className={styles.listItem} onClick={() => handleOpenProfile(u.id)}>
+                  <FriendStatusRow friend={u} />
+                </List.Item>
               )}
-            </div>
+              locale={{ emptyText: <Empty description="Không tìm thấy user" /> }}
+            />
           </div>
         </Modal>
 
-        <Modal
-          open={confirmVisible}
-          title={typeStatus === "add" ? "Xác nhận gửi lời mời kết bạn" : "Xác nhận hủy lời mời kết bạn"}
-          onCancel={() => setConfirmVisible(false)}
-          onOk={handleSendRequest}
-          okText={typeStatus === "add" ? "Gửi kết bạn" : "Hủy lời mời"}
-          cancelText="Hủy"
-          confirmLoading={sending}
-          destroyOnClose
-        >
-          <p style={{ marginBottom: 0 }}>
-            Xác nhận {typeStatus === "add" ? "Gửi lời mời kết bạn" : "Hủy lời mời"} tới{" "}
-            <b>{selectedUser?.fullName}</b> không?
-          </p>
-        </Modal>
-      </div>
+        <FullProfileModal
+          ref={profileModalRef}
+          userId={selectedUserId}
+          enableFriendRequest
+          onFriendRequestChange={handleFriendRequestChange}
+          onMessageClick={handleClose}
+        />
+      </>
     );
   },
 );
+
+AddFriendModal.displayName = "AddFriendModal";

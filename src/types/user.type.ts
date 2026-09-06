@@ -34,7 +34,7 @@ export type UserType = {
   createdAt: string;
   updatedAt: string;
   gender: GenderType;
-  receivedFriendRequests?: { status: string }[];
+  friendStatus?: StatusRequest | null;
   privacySettings?: PrivacySettings;
 };
 

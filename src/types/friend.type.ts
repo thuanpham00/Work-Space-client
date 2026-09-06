@@ -32,28 +32,28 @@ export interface FriendDMChannelResponse {
     id: string;
     username: string;
     displayName: string;
-    avatar: string | null;
+    avatar: string;
     status: string;
     fullName: string;
     createdAt: string;
-  } | null;
+  };
   lastMessage: {
     id: string;
     channelId: string;
     senderId: string;
-    content: string | null;
+    content: string;
     messageType: string;
-    replyToId: string | null;
+    replyToId: string;
     createdAt: string;
     updatedAt: string;
-    deletedAt: string | null;
+    deletedAt: string;
     sender: {
       id: string;
       username: string;
       displayName: string;
-      avatar: string | null;
+      avatar: string;
       status: string;
       fullName: string;
     };
-  } | null;
+  };
 }

@@ -16,6 +16,7 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
   const displayName = channelFriend.friend.fullName || "";
   const avatar = channelFriend.friend.avatar || "";
   const status = channelFriend.friend.status as StatusUser;
+  const lastMessage = channelFriend.lastMessage?.content || "";
 
   return (
     <button
@@ -28,9 +29,10 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
         displayName={displayName}
         avatar={avatar}
         status={status as StatusUser}
+        showStatus={true}
         selectedChannel={channelId}
         channelId={channelFriend.channelId}
-        showStatus={true}
+        lastMessage={lastMessage}
       />
     </button>
   );

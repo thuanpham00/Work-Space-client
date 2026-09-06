@@ -52,7 +52,7 @@ export default function InfoUser({
         <div className={styles.profileAvatarContainer}>
           <AvatarFallback
             src={infoReceiver?.avatar}
-            alt={infoReceiver?.username}
+            alt={infoReceiver?.username || ""}
             size={60}
             status={infoReceiver?.status as any}
             showStatus={false}
@@ -84,7 +84,7 @@ export default function InfoUser({
 
       <FullProfileModal
         ref={modalRef}
-        channelDMDetail={channelDMDetail}
+        userId={infoReceiver?.userId || ""}
         backgroundUrlDM={backgroundUrlDM}
         accentDM={accentDM}
       />

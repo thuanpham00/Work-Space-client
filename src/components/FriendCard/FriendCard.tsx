@@ -6,10 +6,11 @@ interface FriendCardProps {
   displayName: string;
   avatar: string;
   status: StatusUser;
-  selectedChannel: string;
-  channelId: string;
+  selectedChannel?: string;
+  channelId?: string;
   showStatus: boolean;
   username?: string;
+  lastMessage?: string;
 }
 
 export default function FriendCard({
@@ -20,6 +21,7 @@ export default function FriendCard({
   channelId,
   username,
   showStatus = false,
+  lastMessage,
 }: FriendCardProps) {
   return (
     <div className={`${styles.friendItem} ${selectedChannel === channelId ? styles.friendItemActive : ""}`}>
@@ -28,6 +30,7 @@ export default function FriendCard({
       <div className={styles.friendInfo}>
         <span className={styles.friendItemName}>{displayName}</span>
         {username && <span className={styles.friendItemUserName}>@{username}</span>}
+        {lastMessage && <span className={styles.friendItemLastMessage}>{lastMessage}</span>}
       </div>
     </div>
   );

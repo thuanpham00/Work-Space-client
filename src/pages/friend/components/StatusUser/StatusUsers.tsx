@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, App } from "antd";
 import styles from "./StatusUsers.module.scss";
 import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
@@ -26,7 +25,7 @@ const userStatusLabel: Record<StatusUser, string> = {
   [StatusUser.OFFLINE]: "Offline",
 };
 
-function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelResponse }) {
+export function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelResponse }) {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
   const friend = channelFriend.friend;
 
@@ -36,7 +35,7 @@ function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelRes
   const displayName = friend.fullName || friend.username || "";
   const subtext = friend.username
     ? `@${friend.username}`
-    : userStatusLabel[friend.status as StatusUser] ?? "";
+    : (userStatusLabel[friend.status as StatusUser] ?? "");
 
   return (
     <div
@@ -57,19 +56,20 @@ function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMChannelRes
   );
 }
 
-function FriendStatusRow({
+export function FriendStatusRow({
   friend,
   status,
   onAccept,
   onReject,
 }: {
   friend: FriendResponse;
-  status: StatusRequest;
-  onAccept: (friendId: string, name: string) => void;
-  onReject: (friendId: string, name: string) => void;
+  status?: StatusRequest;
+  onAccept?: (friendId: string, name: string) => void;
+  onReject?: (friendId: string, name: string) => void;
 }) {
   const avatar = friend.avatar || "";
-  const displayName = friend.displayName || friend.fullName || friend.username || "";
+  const displayName = friend.fullName || "";
+  const username = friend.username || "";
   const isReceived = status === StatusRequest.RECEIVED;
   const isRequested = status === StatusRequest.REQUESTED;
 
@@ -80,7 +80,7 @@ function FriendStatusRow({
 
         <div className={styles.friendMeta}>
           <div className={styles.friendName}>{displayName}</div>
-          <div className={styles.friendSubtext}>{statusLabel[status]}</div>
+          <div className={styles.friendSubtext}>@{username}</div>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ function FriendStatusRow({
               icon={<Check size={14} />}
               onClick={(e) => {
                 e.stopPropagation();
-                onAccept(friend.id, displayName);
+                onAccept?.(friend.id, displayName);
               }}
             >
               Chấp nhận
@@ -103,7 +103,7 @@ function FriendStatusRow({
               icon={<X size={14} />}
               onClick={(e) => {
                 e.stopPropagation();
-                onReject(friend.id, displayName);
+                onReject?.(friend.id, displayName);
               }}
             >
               Từ chối

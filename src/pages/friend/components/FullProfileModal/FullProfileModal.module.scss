@@ -10,12 +10,11 @@
   }
 
   :global(.ant-modal-close) {
-    top: $spacing-sm;
-    right: $spacing-sm;
+    top: 3px;
+    right: 1px;
     width: 32px;
     height: 32px;
     border-radius: $radius-full;
-    background-color: rgba(0, 0, 0, 0.35);
     transition: background-color $transition-fast;
 
     &:hover {
@@ -54,11 +53,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.05) 0%,
-      rgba(0, 0, 0, 0.35) 100%
-    );
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.35) 100%);
     pointer-events: none;
   }
 }
@@ -196,7 +191,9 @@
   border: none !important;
   color: var(--color-text-secondary) !important;
   border-radius: $radius-full !important;
-  transition: background-color $transition-fast, color $transition-fast;
+  transition:
+    background-color $transition-fast,
+    color $transition-fast;
 
   &:hover {
     background-color: var(--color-bg-secondary) !important;
@@ -329,6 +326,53 @@
   margin: 0;
   max-width: 240px;
   line-height: 1.5;
+}
+
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  background-color: var(--color-bg);
+}
+
+.actionsFriendRequest {
+  width: 100%;
+  padding: 0 $spacing-lg;
+}
+
+.friendRequestBtn {
+  width: 100%;
+  border-radius: $radius-full !important;
+  font-weight: 600;
+  height: 38px;
+}
+
+.friendActionsRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+
+  .friendRequestBtn {
+    flex: 1;
+    width: auto;
+  }
+
+  .messageBtn {
+    max-width: none;
+  }
+}
+
+.friendRequestAccepted {
+  color: var(--color-text-secondary) !important;
+  background-color: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-bg-secondary) !important;
+  cursor: default;
+}
+
+.confirmText {
+  margin: 0;
 }
 
 @include respond-to("xs") {
