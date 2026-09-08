@@ -26,10 +26,14 @@ type UnreadStoreType = {
  *  [1]: {
  *    workspaceId: 1,
  *    latestMessageId: 1,
+ *    count: 0
+ *    type: "dm" | "workspace"
  *  },
  *  [2]: {
  *    workspaceId: 1,
  *    latestMessageId: 2,
+ *    count: 0
+ *    type: "dm" | "workspace"
  *  }
  * }
  */
@@ -51,7 +55,7 @@ export const useUnreadStore = create<UnreadStoreType>((set, get) => ({
 
   markRead: (channelId: string) => {
     set((state) => {
-      if (state.byChannelId[channelId]) return state;
+      if (!state.byChannelId[channelId]) return state;
 
       const next = { ...state.byChannelId };
       delete next[channelId]; // là toán tử dùng để xóa cặp key / value trong object

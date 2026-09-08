@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/immutability */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
 import { Phone, Video, Pin, Search, Hash, Lock, PanelRight } from "lucide-react";
@@ -15,14 +13,12 @@ import { Spin } from "antd";
 import InfoChannel from "./InfoChannel/InfoChannel";
 import type { ChannelMemberNickname, MemberChannel } from "../../../types/channel.type";
 import type { Message } from "../../../types/message.type";
-import { useBaseStore } from "../../../store/baseStore";
-import { queryClient } from "../../../main";
 import { LIMIT, PAGE } from "../../../constants/config";
 import type { Attachment } from "../../../types/attachment.type";
+import { useChannelSocket } from "../../../Hooks/useChannelSocket";
 
 export default function ChannelChat() {
   const channelId = useChannelStore((app) => app.channelId);
-  const socket = useBaseStore((app) => app.socket);
   const accessToken = useUserStore((app) => app.accessToken);
   const [showInfoPanel, setShowInfoPanel] = useState(true);
 
@@ -61,7 +57,6 @@ export default function ChannelChat() {
 
   const conversationListData = dataMessage?.data?.data?.messages as Message[];
   const page = dataMessage?.data?.data?.page as number;
-
   const total_page = dataMessage?.data?.data?.total_page as number;
 
   const { data: dataAttachments } = useQuery({
@@ -86,48 +81,6 @@ export default function ChannelChat() {
     setPagination({ page, total_page });
   }, [conversationListData, page, total_page]);
 
-  useEffect(() => {
-    if (!socket || !channelId) return;
-
-    const joinChannel = () => {
-      socket.emit("join_channel", channelId);
-    };
-
-    if (socket.connected) {
-      joinChannel(); // đã kết nối thì join channel
-    }
-    // chưa kết nối thì lắng nghe sự kiện "connect" để join channel
-    socket.on("connect", joinChannel);
-
-    const handleChannelSettingsUpdated = () => {
-      queryClient.invalidateQueries({ queryKey: ["channelWorkspace", channelId, accessToken] });
-    };
-
-    const handleChannelAttachmentsUpdated = () => {
-      queryClient.invalidateQueries({ queryKey: ["attachmentsChannel", channelId, query, accessToken] });
-    };
-
-    socket.on("channel_settings_updated", handleChannelSettingsUpdated);
-    socket.on("channel_nicknames_updated", handleChannelSettingsUpdated);
-    socket.on("receive_attachments", handleChannelAttachmentsUpdated);
-
-    socket.on("receive_message", (msg: any) => {
-      setMessages((prev) => [msg, ...prev]);
-      setTimeout(scrollToBottom, 50); // Cuộn mượt về scrollTop = 0
-    });
-
-    return () => {
-      socket.off("connect", joinChannel);
-      socket.off("channel_settings_updated", handleChannelSettingsUpdated);
-      socket.off("channel_nicknames_updated", handleChannelSettingsUpdated);
-      socket.off("receive_attachments", handleChannelAttachmentsUpdated);
-      socket.off("receive_message");
-      if (socket.connected) {
-        socket.emit("leave_channel", channelId);
-      }
-    };
-  }, [socket, channelId, accessToken, query]);
-
   const scrollToBottom = () => {
     const scrollableDiv = document.getElementById("scrollableDiv");
     if (scrollableDiv) {
@@ -143,6 +96,16 @@ export default function ChannelChat() {
       });
     }
   };
+
+  useChannelSocket({
+    channelId,
+    channelKind: "workspace",
+    accessToken: accessToken as string,
+    onMessage: (message) => {
+      setMessages((prev) => [message, ...prev]);
+      setTimeout(scrollToBottom, 50);
+    },
+  });
 
   if (!dataChannelDetail) {
     return (

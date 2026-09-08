@@ -26,3 +26,23 @@ export const messageType = {
 };
 
 export type MessageType = (typeof messageType)[keyof typeof messageType];
+
+export type LastMessageType = {
+  id: string;
+  channelId: string;
+  senderId: string;
+  content: string;
+  messageType: string;
+  replyToId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  sender: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string;
+    status: string;
+    fullName: string;
+  };
+};

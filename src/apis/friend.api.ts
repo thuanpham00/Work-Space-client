@@ -29,4 +29,8 @@ export const friendApi = {
   rejectedFriend: (friendId: string) => {
     return Http.post<SuccessResponse<{ message: string }>>(`/friends/reject`, { friendId });
   },
+
+  unreadFriend: () => {
+    return Http.get<SuccessResponse<{ message: string }>>(`/friends/unread`);
+  },
 };

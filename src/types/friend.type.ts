@@ -1,3 +1,5 @@
+import type { LastMessageType } from "./message.type";
+
 export type FriendStatusRequestType = {
   status: string;
   search: string;
@@ -37,23 +39,5 @@ export interface FriendDMChannelResponse {
     fullName: string;
     createdAt: string;
   };
-  lastMessage: {
-    id: string;
-    channelId: string;
-    senderId: string;
-    content: string;
-    messageType: string;
-    replyToId: string;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string;
-    sender: {
-      id: string;
-      username: string;
-      displayName: string;
-      avatar: string;
-      status: string;
-      fullName: string;
-    };
-  };
+  lastMessage: LastMessageType | null;
 }
