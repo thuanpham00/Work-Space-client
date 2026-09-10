@@ -78,7 +78,7 @@
 }
 
 .content {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg);
   overflow: auto;
   @include custom-scrollbar;
   transition:

@@ -1,39 +1,23 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Phone, Video, Pin, Search, PanelRight } from "lucide-react";
 import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
 import { useQuery } from "react-query";
 import { channelApi } from "../../../../apis/channel.api";
 import type { Channel, ChannelMemberNickname } from "../../../../types/channel.type";
-import type { QueryBase } from "../../../../types/query.type";
-import { type Message } from "../../../../types/message.type";
 import Messages from "../../../../components/Messages/Messages";
 import Composer from "../../../../components/Composer/Composer";
 import { useUserStore } from "../../../../store/userStore";
 import { useChannelStore } from "../../../../store/channelStore";
 import { Spin } from "antd";
-import type { Attachment } from "../../../../types/attachment.type";
-import { LIMIT, PAGE } from "../../../../constants/config";
 import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
+import useScrollMessage from "../../../../Hooks/useScrollMessage";
 
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);
   const channelId = useChannelStore((app) => app.channelId);
   const userId = useUserStore((app) => app.user?.id);
   const [showInfoPanel, setShowInfoPanel] = useState(true);
-
-  const [query, setQuery] = useState<QueryBase>({
-    limit: LIMIT,
-    page: PAGE,
-  });
-
-  const [pagination, setPagination] = useState({
-    page: PAGE,
-    total_page: 0,
-  });
-
-  const [messages, setMessages] = useState<Message[]>([]);
 
   const { data: dataChannelDM } = useQuery({
     queryKey: ["channelDM", channelId, accessToken],
@@ -51,59 +35,10 @@ export default function DirectChat() {
   const nickName = nickNames?.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
   const displayName = nickName || infoReceiver?.fullName;
 
-  const { data: dataMessage } = useQuery({
-    queryKey: ["messageChannel", channelId, query, accessToken],
-    queryFn: () => channelApi.getMessagesChannel(channelId as string, query),
-    enabled: Boolean(channelId),
-    staleTime: 60 * 1000 * 1,
-  });
-
-  const conversationListData = dataMessage?.data?.data?.messages as Message[];
-  const page = dataMessage?.data?.data?.page as number;
-  const total_page = dataMessage?.data?.data?.total_page as number;
-
-  const { data: dataAttachments } = useQuery({
-    queryKey: ["attachmentsChannel", channelId, query, accessToken],
-    queryFn: () => channelApi.getAttachmentsChannel(channelId as string, query),
-    enabled: Boolean(channelId),
-    staleTime: 60 * 1000 * 1,
-  });
-
-  const attachmentsData = dataAttachments?.data?.data?.attachments as Attachment[];
-
-  useEffect(() => {
-    setMessages([]);
-    setQuery({ page: PAGE, limit: LIMIT });
-    setPagination({ page: PAGE, total_page: 0 });
-  }, [channelId]);
-
-  useEffect(() => {
-    if (!conversationListData) return;
-    if (page === PAGE) setMessages(conversationListData);
-    else setMessages((prev) => [...prev, ...conversationListData]);
-    setPagination({ page, total_page });
-  }, [conversationListData, page, total_page]);
-
-  const scrollToBottom = () => {
-    const scrollableDiv = document.getElementById("scrollableDiv");
-    if (scrollableDiv) {
-      scrollableDiv.scrollTop = 0;
-    }
-  };
-
-  const fetchConversationDataMore = () => {
-    if (pagination.page < pagination.total_page) {
-      setQuery({
-        page: pagination.page + 1,
-        limit: LIMIT,
-      });
-    }
-  };
+  const { messages, setMessages, fetchConversationDataMore, pagination, scrollToBottom } = useScrollMessage();
 
   useChannelSocket({
-    channelId,
     channelKind: "dm",
-    accessToken: accessToken as string,
     onMessage: (message) => {
       setMessages((prev) => [message, ...prev]);
       setTimeout(scrollToBottom, 50);
@@ -191,7 +126,6 @@ export default function DirectChat() {
             backgroundUrlDM={backgroundUrlDM}
             accentDM={accentDM}
             nickNames={nickNames}
-            attachments={attachmentsData}
           />
         </div>
       </div>

@@ -8,6 +8,8 @@ import { channelApi } from "../../../apis/channel.api";
 import { workspaceAPI } from "../../../apis/workspace.api";
 
 const rules: Rule[] = [{ required: true }];
+const defaultJoinHelpText =
+  "Khi bật, kênh sẽ được tự động join mặc định cho thành viên phù hợp trong workspace. Tùy chọn này không áp dụng cho kênh riêng tư.";
 
 export interface ChannelModal {
   handleCreate: (workspaceId: string) => void;
@@ -23,6 +25,7 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [workspaceId, setWorkspaceId] = useState("");
+  const isPrivate = Form.useWatch("isPrivate", form);
 
   const { data: workspaceDetail } = useQuery({
     queryKey: ["workspace-categories", workspaceId],
@@ -42,6 +45,7 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
           workspaceId,
           type: "text",
           isPrivate: false,
+          isDefault: false,
         });
         setWorkspaceId(workspaceId);
         setVisible(true);
@@ -59,6 +63,12 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
       form.setFieldsValue({ categoryId: categories[0].id });
     }
   }, [categories, form, visible]);
+
+  useEffect(() => {
+    if (isPrivate) {
+      form.setFieldsValue({ isDefault: false });
+    }
+  }, [form, isPrivate]);
 
   const submitForm = async () => {
     try {
@@ -127,6 +137,17 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
           <Col span={24}>
             <Form.Item label="Mô tả" name="description">
               <Input.TextArea placeholder="" rows={3} />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label="Mặc định join"
+              name="isDefault"
+              valuePropName="checked"
+              tooltip={defaultJoinHelpText}
+            >
+              <Switch disabled={Boolean(isPrivate)} />
             </Form.Item>
           </Col>
 

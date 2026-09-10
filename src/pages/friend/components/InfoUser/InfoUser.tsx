@@ -6,25 +6,19 @@ import styles from "./InfoUser.module.scss";
 import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
 import PrivacySection from "./sections/PrivacySection";
 import { useUserStore } from "../../../../store/userStore";
-import type { Attachment } from "../../../../types/attachment.type";
 import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
 import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
+import useScrollAttachments from "../../../../Hooks/useScrollAttachments";
 
 interface InfoUserProps {
   channelDMDetail: Channel;
   backgroundUrlDM: string;
   accentDM: string;
   nickNames: ChannelMemberNickname[];
-  attachments: Attachment[];
 }
 
-export default function InfoUser({
-  channelDMDetail,
-  backgroundUrlDM,
-  accentDM,
-  nickNames,
-  attachments,
-}: InfoUserProps) {
+export default function InfoUser({ channelDMDetail, backgroundUrlDM, accentDM, nickNames }: InfoUserProps) {
+  const token = useUserStore((app) => app.accessToken);
   const modalRef = useRef<FullProfileModalRef>(null);
   const userId = useUserStore((app) => app.user?.id);
   const nickName = channelDMDetail.nicknames.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
@@ -40,6 +34,11 @@ export default function InfoUser({
     }
     return undefined;
   }, [backgroundUrlDM, accentDM]);
+
+  const { attachments, pagination, fetchMore, setQuery, query, isFetchingMore } = useScrollAttachments({
+    channelId: channelDMDetail.id,
+    token: token as string,
+  });
 
   return (
     <aside className={styles.profileSidebar}>
@@ -78,7 +77,14 @@ export default function InfoUser({
         nickNames={nickNames}
       />
 
-      <MediaChannel attachments={attachments} />
+      <MediaChannel
+        attachments={attachments}
+        pagination={pagination}
+        fetchMore={fetchMore}
+        query={query}
+        setQuery={setQuery}
+        isFetchingMore={isFetchingMore}
+      />
 
       <PrivacySection />
 

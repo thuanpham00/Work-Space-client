@@ -7,3 +7,8 @@ export interface Attachment {
   messageId: string;
   mimeType: string;
 }
+
+export enum AttachmentType {
+  IMAGE = "image",
+  FILE = "file",
+}

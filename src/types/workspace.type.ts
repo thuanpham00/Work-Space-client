@@ -9,6 +9,7 @@ export type WorkspaceType = {
   createdAt: string;
   updatedAt: string;
   categories: CategoryWorkspace[];
+  countUnread?: number;
 };
 
 export type CategoryWorkspace = {

@@ -22,6 +22,8 @@ interface Props {
   emptyState?: HeadChatProps;
 }
 
+const MESSAGES_SCROLLABLE_ID = "messagesScrollableDiv";
+
 const Messages = forwardRef<HTMLDivElement, Props>(
   ({ messages, pagination, fetchConversationDataMore, accentDM, emptyState }, _) => {
     const user = useUserStore((state) => state.user);
@@ -32,7 +34,7 @@ const Messages = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         className={`${styles.messagesList} ${!hasMessages ? styles.messagesListEmpty : ""}`}
-        id="scrollableDiv"
+        id={MESSAGES_SCROLLABLE_ID}
       >
         {!hasMessages && showChannelHead ? (
           <div className={styles.channelHead}>
@@ -49,8 +51,8 @@ const Messages = forwardRef<HTMLDivElement, Props>(
             }}
             inverse
             hasMore={pagination.page < pagination.total_page}
-            loader={<h4>Loading...</h4>}
-            scrollableTarget="scrollableDiv"
+            loader={<div className={styles.loading}>Loading...</div>}
+            scrollableTarget={MESSAGES_SCROLLABLE_ID}
           >
             {messages.map((msg, index) => {
               const nextMessage = messages[index + 1];

@@ -59,3 +59,19 @@ export const formatMessageTime = (dateString: string | number | Date) => {
 export const formatDateString = (isoString: string, format: string = "DD-MM-YYYY") => {
   return dayjs(isoString).format(format);
 };
+
+// Format file size từ bytes sang KB, MB, GB...
+export const formatFileSize = (bytes: number | string): string => {
+  const numBytes = typeof bytes === "string" ? Number(bytes) : bytes;
+  if (!numBytes || isNaN(numBytes) || numBytes < 0) return "0 B";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const k = 1024;
+  const i = Math.min(Math.floor(Math.log(numBytes) / Math.log(k)), units.length - 1);
+  const size = numBytes / Math.pow(k, i);
+
+  // Hiển thị 1-2 chữ số thập phân nếu >= KB, ngược lại hiển thị số nguyên
+  return size < 10 && i > 0
+    ? `${size.toFixed(1)} ${units[i]}`
+    : `${Math.round(size)} ${units[i]}`;
+};

@@ -1,22 +1,13 @@
 import { create } from "zustand";
-
-export type ChannelUnread = {
-  workspaceId: string;
-  latestMessageId: number;
-};
-
-export type ChannelUnreadPayload = {
-  channelId: string;
-  workspaceId: string;
-  latestMessageId: number;
-};
+import { TypeChannelUnread, type ChannelUnread } from "../types/channel.type";
 
 type UnreadStoreType = {
-  byChannelId: Record<string, ChannelUnread>;
-  markUnread: (payload: ChannelUnreadPayload) => void;
+  loadDataUnreadChannel: (data: ChannelUnread[]) => void;
+  markUnread: (payload: ChannelUnread) => void;
   markRead: (channelId: string) => void;
-  isUnread: (channelId: string) => boolean;
-  hasWorkspaceUnread: (workspaceId: string) => boolean;
+  byChannelId: Map<string, ChannelUnread>;
+  countUnreadWorkspace: Map<string, number>;
+  countUnreadChannelDM: number;
 };
 
 /**
@@ -26,46 +17,80 @@ type UnreadStoreType = {
  *  [1]: {
  *    workspaceId: 1,
  *    latestMessageId: 1,
- *    count: 0
- *    type: "dm" | "workspace"
+ *    count: 2
+ *    type: "workspace"
  *  },
  *  [2]: {
  *    workspaceId: 1,
  *    latestMessageId: 2,
- *    count: 0
- *    type: "dm" | "workspace"
+ *    count: 3
+ *    type: "workspace"
+ *  },
+ *  [3]: {
+ *    workspaceId: null,
+ *    latestMessageId: 3,
+ *    count: 5
+ *    type: "dm"
  *  }
  * }
  */
 
-export const useUnreadStore = create<UnreadStoreType>((set, get) => ({
-  byChannelId: {},
+function getCountUnreadChannelDM(data: Map<string, ChannelUnread>) {
+  let count = 0;
+  for (const value of data.values()) {
+    if (value.type === TypeChannelUnread.DM && value.workspaceId === null) {
+      count += value.count;
+    }
+  }
+  return count;
+}
 
-  markUnread: (payload: ChannelUnreadPayload) => {
-    set((state) => ({
-      byChannelId: {
-        ...state.byChannelId,
-        [payload.channelId]: {
-          workspaceId: String(payload.workspaceId),
-          latestMessageId: Number(payload.latestMessageId),
-        },
-      },
+function getCountUnreadWorkspace(data: Map<string, ChannelUnread>) {
+  const countMap = new Map<string, number>();
+  for (const value of data.values()) {
+    if (value.type !== TypeChannelUnread.DM && value.workspaceId !== null) {
+      const currentCount = countMap.get(value.workspaceId) || 0;
+      countMap.set(value.workspaceId, currentCount + value.count);
+    }
+  }
+  return countMap;
+}
+
+export const useUnreadStore = create<UnreadStoreType>((set) => ({
+  byChannelId: new Map<string, ChannelUnread>(),
+  countUnreadWorkspace: new Map<string, number>(), // tính dụa trên các channel thuộc về workspace đó
+  countUnreadChannelDM: 0,
+
+  loadDataUnreadChannel: (data: ChannelUnread[]) => {
+    const map = new Map<string, ChannelUnread>();
+    data.forEach((item) => {
+      map.set(item.channelId, item);
+    });
+
+    set(() => ({
+      byChannelId: map,
+      countUnreadChannelDM: getCountUnreadChannelDM(map),
+      countUnreadWorkspace: getCountUnreadWorkspace(map),
     }));
+  },
+
+  markUnread: (payload: ChannelUnread) => {
+    set((state) => {
+      const next = new Map(state.byChannelId);
+      next.set(payload.channelId, payload);
+      return {
+        byChannelId: next,
+      };
+    });
   },
 
   markRead: (channelId: string) => {
     set((state) => {
-      if (!state.byChannelId[channelId]) return state;
-
-      const next = { ...state.byChannelId };
-      delete next[channelId]; // là toán tử dùng để xóa cặp key / value trong object
-      return { byChannelId: next };
+      const next = new Map(state.byChannelId);
+      next.delete(channelId);
+      return {
+        byChannelId: next,
+      };
     });
-  },
-
-  isUnread: (channelId: string) => Boolean(get().byChannelId[channelId]),
-
-  hasWorkspaceUnread: (workspaceId: string) => {
-    return Boolean(Object.values(get().byChannelId).some((channel) => channel.workspaceId === workspaceId));
   },
 }));

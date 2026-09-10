@@ -40,7 +40,7 @@ export default function FriendCard({
             {lastMessage.content}
           </span>
         ) : (
-          <span>Chưa có tin nhắn nào</span>
+          <span className={styles.friendItemLastMessage}>Chưa có tin nhắn nào</span>
         )}
       </div>
     </div>

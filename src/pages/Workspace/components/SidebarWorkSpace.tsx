@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import styles from "./SidebarWorkSpace.module.scss";
 import type { WorkspaceType } from "../../../types/workspace.type";
 import { Button } from "antd";
-import { ChartBarStacked, Hash, Lock, Pencil, Ungroup } from "lucide-react";
+import { FolderPlus, Hash, Lock, Pencil, Plus } from "lucide-react";
 import { CategoryChannelModal } from "./CategoryChannelModal";
 import { queryClient } from "../../../main";
 import { ChannelModal } from "./ChannelModal";
@@ -45,19 +45,23 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
           <Button
             type="primary"
             className={`${styles.swPrimaryAction} ${styles.swTopicAction}`}
-            title="Thêm chủ đề mới"
             onClick={() => modalCategoryChannelRef.current?.handleCreate(data.id)}
+            aria-label="Thêm chủ đề mới"
+            title="Thêm chủ đề mới"
           >
-            <ChartBarStacked size={16} />
+            <FolderPlus size={16} />
+            <span className={styles.swActionLabel}>Chủ đề</span>
           </Button>
 
           <Button
             type="primary"
             className={`${styles.swPrimaryAction} ${styles.swChannelAction}`}
-            title="Thêm kênh chat"
             onClick={() => modalChannelRef.current?.handleCreate(data.id)}
+            aria-label="Thêm kênh chat mới"
+            title="Thêm kênh chat mới"
           >
-            <Ungroup size={14} />
+            <Plus size={14} />
+            <span className={styles.swActionLabel}>Kênh chat</span>
           </Button>
         </div>
       </div>

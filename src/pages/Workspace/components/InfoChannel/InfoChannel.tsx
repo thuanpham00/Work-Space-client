@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Settings } from "lucide-react";
 import { Button } from "antd";
 import styles from "./InfoChannel.module.scss";
@@ -8,16 +9,16 @@ import type {
 } from "../../../../types/channel.type";
 import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
 import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
-import type { Attachment } from "../../../../types/attachment.type";
 import MemberChannel from "./section/MemberChannel";
+import useScrollAttachments from "../../../../Hooks/useScrollAttachments";
+import { useUserStore } from "../../../../store/userStore";
+import ChannelSettingsModal, { type ChannelSettingsModalRef } from "../ChannelSettingsModal";
 
 interface InfoChannelProps {
   channelDetail: Channel;
   accentChannel: string;
   backgroundUrlChannel: string;
-  backgroundColorChannel: string;
   nickNames: ChannelMemberNickname[];
-  attachments: Attachment[];
   members: MemberChannelType[];
 }
 
@@ -25,14 +26,20 @@ export default function InfoChannel({
   channelDetail,
   accentChannel,
   backgroundUrlChannel,
-  backgroundColorChannel,
   nickNames,
-  attachments,
   members,
 }: InfoChannelProps) {
+  const token = useUserStore((app) => app.accessToken);
+  const channelSettingsModalRef = useRef<ChannelSettingsModalRef>(null);
+
   const handleOpenSettings = () => {
-    console.log("Open channel settings modal");
+    channelSettingsModalRef.current?.handleOpen();
   };
+
+  const { attachments, pagination, fetchMore, setQuery, query } = useScrollAttachments({
+    channelId: channelDetail.id,
+    token: token as string,
+  });
 
   return (
     <aside className={styles.infoChannelSidebar}>
@@ -50,14 +57,25 @@ export default function InfoChannel({
       <CustomizeChannel
         channelDMDetail={channelDetail}
         backgroundUrlDM={backgroundUrlChannel}
-        backgroundColorDM={backgroundColorChannel}
         accentDM={accentChannel}
         nickNames={nickNames}
       />
 
-      <MediaChannel attachments={attachments} />
+      <MediaChannel
+        attachments={attachments}
+        pagination={pagination}
+        fetchMore={fetchMore}
+        query={query}
+        setQuery={setQuery}
+      />
 
       <MemberChannel members={members} />
+
+      <ChannelSettingsModal
+        ref={channelSettingsModalRef}
+        channelName={channelDetail.name}
+        onClose={() => console.log("Channel settings closed")}
+      />
     </aside>
   );
 }

@@ -5,6 +5,7 @@ import type {
   ChannelConfig,
   ChannelNicknamesBody,
   ChannelSettingsBody,
+  ChannelUnread,
 } from "../types/channel.type";
 import type { Media } from "../types/media.type";
 import type { Message } from "../types/message.type";
@@ -54,5 +55,9 @@ export const channelApi = {
       `/channels/${channelId}/nicknames`,
       data,
     );
+  },
+
+  unreadChannel: () => {
+    return Http.get<SuccessResponse<{ unreadFriends: ChannelUnread[] }>>(`/channels/unread`);
   },
 };

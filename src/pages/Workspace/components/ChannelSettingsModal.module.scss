@@ -1,10 +1,50 @@
-@use "../../styles/variables" as *;
-@use "../../styles/mixins" as *;
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.modal {
+  :global {
+    .ant-modal {
+      width: 90vw !important;
+      max-width: 1400px;
+    }
+
+    .ant-modal-content {
+      padding: 0 !important;
+      overflow: hidden;
+      border-radius: $radius-md;
+    }
+
+    .ant-modal-body {
+      padding: 0 !important;
+    }
+
+    .ant-modal-close {
+      top: 14px;
+    }
+
+    .ant-modal-container {
+      background-color: var(--color-bg);
+    }
+  }
+}
+
+.modalTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modalTitleIcon {
+  color: var(--color-primary);
+  font-size: 18px;
+}
 
 .wrapper {
   width: 100%;
-  height: calc(100vh - 60px);
-  padding: $spacing-md;
+  height: 70vh;
   display: flex;
   gap: $spacing-md;
   background: var(--color-bg);
@@ -56,7 +96,7 @@
       }
     }
 
-    // Submenu items
+    // Submenu title (parent items)
     .ant-menu-submenu-title {
       height: 40px !important;
       line-height: 40px !important;
@@ -68,10 +108,10 @@
 
       &:hover {
         background-color: var(--color-bg-hover) !important;
-        color: var(--color-text-primary) !important;
       }
     }
 
+    // Submenu container
     .ant-menu-sub {
       background: transparent !important;
 
@@ -128,11 +168,62 @@
   }
 }
 
+// Placeholder styles - sẽ được thay thế khi implement content
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 40px;
+  gap: 12px;
+}
+
+.placeholderIcon {
+  font-size: 48px;
+  color: var(--color-primary);
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+.placeholderTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.placeholderDesc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+
+  strong {
+    color: var(--color-primary);
+    font-weight: 600;
+    padding: 2px 8px;
+    background: var(--color-bg-hover);
+    border-radius: 4px;
+  }
+}
+
+.placeholderBadge {
+  margin-top: 16px;
+  padding: 6px 16px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: $radius-full;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 // Responsive
 @media (max-width: 768px) {
   .wrapper {
     flex-direction: column;
     height: auto;
+    min-height: 70vh;
   }
 
   .menu {
@@ -142,5 +233,6 @@
 
   .content {
     width: 100%;
+    min-height: 300px;
   }
 }

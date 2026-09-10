@@ -45,6 +45,7 @@ export interface Channel {
   updatedAt: string;
   members: MemberChannel[];
   config: ChannelConfig;
+  isDefault: boolean;
   nicknames: ChannelMemberNickname[];
 }
 
@@ -55,6 +56,7 @@ export interface ChannelBody {
   categoryId: string;
   description: string;
   isPrivate: boolean;
+  isDefault: boolean;
 }
 
 export interface MemberChannel {
@@ -71,7 +73,7 @@ export interface MemberChannel {
   phone: string;
   dateOfBirth: string;
   gender: string;
-  createdAt: string
+  createdAt: string;
 }
 
 export interface ChannelConfig {
@@ -119,3 +121,18 @@ export enum RoleMemberChannel {
   ADMIN = "ADMIN",
   MEMBER = "MEMBER",
 }
+
+export enum TypeChannelUnread {
+  TEXT = "TEXT",
+  VOICE = "VOICE",
+  DM = "DM",
+}
+
+export type ChannelUnread = {
+  workspaceId: string;
+  channelId: string;
+  type: TypeChannelUnread;
+  lastMessageId: string;
+  count: number;
+  unread: boolean;
+};

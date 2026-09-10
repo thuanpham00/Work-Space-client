@@ -16,10 +16,8 @@
 
 .swTop {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .swTitle {
@@ -117,18 +115,33 @@
 .swGroupActions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .swPrimaryAction {
-  width: 28px;
+  min-width: 28px;
   height: 28px;
-  padding: 0;
+  padding: 0 10px !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   border: none;
   color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.swActionLabel {
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .swTopicAction {

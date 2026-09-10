@@ -8,6 +8,7 @@ import InfoUserPage from "./Components/InfoUserPage";
 import { useQuery } from "react-query";
 import { userAPI } from "../../apis/user.api";
 import { useUserStore } from "../../store/userStore";
+import type { UserType } from "../../types/user.type";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -68,9 +69,9 @@ export default function SettingAccount() {
       case "password":
         return <ChangePasswordPage />;
       case "setting":
-        return <SettingDisplayPage infoUser={infoUser} />;
+        return <SettingDisplayPage infoUser={infoUser as UserType} />;
       case "info":
-        return <InfoUserPage infoUser={infoUser} />;
+        return <InfoUserPage infoUser={infoUser as UserType} />;
     }
   };
 
@@ -83,7 +84,6 @@ export default function SettingAccount() {
         defaultOpenKeys={["account"]}
         onClick={handleClick}
         className={styles.menu}
-        expandIcon={() => null}
       />
 
       <div className={styles.content}>{content()}</div>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Avatar, Layout, Menu, Tooltip } from "antd";
+import { Avatar, Badge, Layout, Menu, Tooltip } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from "./MainLayout.module.scss";
 import { Settings, Users } from "lucide-react";
@@ -13,6 +13,8 @@ import { path } from "../../utils/path";
 import { useUserStore } from "../../store/userStore";
 import { useBaseStore } from "../../store/baseStore";
 import { useChannelStore } from "../../store/channelStore";
+import { useUnreadStore } from "../../store/unreadStore";
+import { useUnreadCHannel } from "../../Hooks/useUnreadChannel";
 
 const { Sider, Content } = Layout;
 
@@ -23,6 +25,8 @@ export default function MainLayout() {
   const token = useUserStore((state) => state.accessToken);
   const socket = useBaseStore((state) => state.socket);
   const channelId = useChannelStore((state) => state.channelId);
+  const countUnreadChannelDM = useUnreadStore((state) => state.countUnreadChannelDM);
+  const countUnreadWorkspace = useUnreadStore((state) => state.countUnreadWorkspace);
 
   // gọi api lấy ds workspace của user và workspace user tham gia
   const { data: dataWorkspace } = useQuery({
@@ -33,6 +37,18 @@ export default function MainLayout() {
   });
 
   const listWorkspaces = dataWorkspace?.data?.data?.workspaces || [];
+
+  const mappingWorkspaceUnread = useMemo(() => {
+    return listWorkspaces.map((workspace: WorkspaceType) => {
+      const countUnread = countUnreadWorkspace.get(workspace.id) || 0;
+      return {
+        ...workspace,
+        countUnread,
+      };
+    });
+  }, [countUnreadWorkspace, listWorkspaces]);
+
+  useUnreadCHannel(token);
 
   const selectedKeys = useMemo(() => {
     if (pathname === "/friends") return ["friends"];
@@ -51,22 +67,26 @@ export default function MainLayout() {
         key: "friends",
         icon: (
           <Tooltip title="Trò chuyện trực tiếp" placement="right">
-            <Avatar icon={<Users />} />
+            <Badge count={countUnreadChannelDM} overflowCount={99} size="small" offset={[-2, 2]}>
+              <Avatar icon={<Users />} />
+            </Badge>
           </Tooltip>
         ),
       },
-      ...listWorkspaces.map((workspace: WorkspaceType) => ({
+      ...mappingWorkspaceUnread.map((workspace: WorkspaceType) => ({
         key: workspace.id,
         icon: (
           <Tooltip title={workspace.name} placement="right">
-            <Avatar src={workspace.avatar} alt={workspace.name}>
-              {workspace.name[0].toUpperCase()}
-            </Avatar>
+            <Badge count={workspace.countUnread ?? 0} overflowCount={99} size="small" offset={[-2, 2]}>
+              <Avatar src={workspace.avatar} alt={workspace.name}>
+                {workspace.name[0].toUpperCase()}
+              </Avatar>
+            </Badge>
           </Tooltip>
         ),
       })),
     ];
-  }, [listWorkspaces, navigate]);
+  }, [countUnreadChannelDM, countUnreadWorkspace, listWorkspaces, navigate]);
 
   const handleClickWorkspace = (key: string) => {
     if (key === "friends") {
@@ -80,7 +100,6 @@ export default function MainLayout() {
     if (!socket || !channelId) return;
 
     socket.on("channel_unread", (data) => {
-      console.log("vào");
       console.log(data);
     });
 
