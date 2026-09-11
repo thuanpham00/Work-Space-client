@@ -5,14 +5,22 @@ import { workspaceAPI } from "../../apis/workspace.api";
 import { useQuery } from "react-query";
 import { Spin } from "antd";
 import ChannelChat from "./components/ChannelChat";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useChannelStore } from "../../store/channelStore";
+import { parseWorkspacePath } from "../../utils/workspaceKey.util";
 
 export type ModeListFriend = "list" | "chat";
 
 export default function WorkspacePage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
+
+  const id = useMemo(() => {
+    if (!slug) return undefined;
+    const fullPath = `/workspaces/${slug}`;
+    const parsed = parseWorkspacePath(fullPath);
+    return parsed?.id;
+  }, [slug]);
 
   const { data: workSpaceDetail } = useQuery({
     queryKey: ["workspace", id],

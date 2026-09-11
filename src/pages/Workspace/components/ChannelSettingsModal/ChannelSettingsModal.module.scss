@@ -1,21 +1,28 @@
-@use "../../../styles/variables" as *;
-@use "../../../styles/mixins" as *;
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
 
 .modal {
   :global {
     .ant-modal {
       width: 90vw !important;
       max-width: 1400px;
+      height: 90vh !important;
     }
 
     .ant-modal-content {
       padding: 0 !important;
       overflow: hidden;
       border-radius: $radius-md;
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
     }
 
     .ant-modal-body {
       padding: 0 !important;
+      flex: 1 !important;
+      overflow: hidden !important;
+      display: flex !important;
     }
 
     .ant-modal-close {
@@ -44,7 +51,7 @@
 
 .wrapper {
   width: 100%;
-  height: 70vh;
+  height: 100%;
   display: flex;
   gap: $spacing-md;
   background: var(--color-bg);
@@ -169,6 +176,34 @@
 }
 
 // Placeholder styles - sẽ được thay thế khi implement content
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.infoForm {
+  height: 100%;
+  padding: 8px 4px;
+  box-sizing: border-box;
+}
+
+.infoTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-color, #1f2937);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+}
+
 .placeholder {
   display: flex;
   flex-direction: column;

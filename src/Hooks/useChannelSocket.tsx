@@ -15,6 +15,7 @@ interface UseChannelSocketOptions {
 export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOptions) {
   const socket = useBaseStore((state) => state.socket);
   const channelId = useChannelStore((state) => state.channelId);
+  const workspaceId = useChannelStore((state) => state.workspaceId);
   const accessToken = useUserStore((state) => state.accessToken);
 
   /**
@@ -39,13 +40,17 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
       onMessage(message);
     };
 
-    const handleChannelSettingsUpdated = () => {
-      queryClient.invalidateQueries({ queryKey: [detailQueryKey, channelId, accessToken] });
-    };
-
     // coi chỗ này xử lý cập nhật state thay vì gọi api
     const handleChannelAttachmentsUpdated = () => {
       // queryClient.invalidateQueries({ queryKey: ["attachmentsChannel", channelId, query, accessToken] });
+    };
+
+    const handleRefreshChannelSettings = () => {
+      queryClient.invalidateQueries({ queryKey: [detailQueryKey, channelId, accessToken] });
+    };
+
+    const handleRefreshWorkspace = () => {
+      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
     };
 
     if (socket.connected) joinChannel();
@@ -56,8 +61,9 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
     socket.on("receive_message", handleMessage);
     socket.on("receive_attachments", handleChannelAttachmentsUpdated);
 
-    socket.on("channel_settings_updated", handleChannelSettingsUpdated);
-    socket.on("channel_nicknames_updated", handleChannelSettingsUpdated);
+    socket.on("channel_settings_updated", handleRefreshChannelSettings);
+    socket.on("channel_nicknames_updated", handleRefreshChannelSettings);
+    socket.on("channel_updated", handleRefreshWorkspace);
 
     return () => {
       socket.off("connect", joinChannel);
@@ -65,12 +71,13 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
       socket.off("receive_message", handleMessage);
       socket.off("receive_attachments", handleChannelAttachmentsUpdated);
 
-      socket.off("channel_settings_updated", handleChannelSettingsUpdated);
-      socket.off("channel_nicknames_updated", handleChannelSettingsUpdated);
+      socket.off("channel_settings_updated", handleRefreshChannelSettings);
+      socket.off("channel_nicknames_updated", handleRefreshChannelSettings);
+      socket.off("channel_updated", handleRefreshWorkspace);
 
       if (socket.connected) {
         socket.emit("leave_channel", channelId);
       }
     };
-  }, [socket, channelId, accessToken, onMessage, channelKind]);
+  }, [socket, channelId, accessToken, workspaceId, onMessage, channelKind]);
 }

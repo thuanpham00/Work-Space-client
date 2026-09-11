@@ -8,6 +8,7 @@ import { useQuery } from "react-query";
 import { workspaceAPI } from "../../apis/workspace.api";
 import { useEffect, useMemo } from "react";
 import type { WorkspaceType } from "../../types/workspace.type";
+import { getWorkspaceMenuKey, parseWorkspaceKey, parseWorkspacePath } from "../../utils/workspaceKey.util";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
 import { useUserStore } from "../../store/userStore";
@@ -54,12 +55,16 @@ export default function MainLayout() {
     if (pathname === "/friends") return ["friends"];
 
     if (pathname.startsWith("/workspaces/")) {
-      const workspaceId = pathname.split("/")[2];
-      return [workspaceId];
+      const parsed = parseWorkspacePath(pathname);
+      if (parsed) {
+        const ws = mappingWorkspaceUnread.find((w: WorkspaceType) => w.id === parsed.id);
+        if (ws) return [getWorkspaceMenuKey(ws.name, ws.id)];
+      }
+      return [];
     }
 
     return [];
-  }, [pathname]);
+  }, [pathname, mappingWorkspaceUnread]);
 
   const menu = useMemo(() => {
     return [
@@ -74,7 +79,8 @@ export default function MainLayout() {
         ),
       },
       ...mappingWorkspaceUnread.map((workspace: WorkspaceType) => ({
-        key: workspace.id,
+        // VD: "workspace-mac-dinh-i-2"
+        key: getWorkspaceMenuKey(workspace.name, workspace.id),
         icon: (
           <Tooltip title={workspace.name} placement="right">
             <Badge count={workspace.countUnread ?? 0} overflowCount={99} size="small" offset={[-2, 2]}>
@@ -91,8 +97,13 @@ export default function MainLayout() {
   const handleClickWorkspace = (key: string) => {
     if (key === "friends") {
       navigate("/friends");
-    } else {
-      navigate(`/workspaces/${key}`);
+      return;
+    }
+
+    const parsed = parseWorkspaceKey(key);
+    if (parsed) {
+      // /workspaces/workspace-mac-dinh-i-2
+      navigate(`/workspaces/${parsed.slug}-i-${parsed.id}`);
     }
   };
 
@@ -120,7 +131,10 @@ export default function MainLayout() {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKeys}
-          onClick={({ key }) => handleClickWorkspace(key)}
+          onClick={({ key }) => {
+            handleClickWorkspace(key);
+            console.log(key);
+          }}
           className={styles.menu}
           items={menu}
         />

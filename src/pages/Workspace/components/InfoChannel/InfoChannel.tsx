@@ -12,7 +12,9 @@ import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
 import MemberChannel from "./section/MemberChannel";
 import useScrollAttachments from "../../../../Hooks/useScrollAttachments";
 import { useUserStore } from "../../../../store/userStore";
-import ChannelSettingsModal, { type ChannelSettingsModalRef } from "../ChannelSettingsModal";
+import ChannelSettingsModal, {
+  type ChannelSettingsModalRef,
+} from "../ChannelSettingsModal/ChannelSettingsModal";
 
 interface InfoChannelProps {
   channelDetail: Channel;
@@ -73,6 +75,7 @@ export default function InfoChannel({
 
       <ChannelSettingsModal
         ref={channelSettingsModalRef}
+        channelId={channelDetail.id}
         channelName={channelDetail.name}
         onClose={() => console.log("Channel settings closed")}
       />

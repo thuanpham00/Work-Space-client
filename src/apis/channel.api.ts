@@ -46,6 +46,10 @@ export const channelApi = {
     });
   },
 
+  update: (channelId: string, data: Partial<ChannelBody>) => {
+    return Http.patch<SuccessResponse<{ channel: Channel }>>(`/channels/${channelId}`, data);
+  },
+
   updateSettings: (channelId: string, data: ChannelSettingsBody) => {
     return Http.patch<SuccessResponse<{ channel: ChannelConfig }>>(`/channels/${channelId}/settings`, data);
   },

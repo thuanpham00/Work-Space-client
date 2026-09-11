@@ -1,4 +1,5 @@
 import type { PrivacySettings, UserType } from "./user.type";
+import type { CategoryWorkspace } from "./workspace.type";
 
 export type ChannelDM = {
   id: string;
@@ -47,6 +48,7 @@ export interface Channel {
   config: ChannelConfig;
   isDefault: boolean;
   nicknames: ChannelMemberNickname[];
+  category: CategoryWorkspace;
 }
 
 export interface ChannelBody {

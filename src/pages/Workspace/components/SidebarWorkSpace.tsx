@@ -94,9 +94,9 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
                   title={ch.name}
                 >
                   {ch.isPrivate ? (
-                    <Lock className={styles.swHash} size={18} />
+                    <Lock className={styles.swHash} size={16} />
                   ) : (
-                    <Hash className={styles.swHash} size={18} />
+                    <Hash className={styles.swHash} size={16} />
                   )}
                   <span className={styles.swName}>{ch.name}</span>
                 </li>

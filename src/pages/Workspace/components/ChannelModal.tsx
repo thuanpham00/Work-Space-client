@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Form, Input, App, Modal, Row, Select, Switch } from "antd";
+import { Col, Form, Input, App, Modal, Row, Switch } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import type { ChannelBody } from "../../../types/channel.type";
 import { channelApi } from "../../../apis/channel.api";
 import { workspaceAPI } from "../../../apis/workspace.api";
+import SelectorCategoryWorkspace from "../../../components/Selector/SelectorCategoryWorkspace";
 
 const rules: Rule[] = [{ required: true }];
 const defaultJoinHelpText =
@@ -111,15 +112,7 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
           </Form.Item>
 
           <Col span={12}>
-            <Form.Item label="Chủ đề" name="categoryId" rules={rules}>
-              <Select
-                placeholder="Chọn chủ đề"
-                options={categories.map((category) => ({
-                  label: category.name,
-                  value: category.id,
-                }))}
-              />
-            </Form.Item>
+            <SelectorCategoryWorkspace workspaceId={workspaceId} visible={visible} />
           </Col>
 
           <Col span={12}>

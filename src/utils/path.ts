@@ -4,7 +4,7 @@ export const path = {
   register: "/register",
 
   friends: "/friends",
-  workspaces: "/workspaces/:id",
+  workspaces: "/workspaces/:slug",
 
   settingAccount: "/setting",
 };

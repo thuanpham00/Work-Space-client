@@ -1,7 +1,11 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { Modal, Menu, type MenuProps } from "antd";
-import { InfoCircleOutlined, SettingOutlined, TeamOutlined, BellOutlined } from "@ant-design/icons";
+import { Menu, type MenuProps, Modal } from "antd";
+import { BellOutlined, InfoCircleOutlined, SettingOutlined, TeamOutlined } from "@ant-design/icons";
 import styles from "./ChannelSettingsModal.module.scss";
+import ChannelInfoForm from "./section/ChannelInfoForm";
+import { useQuery } from "react-query";
+import { channelApi } from "../../../../apis/channel.api";
+import type { Channel } from "../../../../types/channel.type";
 
 export type ChannelSettingsModalRef = {
   handleOpen: () => void;
@@ -9,6 +13,7 @@ export type ChannelSettingsModalRef = {
 };
 
 interface ChannelSettingsModalProps {
+  channelId: string;
   channelName?: string;
   onClose?: () => void;
 }
@@ -50,12 +55,20 @@ const items: MenuItem[] = [
 ];
 
 const ChannelSettingsModal = forwardRef<ChannelSettingsModalRef, ChannelSettingsModalProps>(
-  ({ channelName = "kênh", onClose }, ref) => {
+  ({ channelId, channelName = "kênh", onClose }, ref) => {
     const [open, setOpen] = useState(false);
     const [activeKey, setActiveKey] = useState<string>("info");
     const [openKeys, setOpenKeys] = useState<string[]>(["general"]);
 
-    // Expose methods cho parent component
+    // Query chi tiết kênh
+    const { data: channelDetail, isLoading } = useQuery({
+      queryKey: ["channel-detail", channelId],
+      queryFn: () => channelApi.getChannelDetail(channelId),
+      staleTime: 1000 * 60 * 5,
+    });
+
+    const channel: Channel | undefined = channelDetail?.data.data.channel;
+
     useImperativeHandle(ref, () => ({
       handleOpen: () => setOpen(true),
       handleClose: () => setOpen(false),
@@ -70,8 +83,11 @@ const ChannelSettingsModal = forwardRef<ChannelSettingsModalRef, ChannelSettings
       onClose?.();
     };
 
-    // Render content mẫu theo key - sẽ được implement sau
     const renderContent = () => {
+      if (activeKey === "info") {
+        return <ChannelInfoForm channel={channel!} isLoading={isLoading} onCancel={handleCancel} />;
+      }
+
       return (
         <div className={styles.placeholder}>
           <div className={styles.placeholderIcon}>
@@ -92,6 +108,7 @@ const ChannelSettingsModal = forwardRef<ChannelSettingsModalRef, ChannelSettings
         onCancel={handleCancel}
         footer={null}
         width="90vw"
+        height="90vh"
         centered
         destroyOnClose
         className={styles.modal}
