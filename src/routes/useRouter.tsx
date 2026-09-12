@@ -10,6 +10,7 @@ import FriendPage from "../pages/Friend/FriendPage";
 import Workspace from "../pages/Workspace/Workspace";
 import SettingAccount from "../pages/SettingAccount/SettingAccount";
 import { useUserStore } from "../store/userStore";
+import SearchPage from "../pages/Search/SearchPage";
 
 const ProjectRouter = () => {
   const isLogin = useUserStore((state) => state.accessToken);
@@ -62,6 +63,14 @@ export default function useRouter() {
               element: (
                 <Suspense>
                   <SettingAccount />
+                </Suspense>
+              ),
+            },
+            {
+              path: path.search,
+              element: (
+                <Suspense>
+                  <SearchPage />
                 </Suspense>
               ),
             },

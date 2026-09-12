@@ -1,7 +1,7 @@
 import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, App } from "antd";
 import styles from "./StatusUsers.module.scss";
 import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
@@ -11,6 +11,8 @@ import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { StatusRequest } from "../../../../types/user.type";
 import { useUserStore } from "../../../../store/userStore";
+import { useNavigate } from "react-router-dom";
+import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
 
 const statusLabel: Record<StatusRequest, string> = {
   [StatusRequest.ONLINE]: "Trực tuyến",
@@ -61,11 +63,13 @@ export function FriendStatusRow({
   status,
   onAccept,
   onReject,
+  onUserClick,
 }: {
   friend: FriendResponse;
   status?: StatusRequest;
   onAccept?: (friendId: string, name: string) => void;
   onReject?: (friendId: string, name: string) => void;
+  onUserClick?: (userId: string) => void;
 }) {
   const avatar = friend.avatar || "";
   const displayName = friend.fullName || "";
@@ -74,7 +78,7 @@ export function FriendStatusRow({
   const isRequested = status === StatusRequest.REQUESTED;
 
   return (
-    <div className={styles.friendRow}>
+    <div className={styles.friendRow} onClick={() => onUserClick?.(friend.id)}>
       <div className={styles.friendIdentity}>
         <AvatarFallback src={avatar} alt={displayName} showStatus={false} />
 
@@ -127,6 +131,7 @@ function FriendStatusPanel({
   onAccept,
   onReject,
   type,
+  onUserClick,
 }: {
   status: StatusRequest;
   friends?: FriendResponse[];
@@ -137,6 +142,7 @@ function FriendStatusPanel({
   onAccept: (friendId: string, name: string) => void;
   onReject: (friendId: string, name: string) => void;
   type: "statusFriends" | "channelFriends";
+  onUserClick?: (userId: string) => void;
 }) {
   const listLength = type === "statusFriends" ? friends.length : channelsFriends.length;
 
@@ -170,8 +176,9 @@ function FriendStatusPanel({
       </div>
 
       <div className={styles.panelHeader}>
-        <h3>{statusLabel[status]}</h3>
-        <span>{listLength}</span>
+        <h3>
+          {statusLabel[status]} ({listLength})
+        </h3>
       </div>
 
       <div className={styles.friendList}>
@@ -183,6 +190,7 @@ function FriendStatusPanel({
               status={status}
               onAccept={onAccept}
               onReject={onReject}
+              onUserClick={onUserClick}
             />
           ))}
 
@@ -195,11 +203,13 @@ function FriendStatusPanel({
   );
 }
 
-export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend: () => void }) {
+export default function StatusUsers() {
   const { message } = App.useApp();
   const [type, setType] = useState<StatusRequest>(StatusRequest.ACCEPTED);
   const [search, setSearch] = useState("");
   const accessToken = useUserStore((state) => state.accessToken);
+  const navigate = useNavigate();
+  const profileModalRef = useRef<FullProfileModalRef>(null);
 
   const onChange = (key: string) => {
     setType(key as StatusRequest);
@@ -282,6 +292,10 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
     }
   };
 
+  const handleUserClick = (userId: string) => {
+    profileModalRef.current?.openModal(userId);
+  };
+
   const items: TabsProps["items"] = [
     {
       key: StatusRequest.ACCEPTED,
@@ -342,6 +356,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
           onSearchChange={setSearch}
           onAccept={handleAccept}
           onReject={handleReject}
+          onUserClick={handleUserClick}
         />
       ),
     },
@@ -363,6 +378,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
           onSearchChange={setSearch}
           onAccept={handleAccept}
           onReject={handleReject}
+          onUserClick={handleUserClick}
         />
       ),
     },
@@ -376,7 +392,7 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
         onChange={onChange}
         tabBarExtraContent={{
           right: (
-            <Button type="primary" onClick={openModalAddFriend}>
+            <Button type="primary" onClick={() => navigate("/search")}>
               <Plus size={16} />
               Thêm bạn
             </Button>
@@ -419,6 +435,8 @@ export default function StatusUsers({ openModalAddFriend }: { openModalAddFriend
           Bạn có chắc chắn muốn từ chối kết bạn với <b>{selectedFriend?.name}</b>?
         </p>
       </Modal>
+
+      <FullProfileModal ref={profileModalRef} onFriendRequestChange={() => {}} onMessageClick={() => {}} />
     </div>
   );
 }

@@ -1,12 +1,8 @@
-import { useRef } from "react";
 import MainFriend from "./components/MainFriend/MainFriend";
 import SidebarFriend from "./components/SidebarFriend/SidebarFriend";
 import styles from "./Friend.module.scss";
-import { AddFriendModal, type AddFriendRef } from "./components/AddFriendModal/AddFriendModal";
 
 export default function FriendPage() {
-  const modalAddFriendRef = useRef<AddFriendRef>(null);
-
   return (
     <>
       <div className={styles.friend}>
@@ -15,11 +11,9 @@ export default function FriendPage() {
         </div>
 
         <div className={styles.friendContent}>
-          <MainFriend openModalAddFriend={() => modalAddFriendRef.current?.handleOpen?.()} />
+          <MainFriend />
         </div>
       </div>
-
-      <AddFriendModal ref={modalAddFriendRef} onClose={() => {}} onSubmitOk={() => {}} />
     </>
   );
 }

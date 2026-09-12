@@ -1,9 +1,8 @@
 import React, { useCallback, useImperativeHandle, useMemo, useState } from "react";
-import { Modal, Tabs, Button, Tooltip, Spin, App } from "antd";
+import { Modal, Tabs, Button, Spin, App } from "antd";
 import {
   MessageSquare,
   UserPlus,
-  MoreHorizontal,
   X,
   UserCheck,
   Calendar,
@@ -31,15 +30,13 @@ import { useUserStore } from "../../../../store/userStore";
 import type { FriendDMChannelResponse } from "../../../../types/friend.type";
 
 export interface FullProfileModalRef {
-  openModal: () => void;
+  openModal: (idUserId: string) => void;
   closeModal: () => void;
 }
 
 interface FullProfileModalProps {
-  userId: string;
   backgroundUrlDM?: string;
   accentDM?: string;
-  enableFriendRequest?: boolean;
   onFriendRequestChange?: () => void;
   onMessageClick?: () => void;
 }
@@ -79,13 +76,11 @@ function EmptyState({
 }
 
 export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfileModalProps>(
-  (
-    { userId, backgroundUrlDM, accentDM, enableFriendRequest = false, onFriendRequestChange, onMessageClick },
-    ref,
-  ) => {
+  ({ backgroundUrlDM, accentDM, onFriendRequestChange, onMessageClick }, ref) => {
     const [visible, setVisible] = useState(false);
     const [sending, setSending] = useState(false);
     const [openingChat, setOpeningChat] = useState(false);
+    const [userId, setUserId] = useState<string>("");
 
     const { message } = App.useApp();
     const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
@@ -117,14 +112,20 @@ export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfil
     });
 
     useImperativeHandle(ref, () => ({
-      openModal: () => setVisible(true),
-      closeModal: () => setVisible(false),
+      openModal: (idUserId: string) => {
+        setVisible(true);
+        setUserId(idUserId);
+      },
+      closeModal: () => {
+        setVisible(false);
+      },
     }));
 
     const handleClose = useCallback(() => {
       setVisible(false);
       setSending(false);
       setOpeningChat(false);
+      setUserId("");
     }, []);
 
     const refreshFriendQueries = useCallback(() => {
@@ -337,96 +338,80 @@ export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfil
     ];
 
     const renderActions = () => {
-      if (enableFriendRequest) {
-        switch (friendStatus) {
-          case StatusRequest.ACCEPTED:
-            return (
-              <div className={styles.friendActionsRow}>
-                <Button
-                  disabled
-                  icon={<UserCheck size={16} />}
-                  className={`${styles.friendRequestBtn} ${styles.friendRequestAccepted}`}
-                >
-                  Bạn bè
-                </Button>
-                <Button
-                  type="primary"
-                  loading={openingChat}
-                  icon={<MessageSquare size={16} />}
-                  className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
-                  onClick={handleOpenMessage}
-                >
-                  Nhắn tin
-                </Button>
-              </div>
-            );
-
-          case StatusRequest.REQUESTED:
-            return (
+      switch (friendStatus) {
+        case StatusRequest.ACCEPTED:
+          return (
+            <div className={styles.friendActionsRow}>
               <Button
-                block
+                disabled
+                icon={<UserCheck size={16} />}
+                className={`${styles.friendRequestBtn} ${styles.friendRequestAccepted}`}
+              >
+                Bạn bè
+              </Button>
+              <Button
                 type="primary"
+                loading={openingChat}
+                icon={<MessageSquare size={16} />}
+                className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
+                onClick={handleOpenMessage}
+              >
+                Nhắn tin
+              </Button>
+            </div>
+          );
+
+        case StatusRequest.REQUESTED:
+          return (
+            <Button
+              block
+              type="primary"
+              loading={sending}
+              icon={<X size={16} />}
+              className={styles.friendRequestBtn}
+              onClick={handleCancelRequest}
+            >
+              Hủy lời mời
+            </Button>
+          );
+
+        case StatusRequest.RECEIVED:
+          return (
+            <div className={styles.friendActionsRow}>
+              <Button
+                type="primary"
+                loading={sending}
+                icon={<Check size={16} />}
+                className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
+                onClick={handleAcceptRequest}
+              >
+                Chấp nhận
+              </Button>
+              <Button
                 loading={sending}
                 icon={<X size={16} />}
                 className={styles.friendRequestBtn}
-                onClick={handleCancelRequest}
+                onClick={handleRejectRequest}
               >
-                Hủy lời mời
+                Từ chối
               </Button>
-            );
+            </div>
+          );
 
-          case StatusRequest.RECEIVED:
-            return (
-              <div className={styles.friendActionsRow}>
-                <Button
-                  type="primary"
-                  loading={sending}
-                  icon={<Check size={16} />}
-                  className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
-                  onClick={handleAcceptRequest}
-                >
-                  Chấp nhận
-                </Button>
-                <Button
-                  loading={sending}
-                  icon={<X size={16} />}
-                  className={styles.friendRequestBtn}
-                  onClick={handleRejectRequest}
-                >
-                  Từ chối
-                </Button>
-              </div>
-            );
-
-          default:
-            return (
-              <Button
-                block
-                type="primary"
-                loading={sending}
-                icon={<UserPlus size={16} />}
-                className={styles.friendRequestBtn}
-                onClick={handleAddRequest}
-              >
-                Kết bạn
-              </Button>
-            );
-        }
+        default:
+          return (
+            <Button
+              block
+              type="primary"
+              loading={sending}
+              icon={<UserPlus size={16} />}
+              className={styles.friendRequestBtn}
+              onClick={handleAddRequest}
+            >
+              Kết bạn
+            </Button>
+          );
       }
-
-      return (
-        <>
-          <Button type="primary" className={styles.messageBtn} icon={<MessageSquare size={16} />}>
-            Tin nhắn
-          </Button>
-          <Tooltip title="Thêm bạn">
-            <Button className={styles.iconBtn} icon={<UserPlus size={16} />} />
-          </Tooltip>
-          <Tooltip title="Tuỳ chọn">
-            <Button className={styles.iconBtn} icon={<MoreHorizontal size={16} />} />
-          </Tooltip>
-        </>
-      );
     };
 
     return (
@@ -440,78 +425,74 @@ export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfil
         closeIcon={<X size={18} className={styles.closeIcon} />}
         destroyOnClose
       >
-          {isLoading || !userData ? (
-            <div className={styles.loadingWrapper}>
-              <Spin size="large" />
-            </div>
-          ) : (
-            <div className={styles.modalBody}>
-              <div className={styles.header}>
-                <div
-                  className={`${styles.banner} ${!backgroundUrlDM && !accentDM ? styles.bannerFallback : ""}`}
-                  style={bannerStyle}
+        {isLoading || !userData ? (
+          <div className={styles.loadingWrapper}>
+            <Spin size="large" />
+          </div>
+        ) : (
+          <div className={styles.modalBody}>
+            <div className={styles.header}>
+              <div
+                className={`${styles.banner} ${!backgroundUrlDM && !accentDM ? styles.bannerFallback : ""}`}
+                style={bannerStyle}
+              />
+              <div className={styles.avatarWrapper}>
+                <AvatarFallback
+                  className={styles.avatarOverride}
+                  src={userData.avatar}
+                  alt={userData.username}
+                  size={96}
+                  status={status}
+                  showStatus={true}
+                  statusStyle={{
+                    bottom: "6px",
+                    right: "6px",
+                    width: "18px",
+                    height: "18px",
+                    border: "4px solid var(--color-bg)",
+                  }}
                 />
-                <div className={styles.avatarWrapper}>
-                  <AvatarFallback
-                    className={styles.avatarOverride}
-                    src={userData.avatar}
-                    alt={userData.username}
-                    size={96}
-                    status={status}
-                    showStatus={true}
-                    statusStyle={{
-                      bottom: "6px",
-                      right: "6px",
-                      width: "18px",
-                      height: "18px",
-                      border: "4px solid var(--color-bg)",
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.content}>
-                <div className={styles.meta}>
-                  <h2 className={styles.fullName}>{userData.fullName}</h2>
-                  <p className={styles.username}>@{userData.username}</p>
-                  <span className={`${styles.statusPill} ${statusConfig.className}`}>
-                    <span className={styles.statusDot} />
-                    {statusConfig.label}
-                  </span>
-                </div>
-
-                <div
-                  className={`${styles.actions} ${enableFriendRequest ? styles.actionsFriendRequest : ""}`}
-                >
-                  {renderActions()}
-                </div>
-
-                <div className={styles.infoSection}>
-                  {infoItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <div key={item.key} className={styles.infoRow}>
-                        <div className={styles.infoIcon}>
-                          <Icon size={16} strokeWidth={1.75} />
-                        </div>
-                        <div className={styles.infoContent}>
-                          <span className={styles.infoLabel}>{item.label}</span>
-                          <span className={styles.infoValue}>
-                            {item.value}
-                            {item.isPrivate && <Lock size={12} className={styles.lockIcon} />}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className={styles.tabsSection}>
-                  <Tabs defaultActiveKey="mutual-friends" items={tabItems} className={styles.customTabs} />
-                </div>
               </div>
             </div>
-          )}
+
+            <div className={styles.content}>
+              <div className={styles.meta}>
+                <h2 className={styles.fullName}>{userData.fullName}</h2>
+                <p className={styles.username}>@{userData.username}</p>
+                <span className={`${styles.statusPill} ${statusConfig.className}`}>
+                  <span className={styles.statusDot} />
+                  {statusConfig.label}
+                </span>
+              </div>
+
+              <div className={`${styles.actions}`}>{renderActions()}</div>
+
+              <div className={styles.infoSection}>
+                {infoItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.key} className={styles.infoRow}>
+                      <div className={styles.infoIcon}>
+                        <Icon size={16} strokeWidth={1.75} />
+                      </div>
+                      <div className={styles.infoContent}>
+                        <span className={styles.infoLabel}>{item.label}</span>
+                        <span className={styles.infoValue}>
+                          {item.value}
+                          {item.isPrivate && <Lock size={12} className={styles.lockIcon} />}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className={styles.tabsSection}>
+                <Tabs defaultActiveKey="mutual-friends" items={tabItems} className={styles.customTabs} />
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     );
   },

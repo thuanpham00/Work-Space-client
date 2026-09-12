@@ -14,7 +14,7 @@ class Http {
   private refreshTokenRequest: Promise<string> | null;
 
   constructor() {
-    this.accessToken = useUserStore.getState().accessToken;
+    this.accessToken = useUserStore.getState().accessToken || "";
     this.refreshTokenRequest = null;
     this.instance = axios.create({
       baseURL: config.baseURLServer, // kết nối tới server

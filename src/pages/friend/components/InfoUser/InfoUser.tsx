@@ -65,7 +65,10 @@ export default function InfoUser({ channelDMDetail, backgroundUrlDM, accentDM, n
           <h2 className={styles.profileDisplayName}>{displayName}</h2>
         </div>
 
-        <button className={styles.fullProfileBtn} onClick={() => modalRef.current?.openModal()}>
+        <button
+          className={styles.fullProfileBtn}
+          onClick={() => modalRef.current?.openModal(infoReceiver?.userId || "")}
+        >
           Xem hồ sơ đầy đủ
         </button>
       </div>
@@ -88,12 +91,7 @@ export default function InfoUser({ channelDMDetail, backgroundUrlDM, accentDM, n
 
       <PrivacySection />
 
-      <FullProfileModal
-        ref={modalRef}
-        userId={infoReceiver?.userId || ""}
-        backgroundUrlDM={backgroundUrlDM}
-        accentDM={accentDM}
-      />
+      <FullProfileModal ref={modalRef} backgroundUrlDM={backgroundUrlDM} accentDM={accentDM} />
     </aside>
   );
 }

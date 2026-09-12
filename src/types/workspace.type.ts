@@ -1,4 +1,5 @@
 import type { Channel } from "./channel.type";
+import type { UserType } from "./user.type";
 
 export type WorkspaceType = {
   id: string;
@@ -10,6 +11,7 @@ export type WorkspaceType = {
   updatedAt: string;
   categories: CategoryWorkspace[];
   countUnread?: number;
+  owner: UserType;
 };
 
 export type CategoryWorkspace = {

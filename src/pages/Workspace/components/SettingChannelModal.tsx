@@ -1,4 +1,4 @@
-import { Col, Form, Input, App, Modal, Row } from "antd";
+import { Col, Form, Input, Modal, Row } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useImperativeHandle, useState } from "react";
 
@@ -15,10 +15,8 @@ interface SettingChannelModalProps {
 export const SettingChannelModal = React.forwardRef(
   ({ onClose, onSubmitOk }: SettingChannelModalProps, ref) => {
     const [form] = Form.useForm<any>();
-    const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
-    const [selectedSettingChannel, setSelectedSettingChannel] = useState<any>();
 
     useImperativeHandle<any, SettingChannelModal>(
       ref,
@@ -26,23 +24,22 @@ export const SettingChannelModal = React.forwardRef(
         handleOpen() {
           form.resetFields();
           setVisible(true);
-          setSelectedSettingChannel(undefined);
         },
       }),
       [],
     );
 
-    const getPayload = () => {
-      const { ...rest } = form.getFieldsValue();
-      return { SettingChannel: rest };
-    };
+    // const getPayload = () => {
+    //   const { ...rest } = form.getFieldsValue();
+    //   return { SettingChannel: rest };
+    // };
 
     const submitForm = async () => {
       try {
         setLoading(true);
-        const valid = await form.validateFields();
-        const data = getPayload();
-        let res: any = undefined;
+        // const valid = await form.validateFields();
+        // const data = getPayload();
+        // let res: any = undefined;
         // switch (status) {
         //   case "create":
         //     res = await SettingChannelApi.create(data);
@@ -63,7 +60,6 @@ export const SettingChannelModal = React.forwardRef(
     const handleClose = () => {
       onClose?.();
       setVisible(false);
-      setSelectedSettingChannel(undefined);
     };
 
     return (
