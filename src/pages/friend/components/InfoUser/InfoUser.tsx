@@ -3,7 +3,7 @@ import { useMemo, useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { Channel, ChannelMemberNickname } from "../../../../types/channel.type";
 import styles from "./InfoUser.module.scss";
-import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
+import { ProfileModal, type ProfileModalRef } from "../ProfileModal/ProfileModal";
 import PrivacySection from "./sections/PrivacySection";
 import { useUserStore } from "../../../../store/userStore";
 import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
@@ -19,7 +19,7 @@ interface InfoUserProps {
 
 export default function InfoUser({ channelDMDetail, backgroundUrlDM, accentDM, nickNames }: InfoUserProps) {
   const token = useUserStore((app) => app.accessToken);
-  const modalRef = useRef<FullProfileModalRef>(null);
+  const modalRef = useRef<ProfileModalRef>(null);
   const userId = useUserStore((app) => app.user?.id);
   const nickName = channelDMDetail.nicknames.filter((nickname) => nickname.userId !== userId)[0]?.nickname;
   const infoReceiver = channelDMDetail.members?.find((member) => member.userId !== userId);
@@ -91,7 +91,7 @@ export default function InfoUser({ channelDMDetail, backgroundUrlDM, accentDM, n
 
       <PrivacySection />
 
-      <FullProfileModal ref={modalRef} backgroundUrlDM={backgroundUrlDM} accentDM={accentDM} />
+      <ProfileModal ref={modalRef} backgroundUrlDM={backgroundUrlDM} accentDM={accentDM} />
     </aside>
   );
 }

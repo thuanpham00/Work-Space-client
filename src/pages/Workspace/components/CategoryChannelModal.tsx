@@ -4,7 +4,7 @@ import React, { useImperativeHandle, useState } from "react";
 import type { ModalStatus } from "../../../types/utils.type";
 import { workspaceAPI } from "../../../apis/workspace.api";
 import type { Rule } from "antd/es/form";
-import type { CategoryChannel, CategoryChannelBody } from "../../../types/categoryChannel.type";
+import type { CategoryChannel, CategoryChannelBody } from "../../../types/CategoryChannel.type";
 
 const rules: Rule[] = [{ required: true }];
 

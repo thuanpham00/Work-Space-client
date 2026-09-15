@@ -1,6 +1,7 @@
-import type { CategoryChannel, CategoryChannelBody } from "../types/categoryChannel.type";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { CategoryChannel, CategoryChannelBody } from "../types/CategoryChannel.type";
 import type { SuccessResponse } from "../types/utils.type";
-import type { WorkspaceType } from "../types/workspace.type";
+import type { WorkspaceMember, WorkspaceType } from "../types/workspace.type";
 import Http from "../utils/http";
 
 export const workspaceAPI = {
@@ -30,6 +31,16 @@ export const workspaceAPI = {
   deleteCategory: (categoryId: string) => {
     return Http.delete<SuccessResponse<{ category: CategoryChannel }>>(
       `/workspaces/categories/${categoryId}`,
+    );
+  },
+
+  infoWorkspaceStatus: (workspaceId: string) => {
+    return Http.get<SuccessResponse<{ workspace: WorkspaceType }>>(`/workspaces/${workspaceId}/status`);
+  },
+
+  requestInvite: (workspaceId: string) => {
+    return Http.post<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
+      `/workspaces/${workspaceId}/request-invite`,
     );
   },
 };

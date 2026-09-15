@@ -1,5 +1,4 @@
-import type { MouseEvent, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import type { ReactNode } from "react";
 import { Badge } from "antd";
 import AvatarFallback from "../../../components/AvatarFallback/AvatarFallback";
 import type { SearchItem } from "../../../types/search.type";
@@ -10,7 +9,7 @@ import styles from "./SearchResultItem.module.scss";
 type Props = {
   item: SearchItem;
   keyword: string;
-  onUserClick?: (userId: string, event: MouseEvent) => void;
+  onUserClick?: (userId: string, type: "user" | "workspace") => void;
 };
 
 const friendStatusLabel: Record<string, string> = {
@@ -24,7 +23,7 @@ export default function SearchResultItem({ item, keyword, onUserClick }: Props) 
   if (item.type === "user") {
     return <UserResultCard item={item} keyword={keyword} onUserClick={onUserClick} />;
   }
-  return <WorkspaceResultCard item={item} keyword={keyword} />;
+  return <WorkspaceResultCard item={item} keyword={keyword} onUserClick={onUserClick} />;
 }
 
 function UserResultCard({
@@ -34,17 +33,12 @@ function UserResultCard({
 }: {
   item: Extract<SearchItem, { type: "user" }>;
   keyword: string;
-  onUserClick?: (userId: string, event: MouseEvent) => void;
+  onUserClick?: (userId: string, type: "user" | "workspace") => void;
 }) {
-  const navigate = useNavigate();
   const displayName = item.fullName || item.displayName || item.username;
 
-  const handleClick = (e: MouseEvent) => {
-    if (onUserClick) {
-      onUserClick(item.id, e);
-    } else {
-      navigate(`/users/${item.id}`);
-    }
+  const handleClick = () => {
+    onUserClick?.(item.id, "user");
   };
 
   return (
@@ -79,14 +73,18 @@ function UserResultCard({
 function WorkspaceResultCard({
   item,
   keyword,
+  onUserClick,
 }: {
   item: Extract<SearchItem, { type: "workspace" }>;
   keyword: string;
+  onUserClick?: (userId: string, type: "user" | "workspace") => void;
 }) {
-  const navigate = useNavigate();
+  const handleClick = () => {
+    onUserClick?.(item.id, "workspace");
+  };
 
   return (
-    <div className={styles.item} onClick={() => navigate(`/workspaces/${item.name}-i-${item.id}`)}>
+    <div className={styles.item} onClick={handleClick}>
       <div className={styles.avatarWrap}>
         <AvatarFallback src={item.avatar || null} alt={item.name} showStatus={false} size={44} />
       </div>

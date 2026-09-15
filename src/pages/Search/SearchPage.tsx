@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import SearchHeader from "./components/SearchHeader";
 import SearchResultItem from "./components/SearchResultItem";
@@ -7,10 +8,11 @@ import { useDebounce } from "../../Hooks/useDebounce";
 import { PAGE } from "../../constants/config";
 import type { SearchItem, SearchQuery } from "../../types/search.type";
 import styles from "./SearchPage.module.scss";
+import { ProfileModal, type ProfileModalRef } from "../Friend/components/ProfileModal/ProfileModal";
 import {
-  FullProfileModal,
-  type FullProfileModalRef,
-} from "../Friend/components/FullProfileModal/FullProfileModal";
+  WorkspaceProfileModal,
+  type WorkspaceProfileModalRef,
+} from "../Workspace/components/WorkspaceProfileModal/WorkspaceProfileModal";
 import { Spin } from "antd";
 
 const SEARCH_LIMIT = 10;
@@ -27,7 +29,8 @@ export default function SearchPage() {
   const [keyword, setKeyword] = useState("");
   const [activeTab, setActiveTab] = useState<SearchQuery>("all");
   const debouncedKeyword = useDebounce(keyword, 200);
-  const profileModalRef = useRef<FullProfileModalRef>(null);
+  const profileModalRef = useRef<ProfileModalRef>(null);
+  const workspaceModalRef = useRef<WorkspaceProfileModalRef>(null);
 
   const [query, setQuery] = useState<{ limit: number; page: number; type: SearchQuery }>({
     limit: SEARCH_LIMIT,
@@ -48,9 +51,9 @@ export default function SearchPage() {
       }),
   });
 
-  const result = data?.data?.data;
-  const fetchedItems = result?.items ?? [];
-  const total = result?.total ?? 0;
+  const result = useMemo(() => data?.data?.data, [data]);
+  const fetchedItems = useMemo(() => result?.items ?? [], [result]);
+  const total = useMemo(() => result?.total ?? 0, [result]);
 
   useEffect(() => {
     if (!result) return;
@@ -69,13 +72,17 @@ export default function SearchPage() {
     setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
   };
 
-  const handleUserClick = useCallback((userId: string) => {
-    profileModalRef.current?.openModal(userId);
+  const handleUserClick = useCallback((id: string, type: "user" | "workspace") => {
+    if (type === "user") {
+      profileModalRef.current?.openModal(id);
+    } else {
+      workspaceModalRef.current?.openModal(id);
+    }
   }, []);
 
   const handleFriendRequestChange = useCallback(() => {
     refetch();
-  }, []);
+  }, [refetch]);
 
   return (
     <div className={styles.container}>
@@ -141,7 +148,8 @@ export default function SearchPage() {
         )}
       </div>
 
-      <FullProfileModal ref={profileModalRef} onFriendRequestChange={handleFriendRequestChange} />
+      <ProfileModal ref={profileModalRef} onFriendRequestChange={handleFriendRequestChange} />
+      <WorkspaceProfileModal ref={workspaceModalRef} onWorkspaceChange={handleFriendRequestChange} />
     </div>
   );
 }

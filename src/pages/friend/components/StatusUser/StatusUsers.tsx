@@ -12,7 +12,7 @@ import { modeListFriend, useChannelStore } from "../../../../store/channelStore"
 import { StatusRequest } from "../../../../types/user.type";
 import { useUserStore } from "../../../../store/userStore";
 import { useNavigate } from "react-router-dom";
-import { FullProfileModal, type FullProfileModalRef } from "../FullProfileModal/FullProfileModal";
+import { ProfileModal, type ProfileModalRef } from "../ProfileModal/ProfileModal";
 
 const statusLabel: Record<StatusRequest, string> = {
   [StatusRequest.ONLINE]: "Trực tuyến",
@@ -209,7 +209,7 @@ export default function StatusUsers() {
   const [search, setSearch] = useState("");
   const accessToken = useUserStore((state) => state.accessToken);
   const navigate = useNavigate();
-  const profileModalRef = useRef<FullProfileModalRef>(null);
+  const profileModalRef = useRef<ProfileModalRef>(null);
 
   const onChange = (key: string) => {
     setType(key as StatusRequest);
@@ -436,7 +436,7 @@ export default function StatusUsers() {
         </p>
       </Modal>
 
-      <FullProfileModal ref={profileModalRef} onFriendRequestChange={() => {}} onMessageClick={() => {}} />
+      <ProfileModal ref={profileModalRef} onFriendRequestChange={() => {}} onMessageClick={() => {}} />
     </div>
   );
 }

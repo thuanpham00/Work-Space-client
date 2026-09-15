@@ -5,7 +5,7 @@ import type {
   UpdateUserBodyType,
 } from "../types/auth.type";
 import type { Media } from "../types/media.type";
-import type { ListUserParamsType, UserType } from "../types/user.type";
+import type { UserType } from "../types/user.type";
 import type { AuthResponse, SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
 
@@ -44,10 +44,6 @@ export const userAPI = {
 
   changePassword: (data: ChangePasswordBodyType) => {
     return Http.post<SuccessResponse<{ message: string }>>("/users/change-password", data);
-  },
-
-  list: (params: ListUserParamsType) => {
-    return Http.get<SuccessResponse<{ users: UserType[]; total: number }>>("/users", { params });
   },
 
   infoUserStatus: (userId: string) => {

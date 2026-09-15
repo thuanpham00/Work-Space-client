@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
-import styles from "./FullProfileModal.module.scss";
+import styles from "./ProfileModal.module.scss";
 import { StatusUser } from "../../../../types/friend.type";
 import { useMutation, useQuery } from "react-query";
 import { userAPI } from "../../../../apis/user.api";
@@ -29,12 +29,12 @@ import { modeListFriend, useChannelStore } from "../../../../store/channelStore"
 import { useUserStore } from "../../../../store/userStore";
 import type { FriendDMChannelResponse } from "../../../../types/friend.type";
 
-export interface FullProfileModalRef {
+export interface ProfileModalRef {
   openModal: (idUserId: string) => void;
   closeModal: () => void;
 }
 
-interface FullProfileModalProps {
+interface ProfileModalProps {
   backgroundUrlDM?: string;
   accentDM?: string;
   onFriendRequestChange?: () => void;
@@ -75,7 +75,7 @@ function EmptyState({
   );
 }
 
-export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfileModalProps>(
+export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>(
   ({ backgroundUrlDM, accentDM, onFriendRequestChange, onMessageClick }, ref) => {
     const [visible, setVisible] = useState(false);
     const [sending, setSending] = useState(false);
@@ -498,4 +498,4 @@ export const FullProfileModal = React.forwardRef<FullProfileModalRef, FullProfil
   },
 );
 
-FullProfileModal.displayName = "FullProfileModal";
+ProfileModal.displayName = "ProfileModal";
