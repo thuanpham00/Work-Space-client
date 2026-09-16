@@ -36,34 +36,32 @@
 .nameRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
   min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .name {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  column-gap: 8px;
+  row-gap: 4px;
   min-width: 0;
   font-size: 15px;
   font-weight: 600;
   color: var(--color-text);
+}
+
+.nameText {
+  display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.nameHighlight {
-  display: inline-flex;
-  align-items: center;
+  max-width: 100%;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.badge {
-  flex-shrink: 0;
+  flex: 0 1 auto;
 }
 
 .username {
@@ -99,6 +97,71 @@
 
 .dot {
   display: inline-block;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.95;
+  flex-shrink: 0;
+}
+
+/* User friend-status tones (chỉ giữ color, không background) */
+.tone_success {
+  background: transparent;
+  color: #16a34a;
+}
+
+.tone_warning {
+  background: transparent;
+  color: #d97706;
+}
+
+.tone_info {
+  background: transparent;
+  color: #2563eb;
+}
+
+.tone_default {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+/* Workspace member-status tones (chỉ giữ color, không background) */
+.wsTone_active {
+  background: transparent;
+  color: #16a34a;
+}
+
+.wsTone_pending {
+  background: transparent;
+  color: #d97706;
+}
+
+.wsTone_rejected {
+  background: transparent;
+  color: #dc2626;
+}
+
+.wsTone_offline {
+  background: transparent;
+  color: #71717a;
 }
 
 .unread {

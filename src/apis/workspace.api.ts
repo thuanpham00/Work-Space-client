@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { CategoryChannel, CategoryChannelBody } from "../types/CategoryChannel.type";
 import type { SuccessResponse } from "../types/utils.type";
 import type { WorkspaceMember, WorkspaceType } from "../types/workspace.type";
@@ -40,6 +39,12 @@ export const workspaceAPI = {
 
   requestInvite: (workspaceId: string) => {
     return Http.post<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
+      `/workspaces/${workspaceId}/request-invite`,
+    );
+  },
+
+  cancelRequest: (workspaceId: string) => {
+    return Http.delete<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
       `/workspaces/${workspaceId}/request-invite`,
     );
   },

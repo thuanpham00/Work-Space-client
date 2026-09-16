@@ -1,6 +1,6 @@
 import React, { useCallback, useImperativeHandle, useMemo, useState } from "react";
-import { Modal, Tabs, Button, Spin, App } from "antd";
-import { X, Calendar, User, Hash, Users, UserPlus } from "lucide-react";
+import { Modal, Button, Spin, App } from "antd";
+import { X, Calendar, User, Users, UserPlus } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
 import styles from "./WorkspaceProfileModal.module.scss";
@@ -19,35 +19,7 @@ interface WorkspaceProfileModalProps {
   onWorkspaceChange?: () => void;
 }
 
-const WORKSPACE_STATUS_CONFIG: Record<WorkspaceMemberStatus, { label: string; className: string }> = {
-  [WorkspaceMemberStatus.ACTIVE]: {
-    label: "Đang hoạt động",
-    className: styles.statusActive,
-  },
-  [WorkspaceMemberStatus.PENDING_INVITE]: {
-    label: "Lời mời đang chờ",
-    className: styles.statusPending,
-  },
-  [WorkspaceMemberStatus.PENDING_REQUEST]: {
-    label: "Yêu cầu đang chờ",
-    className: styles.statusPending,
-  },
-  [WorkspaceMemberStatus.REJECTED]: {
-    label: "Bị từ chối",
-    className: styles.statusRejected,
-  },
-  [WorkspaceMemberStatus.LEFT]: {
-    label: "Đã rời",
-    className: styles.statusOffline,
-  },
-  [WorkspaceMemberStatus.CANCELLED]: {
-    label: "Đã hủy",
-    className: styles.statusOffline,
-  },
-};
-
 const PLACEHOLDER = "—";
-const MEMBER_COUNT = 0;
 
 export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, WorkspaceProfileModalProps>(
   ({ backgroundUrlDM, accentDM, onWorkspaceChange }, ref) => {
@@ -56,7 +28,7 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
     const [visible, setVisible] = useState(false);
     const [workspaceId, setWorkspaceId] = useState<string>("");
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, refetch } = useQuery({
       queryKey: ["infoWorkspace", workspaceId],
       queryFn: () => workspaceAPI.infoWorkspaceStatus(workspaceId),
       staleTime: 1000 * 60 * 5,
@@ -93,7 +65,6 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
     }, [backgroundUrlDM, accentDM]);
 
     const status = (workspaceData?.workspaceStatus as WorkspaceMemberStatus) ?? undefined;
-    const statusConfig = status ? WORKSPACE_STATUS_CONFIG[status as WorkspaceMemberStatus] : undefined;
 
     const requestWorkspaceMutation = useMutation({
       mutationFn: (id: string) => workspaceAPI.requestInvite(id),
@@ -104,10 +75,26 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
       try {
         await requestWorkspaceMutation.mutateAsync(workspaceId);
         message.success("Yêu cầu tham gia workspace đã được gửi");
+        refetch();
       } catch (error) {
         console.error(error);
       }
-    }, [workspaceId, message, requestWorkspaceMutation]);
+    }, [workspaceId, message, requestWorkspaceMutation, refetch]);
+
+    const cancelRequestMutation = useMutation({
+      mutationFn: (id: string) => workspaceAPI.cancelRequest(id),
+    });
+
+    const handleCancelRequest = useCallback(async () => {
+      if (!workspaceId) return;
+      try {
+        await cancelRequestMutation.mutateAsync(workspaceId);
+        message.success("Đã hủy yêu cầu tham gia workspace");
+        refetch();
+      } catch (error) {
+        console.error(error);
+      }
+    }, [workspaceId, message, cancelRequestMutation, refetch]);
 
     const infoItems = useMemo(() => {
       if (!workspaceData) return [];
@@ -119,57 +106,27 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
         value: React.ReactNode;
       }[] = [
         {
-          key: "joined",
-          icon: Calendar,
-          label: "Ngày tạo",
-          value: formatDateString(workspaceData.createdAt),
-        },
-        {
-          key: "description",
-          icon: Hash,
-          label: "Mô tả",
-          value: workspaceData.description || PLACEHOLDER,
-        },
-        {
           key: "owner",
           icon: User,
           label: "Chủ sở hữu",
           value: workspaceData.owner?.fullName || workspaceData.owner?.username || PLACEHOLDER,
         },
         {
-          key: "status",
+          key: "joined",
+          icon: Calendar,
+          label: "Ngày tạo",
+          value: formatDateString(workspaceData.createdAt),
+        },
+        {
+          key: "members",
           icon: Users,
-          label: "Trạng thái",
-          value: statusConfig ? (
-            <span className={`${styles.statusPill} ${statusConfig.className}`} style={{ marginTop: 0 }}>
-              <span className={styles.statusDot} />
-              {statusConfig.label}
-            </span>
-          ) : (
-            PLACEHOLDER
-          ),
+          label: "Thành viên",
+          value: `0 thành viên`,
         },
       ];
 
       return items;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [workspaceData, status]);
-
-    const tabItems = [
-      {
-        key: "members",
-        label: "Thành viên",
-        children: (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateIcon}>
-              <Users size={28} strokeWidth={1.5} />
-            </div>
-            <p className={styles.emptyStateTitle}>{MEMBER_COUNT} thành viên</p>
-            <p className={styles.emptyStateSubtitle}>Danh sách thành viên sẽ hiển thị ở đây</p>
-          </div>
-        ),
-      },
-    ];
+    }, [workspaceData]);
 
     return (
       <Modal
@@ -210,23 +167,30 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
                 {workspaceData.description && (
                   <p className={styles.description}>{workspaceData.description}</p>
                 )}
-                {statusConfig && (
-                  <span className={`${styles.statusPill} ${statusConfig.className}`}>
-                    <span className={styles.statusDot} />
-                    {statusConfig.label}
-                  </span>
-                )}
               </div>
 
               <div className={styles.actions}>
-                <Button
-                  type="primary"
-                  icon={<UserPlus size={16} />}
-                  className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
-                  onClick={handleRequestInvite}
-                >
-                  Tham gia
-                </Button>
+                {(!status || status === WorkspaceMemberStatus.CANCELLED) && (
+                  <Button
+                    type="primary"
+                    icon={<UserPlus size={16} />}
+                    className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
+                    onClick={handleRequestInvite}
+                  >
+                    Tham gia
+                  </Button>
+                )}
+
+                {status === WorkspaceMemberStatus.PENDING_REQUEST && (
+                  <Button
+                    danger
+                    icon={<X size={16} />}
+                    className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
+                    onClick={handleCancelRequest}
+                  >
+                    Hủy yêu cầu
+                  </Button>
+                )}
               </div>
 
               <div className={styles.infoSection}>
@@ -244,10 +208,6 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
                     </div>
                   );
                 })}
-              </div>
-
-              <div className={styles.tabsSection}>
-                <Tabs defaultActiveKey="members" items={tabItems} className={styles.customTabs} />
               </div>
             </div>
           </div>
