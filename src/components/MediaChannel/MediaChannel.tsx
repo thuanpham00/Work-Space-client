@@ -110,7 +110,7 @@ const MediaChannel = ({ attachments, pagination, fetchMore, setQuery, query, isF
                   className={styles.loadMoreBtn}
                   onClick={fetchMore}
                   disabled={isFetchingMore}
-                  icon={isFetchingMore ? <Spin size="small" /> : <ChevronDown size={16} />}
+                  icon={isFetchingMore ? <Spin size="medium" tip="Loading..." /> : <ChevronDown size={16} />}
                 >
                   {isFetchingMore ? "Đang tải..." : "Xem thêm"}
                 </Button>

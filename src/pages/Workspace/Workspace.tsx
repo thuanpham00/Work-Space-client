@@ -51,7 +51,7 @@ export default function WorkspacePage() {
             <SidebarWorkSpace data={dataWorkspaceDetail} workspaceId={id} />
           ) : (
             <div className={styles.loading}>
-              <Spin size="large" tip="Loading..." />
+              <Spin size="medium" tip="Loading..." />
             </div>
           )}
         </div>
@@ -61,7 +61,7 @@ export default function WorkspacePage() {
             <ChannelChat />
           ) : (
             <div className={styles.loading}>
-              <Spin size="large" tip="Loading..." />
+              <Spin size="medium" tip="Loading..." />
             </div>
           )}
         </div>

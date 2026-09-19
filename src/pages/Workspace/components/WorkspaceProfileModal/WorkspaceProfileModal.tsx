@@ -141,7 +141,7 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
       >
         {isLoading || !workspaceData ? (
           <div className={styles.loadingWrapper}>
-            <Spin size="large" />
+            <Spin size="medium" tip="Loading..." />
           </div>
         ) : (
           <div className={styles.modalBody}>

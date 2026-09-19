@@ -48,7 +48,7 @@ export default function DirectChat() {
   if (!channelDMDetail)
     return (
       <div className={styles.loading}>
-        <Spin size="large" tip="Loading..." />
+        <Spin size="medium" tip="Loading..." />
       </div>
     );
 

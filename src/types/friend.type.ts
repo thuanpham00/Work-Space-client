@@ -41,3 +41,9 @@ export interface FriendDMChannelResponse {
   };
   lastMessage: LastMessageType | null;
 }
+
+export interface CountStatusFriendsResponse {
+  sent: number;
+  received: number;
+  accepted: number
+}

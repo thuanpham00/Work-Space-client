@@ -1,0 +1,646 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.wmModal {
+  :global(.ant-modal-content) {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  :global(.ant-modal-header) {
+    padding: 20px 24px;
+    margin: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  :global(.ant-modal-body) {
+    padding: 0;
+  }
+
+  :global(.ant-modal-footer) {
+    display: none;
+  }
+
+  :global(.ant-modal-close) {
+    top: 3px;
+    right: 1px;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.55);
+    }
+  }
+}
+
+.wmHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wmHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wmAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.wmHeaderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wmHeaderTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.wmInviteBtn {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px !important;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.wmTabs {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+
+  :global(.ant-tabs-nav) {
+    margin: 0;
+  }
+
+  :global(.ant-tabs-tab) {
+    padding: 12px 0;
+    font-size: 14px;
+  }
+}
+
+.wmTabBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--color-error);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-left: 6px;
+}
+
+.wmBody {
+  padding: 16px 0 24px;
+}
+
+.wmFilters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.wmSearch {
+  flex: 1;
+  max-width: 300px;
+
+  :global(.ant-input-affix-wrapper) {
+    border-radius: 8px;
+    background: var(--color-bg-secondary);
+    border-color: transparent;
+  }
+}
+
+.wmMemberList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  @include custom-scrollbar;
+}
+
+.wmLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.wmLoadMore {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wmLoadMoreHint {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.wmPendingPlaceholder {
+  padding: 32px 0;
+}
+
+.wmPendingList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.wmPendingLoading {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.wmPendingSummary {
+  display: flex;
+  gap: 16px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+
+  strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+}
+
+.wmPendingItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 72px;
+  background: var(--color-bg-secondary);
+  border-radius: 10px;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.wmRoleInvite {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: #818cf8 !important;
+}
+
+.wmRoleJoin {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #f59e0b !important;
+}
+
+.wmMemberItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 72px;
+  background: var(--color-bg-secondary);
+  border-radius: 10px;
+  transition: background 0.15s ease;
+  box-sizing: border-box;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.wmMemberAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: var(--color-bg);
+}
+
+.wmMemberAvatarPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.wmMemberInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.wmMemberName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wmMemberEmail {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wmMemberMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.wmMemberRole {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &.wmRoleOwner {
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+  }
+
+  &.wmRoleAdmin {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+  }
+
+  &.wmRoleMember {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+}
+
+.wmMemberYouBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #5b6cff 0%, #22c55e 100%);
+  color: #fff;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 2px rgba(91, 108, 255, 0.25);
+
+  &::before {
+    content: "✓";
+    font-size: 10px;
+    line-height: 1;
+  }
+}
+
+.wmMemberMoreBtn {
+  flex-shrink: 0;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px !important;
+  color: var(--color-text-secondary) !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--color-text) !important;
+    outline: none !important;
+  }
+}
+
+.wmMemberItem:hover .wmMemberMoreBtn,
+.wmMemberMoreBtn:focus-visible,
+.wmMemberMoreBtn {
+  opacity: 1;
+}
+
+.wmDropdownOverlay {
+  :global(.ant-dropdown-menu) {
+    min-width: 200px;
+    padding: 4px;
+    border-radius: 8px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  :global(.ant-dropdown-menu-item) {
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 2px 0;
+    font-size: 14px;
+    color: var(--color-text);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+
+  :global(.ant-dropdown-menu-item-divider) {
+    background: var(--color-border);
+    margin: 4px 0;
+  }
+
+  :global(.ant-dropdown-menu-submenu-title) {
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 2px 0;
+    font-size: 14px;
+    color: var(--color-text);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+}
+
+.wmEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--color-text-secondary);
+
+  svg {
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.wmPendingSection {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.wmPendingTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wmPendingItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 72px;
+  background: var(--color-bg-secondary);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.wmPendingInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.wmPendingName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wmPendingTime {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wmPendingType {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  white-space: nowrap;
+
+  &.wmTypeRequest {
+    background: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+  }
+
+  &.wmTypeInvite {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+  }
+}
+
+.wmPendingActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.wmInviteModal {
+  :global(.ant-modal-content) {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  :global(.ant-modal-header) {
+    margin: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  :global(.ant-modal-body) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+.wmInviteTab {
+  margin-bottom: 20px;
+
+  :global(.ant-segmented) {
+    background: var(--color-bg-secondary);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+  }
+
+  :global(.ant-segmented-item) {
+    transition: all 0.2s ease;
+
+    &:hover:not(.ant-segmented-item-selected) {
+      color: var(--color-text);
+    }
+  }
+
+  :global(.ant-segmented-item-selected) {
+    background: var(--color-primary);
+    color: #fff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(239, 72, 21, 0.35);
+    border-radius: 6px;
+
+    .ant-segmented-item-label {
+      color: #fff !important;
+    }
+
+    &:hover {
+      background: var(--color-primary-hover);
+      color: #fff !important;
+    }
+  }
+
+  :global(.ant-segmented-thumb) {
+    background: var(--color-primary) !important;
+    box-shadow: 0 2px 6px rgba(239, 72, 21, 0.35) !important;
+  }
+}
+
+.wmInviteLink {
+  margin-top: 16px;
+}
+
+.wmInviteLinkLabel {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.wmInviteLinkBox {
+  display: flex;
+  gap: 8px;
+
+  :global(.ant-input) {
+    flex: 1;
+    background: var(--color-bg-secondary);
+    border-color: transparent;
+  }
+}
+
+.wmInviteSearch {
+  margin-bottom: 12px;
+}
+
+.wmInviteUserItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.wmInviteUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wmInviteUserName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.wmInviteUserEmail {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.wmInviteStatus {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+
+  &.wmInvitePending {
+    background: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+  }
+
+  &.wmInviteMember {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+
+  &.wmInviteSent {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+  }
+}

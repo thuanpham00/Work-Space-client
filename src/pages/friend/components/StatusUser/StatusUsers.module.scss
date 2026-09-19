@@ -19,26 +19,6 @@
   background: var(--color-bg);
 }
 
-.panelHeader {
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  color: var(--color-text-secondary, #9aa0aa);
-
-  h3 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--color-text, #f3f4f6);
-  }
-
-  span {
-    font-size: 13px;
-  }
-}
-
 .stateBox {
   min-height: 320px;
   display: grid;

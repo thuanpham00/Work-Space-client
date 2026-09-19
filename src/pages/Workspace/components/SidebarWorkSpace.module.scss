@@ -26,6 +26,30 @@
   color: var(--color-text);
 }
 
+.swTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.swMemberBtn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px !important;
+  color: var(--color-text-secondary) !important;
+  transition: all 0.15s ease !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: var(--color-text) !important;
+  }
+}
+
 .swAction {
   background: rgba(255, 255, 255, 0.04);
   color: var(--color-text);

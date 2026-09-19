@@ -427,7 +427,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       >
         {isLoading || !userData ? (
           <div className={styles.loadingWrapper}>
-            <Spin size="large" />
+            <Spin size="medium" tip="Loading..." />
           </div>
         ) : (
           <div className={styles.modalBody}>

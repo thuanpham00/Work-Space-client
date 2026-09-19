@@ -112,7 +112,7 @@ export default function SearchPage() {
       <div className={styles.body}>
         {isFirstLoad && (
           <div className={styles.empty}>
-            <Spin size="large" tip="Loading..." />
+            <Spin size="medium" tip="Loading..." />
           </div>
         )}
 

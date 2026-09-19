@@ -1,4 +1,9 @@
-import type { FriendDMChannelResponse, FriendResponse, FriendStatusRequestType } from "../types/friend.type";
+import type {
+  CountStatusFriendsResponse,
+  FriendDMChannelResponse,
+  FriendResponse,
+  FriendStatusRequestType,
+} from "../types/friend.type";
 import type { SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
 
@@ -16,6 +21,10 @@ export const friendApi = {
         params,
       },
     );
+  },
+
+  getCountStatusFriends: () => {
+    return Http.get<SuccessResponse<CountStatusFriendsResponse>>(`/friends/status/count`);
   },
 
   addFriend: (friendId: string) => {

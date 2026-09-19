@@ -1,12 +1,14 @@
 import { useMemo, useRef, useState } from "react";
 import styles from "./SidebarWorkSpace.module.scss";
 import type { WorkspaceType } from "../../../types/workspace.type";
-import { Button } from "antd";
-import { FolderPlus, Hash, Lock, Pencil, Plus } from "lucide-react";
+import { Button, Tooltip } from "antd";
+import { FolderPlus, Hash, Lock, Pencil, Plus, Users } from "lucide-react";
 import { CategoryChannelModal } from "./CategoryChannelModal";
 import { queryClient } from "../../../main";
 import { ChannelModal } from "./ChannelModal";
 import { useChannelStore } from "../../../store/channelStore";
+import type { WorkspaceMemberModalRef } from "./WorkspaceMemberModal/WorkspaceMemberModal";
+import WorkspaceMemberModal from "./WorkspaceMemberModal/WorkspaceMemberModal";
 
 interface SidebarWorkSpaceProps {
   data: WorkspaceType;
@@ -16,6 +18,7 @@ interface SidebarWorkSpaceProps {
 export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpaceProps) {
   const modalCategoryChannelRef = useRef<CategoryChannelModal>(null);
   const modalChannelRef = useRef<ChannelModal>(null);
+  const modalMemberRef = useRef<WorkspaceMemberModalRef>(null);
   const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
 
   const groups = useMemo(
@@ -39,7 +42,19 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
   return (
     <aside className={styles.swSidebar}>
       <div className={styles.swTop}>
-        <div className={styles.swTitle}>{data.name}</div>
+        <div className={styles.swTitleRow}>
+          <div className={styles.swTitle}>{data.name}</div>
+          <Tooltip title="Thành viên workspace">
+            <Button
+              type="text"
+              className={styles.swMemberBtn}
+              onClick={() => modalMemberRef.current?.handleOpen(workspaceId, data.name)}
+              aria-label="Xem thành viên workspace"
+            >
+              <Users size={18} />
+            </Button>
+          </Tooltip>
+        </div>
 
         <div className={styles.swGroupActions}>
           <Button
@@ -117,6 +132,8 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
         onSubmitOk={() => refreshDataWorkspaceDetail()}
         onClose={() => {}}
       />
+
+      <WorkspaceMemberModal ref={modalMemberRef} />
     </aside>
   );
 }

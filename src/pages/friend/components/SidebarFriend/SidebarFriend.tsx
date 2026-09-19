@@ -80,7 +80,7 @@ export default function SidebarFriend() {
       <div className={styles.layoutList}>
         {isLoading ? (
           <div className="flex items-center justify-center py-4 w-full">
-            <Spin size="small" />
+            <Spin size="medium" tip="Loading..." />
           </div>
         ) : channelsFriends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>

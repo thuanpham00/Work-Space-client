@@ -9,7 +9,6 @@ export enum GenderType {
 export const genderTranslate = {
   [GenderType.MALE]: "Nam",
   [GenderType.FEMALE]: "Nữ",
-
   [GenderType.OTHER]: "Khác",
 };
 

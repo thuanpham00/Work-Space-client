@@ -58,7 +58,7 @@ const ChannelInfoForm = ({ channel, isLoading, onCancel }: ChannelInfoFormProps)
   if (isLoading) {
     return (
       <div className={styles.loading}>
-        <Spin />
+        <Spin size="medium" tip="Loading..." />
       </div>
     );
   }

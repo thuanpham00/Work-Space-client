@@ -1,6 +1,12 @@
-import type { CategoryChannel, CategoryChannelBody } from "../types/CategoryChannel.type";
+import type { CategoryChannel, CategoryChannelBody } from "../types/categoryChannel.type";
+import type { QueryBase } from "../types/query.type";
 import type { SuccessResponse } from "../types/utils.type";
-import type { WorkspaceMember, WorkspaceType } from "../types/workspace.type";
+import type {
+  WorkspaceMember,
+  WorkspaceMemberItem,
+  WorkspaceRequestItem,
+  WorkspaceType,
+} from "../types/workspace.type";
 import Http from "../utils/http";
 
 export const workspaceAPI = {
@@ -14,6 +20,24 @@ export const workspaceAPI = {
 
   getCategoryById: (categoryId: string) => {
     return Http.get<SuccessResponse<{ categories: CategoryChannel }>>(`/workspaces/categories/${categoryId}`);
+  },
+
+  getMembersWorkspace: (workspaceId: string, params: QueryBase) => {
+    return Http.get<
+      SuccessResponse<{
+        members: WorkspaceMemberItem[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+      }>
+    >(`/workspaces/${workspaceId}/members`, { params });
+  },
+
+  getMemberWorkspaceRequests: (workspaceId: string) => {
+    return Http.get<
+      SuccessResponse<{ requests: WorkspaceRequestItem[]; joinCount: number; inviteCount: number }>
+    >(`/workspaces/${workspaceId}/requests`);
   },
 
   createCategory: (data: CategoryChannelBody) => {

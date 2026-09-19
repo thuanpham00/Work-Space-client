@@ -44,7 +44,7 @@ export default function ChannelChat() {
   if (!dataChannelDetail) {
     return (
       <div className={styles.loading}>
-        <Spin size="large" tip="Loading..." />
+        <Spin size="medium" tip="Loading..." />
       </div>
     );
   }

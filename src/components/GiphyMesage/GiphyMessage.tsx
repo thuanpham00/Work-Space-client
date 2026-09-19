@@ -16,32 +16,45 @@ export default function GifPicker({ show, onSubmit }: GiphyProps) {
   const [gifs, setGifs] = useState<any[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  const loadGifs = useCallback(
-    async (currentOffset: number) => {
-      if (loading || !hasMore) return;
+  // Refs để tránh stale closure trong IntersectionObserver
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(true);
+  const inFlightRef = useRef(false);
 
-      setLoading(true);
+  const loadGifs = useCallback(async (currentOffset: number) => {
+    // Chặn duplicate call khi đang fetch
+    if (inFlightRef.current || !hasMoreRef.current) return;
+    inFlightRef.current = true;
+    loadingRef.current = true;
+    setLoading(true);
 
+    try {
       const res = await gf.trending({
         offset: currentOffset,
         limit: LIMIT,
       });
 
-      setGifs((prev) => [...prev, ...res.data]);
+      // Dedup theo id để tránh trùng key do effect chạy 2 lần với cùng offset
+      setGifs((prev) => {
+        const seen = new Set(prev.map((g: any) => g.id));
+        const fresh = res.data.filter((g: any) => !seen.has(g.id));
+        return [...prev, ...fresh];
+      });
 
-      setOffset(currentOffset + LIMIT);
+      const nextOffset = currentOffset + LIMIT;
+      setOffset(nextOffset);
 
       if (res.data.length < LIMIT) {
-        setHasMore(false);
+        hasMoreRef.current = false;
       }
-
+    } finally {
+      loadingRef.current = false;
       setLoading(false);
-    },
-    [loading, hasMore],
-  );
+      inFlightRef.current = false;
+    }
+  }, []);
 
   useEffect(() => {
     loadGifs(0);
@@ -55,7 +68,7 @@ export default function GifPicker({ show, onSubmit }: GiphyProps) {
         }
       },
       {
-        threshold: 0.1, // 10% diện tích của element được quan sát xuất hiện trong vùng nhìn thấy, thì callback sẽ chạy.
+        threshold: 0.1,
       },
     );
 

@@ -1,7 +1,7 @@
-import { Button, Empty, Input, Spin, Tabs, type TabsProps, Modal, App } from "antd";
+import { Button, Empty, Input, Spin, Tabs, Modal, App } from "antd";
 import styles from "./StatusUsers.module.scss";
 import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { friendApi } from "../../../../apis/friend.api";
 import { useMutation, useQuery } from "react-query";
 import { useDebounce } from "../../../../Hooks/useDebounce";
@@ -13,13 +13,6 @@ import { StatusRequest } from "../../../../types/user.type";
 import { useUserStore } from "../../../../store/userStore";
 import { useNavigate } from "react-router-dom";
 import { ProfileModal, type ProfileModalRef } from "../ProfileModal/ProfileModal";
-
-const statusLabel: Record<StatusRequest, string> = {
-  [StatusRequest.ONLINE]: "Trực tuyến",
-  [StatusRequest.ACCEPTED]: "Tất cả",
-  [StatusRequest.REQUESTED]: "Đã gửi yêu cầu",
-  [StatusRequest.RECEIVED]: "Chờ xác nhận",
-};
 
 const userStatusLabel: Record<StatusUser, string> = {
   [StatusUser.ONLINE]: "Trực tuyến",
@@ -149,7 +142,7 @@ function FriendStatusPanel({
   if (isLoading) {
     return (
       <div className={styles.stateBox}>
-        <Spin />
+        <Spin size="medium" tip="Loading..." />
       </div>
     );
   }
@@ -173,12 +166,6 @@ function FriendStatusPanel({
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
         />
-      </div>
-
-      <div className={styles.panelHeader}>
-        <h3>
-          {statusLabel[status]} ({listLength})
-        </h3>
       </div>
 
       <div className={styles.friendList}>
@@ -210,6 +197,21 @@ export default function StatusUsers() {
   const accessToken = useUserStore((state) => state.accessToken);
   const navigate = useNavigate();
   const profileModalRef = useRef<ProfileModalRef>(null);
+
+  const { data: dataCountStatusFriends } = useQuery({
+    queryKey: ["countStatusFriends", accessToken],
+    queryFn: () => friendApi.getCountStatusFriends(),
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    enabled: Boolean(accessToken),
+  });
+
+  const statusFriendsCount = useMemo(() => {
+    return {
+      accepted: dataCountStatusFriends?.data.data.accepted ?? 0,
+      received: dataCountStatusFriends?.data.data.received ?? 0,
+      sent: dataCountStatusFriends?.data.data.sent ?? 0,
+    };
+  }, [dataCountStatusFriends?.data.data]);
 
   const onChange = (key: string) => {
     setType(key as StatusRequest);
@@ -269,6 +271,7 @@ export default function StatusUsers() {
       message.success(`Đã đồng ý kết bạn với ${selectedFriend.name}`);
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
+      queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
       setConfirmAcceptOpen(false);
       setSelectedFriend(null);
     } catch (error) {
@@ -284,6 +287,7 @@ export default function StatusUsers() {
       message.success(`Đã từ chối kết bạn với ${selectedFriend.name}`);
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
+      queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
       setConfirmRejectOpen(false);
       setSelectedFriend(null);
     } catch (error) {
@@ -296,93 +300,96 @@ export default function StatusUsers() {
     profileModalRef.current?.openModal(userId);
   };
 
-  const items: TabsProps["items"] = [
-    {
-      key: StatusRequest.ACCEPTED,
-      label: (
-        <div className="flex items-center gap-2">
-          <UsersRound size={16} />
-          <span>Tất cả</span>
-        </div>
-      ),
-      children: (
-        <FriendStatusPanel
-          status={StatusRequest.ACCEPTED}
-          channelsFriends={channelsFriendsData}
-          type={"channelFriends"}
-          isLoading={isLoadingChannelsFriends}
-          search={search}
-          onSearchChange={setSearch}
-          onAccept={handleAccept}
-          onReject={handleReject}
-        />
-      ),
-    },
-    {
-      key: StatusRequest.ONLINE,
-      label: (
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span>Online</span>
-        </div>
-      ),
-      children: (
-        <FriendStatusPanel
-          status={StatusRequest.ONLINE}
-          channelsFriends={onlineChannelsFriends}
-          type="channelFriends"
-          isLoading={isLoadingChannelsFriends}
-          search={search}
-          onSearchChange={setSearch}
-          onAccept={handleAccept}
-          onReject={handleReject}
-        />
-      ),
-    },
-    {
-      key: StatusRequest.REQUESTED,
-      label: (
-        <div className="flex items-center gap-2">
-          <Send size={16} /> <span>Đã gửi yêu cầu</span>
-        </div>
-      ),
-      children: (
-        <FriendStatusPanel
-          status={StatusRequest.REQUESTED}
-          friends={friendsData}
-          type={"statusFriends"}
-          isLoading={isLoadingFriendStatus}
-          search={search}
-          onSearchChange={setSearch}
-          onAccept={handleAccept}
-          onReject={handleReject}
-          onUserClick={handleUserClick}
-        />
-      ),
-    },
-    {
-      key: StatusRequest.RECEIVED,
-      label: (
-        <div className="flex items-center gap-2">
-          <Loader size={16} />
-          <span>Chờ xác nhận</span>
-        </div>
-      ),
-      children: (
-        <FriendStatusPanel
-          status={StatusRequest.RECEIVED}
-          friends={friendsData}
-          type={"statusFriends"}
-          isLoading={isLoadingFriendStatus}
-          search={search}
-          onSearchChange={setSearch}
-          onAccept={handleAccept}
-          onReject={handleReject}
-          onUserClick={handleUserClick}
-        />
-      ),
-    },
-  ];
+  const items = useMemo(
+    () => [
+      {
+        key: StatusRequest.ACCEPTED,
+        label: (
+          <div className="flex items-center gap-2">
+            <UsersRound size={16} />
+            <span>Tất cả ({statusFriendsCount.accepted})</span>
+          </div>
+        ),
+        children: (
+          <FriendStatusPanel
+            status={StatusRequest.ACCEPTED}
+            channelsFriends={channelsFriendsData}
+            type={"channelFriends"}
+            isLoading={isLoadingChannelsFriends}
+            search={search}
+            onSearchChange={setSearch}
+            onAccept={handleAccept}
+            onReject={handleReject}
+          />
+        ),
+      },
+      {
+        key: StatusRequest.ONLINE,
+        label: (
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span>Online</span>
+          </div>
+        ),
+        children: (
+          <FriendStatusPanel
+            status={StatusRequest.ONLINE}
+            channelsFriends={onlineChannelsFriends}
+            type="channelFriends"
+            isLoading={isLoadingChannelsFriends}
+            search={search}
+            onSearchChange={setSearch}
+            onAccept={handleAccept}
+            onReject={handleReject}
+          />
+        ),
+      },
+      {
+        key: StatusRequest.REQUESTED,
+        label: (
+          <div className="flex items-center gap-2">
+            <Send size={16} /> <span>Đã gửi yêu cầu ({statusFriendsCount.sent})</span>
+          </div>
+        ),
+        children: (
+          <FriendStatusPanel
+            status={StatusRequest.REQUESTED}
+            friends={friendsData}
+            type={"statusFriends"}
+            isLoading={isLoadingFriendStatus}
+            search={search}
+            onSearchChange={setSearch}
+            onAccept={handleAccept}
+            onReject={handleReject}
+            onUserClick={handleUserClick}
+          />
+        ),
+      },
+      {
+        key: StatusRequest.RECEIVED,
+        label: (
+          <div className="flex items-center gap-2">
+            <Loader size={16} />
+            <span>Chờ xác nhận ({statusFriendsCount.received})</span>
+          </div>
+        ),
+        children: (
+          <FriendStatusPanel
+            status={StatusRequest.RECEIVED}
+            friends={friendsData}
+            type={"statusFriends"}
+            isLoading={isLoadingFriendStatus}
+            search={search}
+            onSearchChange={setSearch}
+            onAccept={handleAccept}
+            onReject={handleReject}
+            onUserClick={handleUserClick}
+          />
+        ),
+      },
+    ],
+    [statusFriendsCount, channelsFriendsData, friendsData, search],
+  );
 
   return (
     <div className={styles.statusUsersInner}>
