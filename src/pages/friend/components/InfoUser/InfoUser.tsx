@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useRef } from "react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import type { Channel, ChannelMemberNickname } from "../../../../types/channel.type";
@@ -53,7 +52,6 @@ export default function InfoUser({ channelDMDetail, backgroundUrlDM, accentDM, n
             src={infoReceiver?.avatar}
             alt={infoReceiver?.username || ""}
             size={60}
-            status={infoReceiver?.status as any}
             showStatus={false}
             className={styles.avatarOverride}
           />

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { WorkspaceMemberRole } from "../types/workspace.type";
 
 export const modeListFriend = {
   list: "list",
@@ -9,35 +10,27 @@ export const modeListFriend = {
 export type ModeListFriend = (typeof modeListFriend)[keyof typeof modeListFriend];
 
 type AppStoreType = {
-  friendId: string;
+  modeListFriend: ModeListFriend;
   channelId: string;
   workspaceId: string;
-  modeListFriend: ModeListFriend;
+  workspaceRole: WorkspaceMemberRole;
 
-  setChannelId: (channelId: string) => void;
-  setWorkspaceId: (workspaceId: string) => void;
-
-  reset: () => void;
-
+  setWorkspaceRole: (workspaceRole: WorkspaceMemberRole) => void;
   chooseChannelFriend: (channelId: string, mode: ModeListFriend) => void;
-
   chooseChannelWorkspace: (workspaceId: string, channelId: string) => void;
+  reset: () => void;
 };
 
 export const useChannelStore = create<AppStoreType>()(
   persist(
     (set) => ({
-      friendId: "",
       channelId: "",
       workspaceId: "",
       modeListFriend: modeListFriend.list,
+      workspaceRole: WorkspaceMemberRole.MEMBER,
 
-      setChannelId: (channelId) => {
-        set({ channelId });
-      },
-
-      setWorkspaceId: (workspaceId) => {
-        set({ workspaceId });
+      setWorkspaceRole: (workspaceRole) => {
+        set({ workspaceRole });
       },
 
       chooseChannelFriend: (channelId, modeListFriend) => {
@@ -45,24 +38,24 @@ export const useChannelStore = create<AppStoreType>()(
           modeListFriend,
           channelId,
           workspaceId: "",
+          workspaceRole: WorkspaceMemberRole.MEMBER,
         });
       },
 
       chooseChannelWorkspace: (workspaceId, channelId) => {
         set({
+          modeListFriend: modeListFriend.list,
           channelId,
           workspaceId,
-          friendId: "",
-          modeListFriend: modeListFriend.list,
         });
       },
 
       reset: () => {
         set({
-          friendId: "",
+          modeListFriend: modeListFriend.list,
           channelId: "",
           workspaceId: "",
-          modeListFriend: modeListFriend.list,
+          workspaceRole: WorkspaceMemberRole.MEMBER,
         });
       },
     }),

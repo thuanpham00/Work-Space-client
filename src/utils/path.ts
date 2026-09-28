@@ -8,4 +8,5 @@ export const path = {
   workspaces: "/workspaces/:slug",
 
   settingAccount: "/setting",
+  invite: "/invite/:token",
 };

@@ -41,7 +41,6 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
 
 export default function SidebarFriend() {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
-
   const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
 

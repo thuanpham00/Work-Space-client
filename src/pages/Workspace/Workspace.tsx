@@ -1,19 +1,21 @@
 import { useParams } from "react-router-dom";
-import SidebarWorkSpace from "./components/SidebarWorkSpace";
 import styles from "./Workspace.module.scss";
 import { workspaceAPI } from "../../apis/workspace.api";
 import { useQuery } from "react-query";
 import { Spin } from "antd";
-import ChannelChat from "./components/ChannelChat";
 import { useEffect, useMemo } from "react";
 import { useChannelStore } from "../../store/channelStore";
 import { parseWorkspacePath } from "../../utils/workspaceKey.util";
+import SidebarWorkSpace from "./components/SidebarWorkspace/SidebarWorkSpace";
+import ChannelChat from "./components/ChannelChat/ChannelChat";
+import { WorkspaceMemberRole } from "../../types/workspace.type";
 
 export type ModeListFriend = "list" | "chat";
 
 export default function WorkspacePage() {
   const { slug } = useParams();
   const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
+  const setWorkspaceRole = useChannelStore((app) => app.setWorkspaceRole);
 
   const id = useMemo(() => {
     if (!slug) return undefined;
@@ -31,6 +33,7 @@ export default function WorkspacePage() {
   });
 
   const dataWorkspaceDetail = workSpaceDetail?.data.data.workspace;
+  const workspaceRole = dataWorkspaceDetail?.role ?? WorkspaceMemberRole.MEMBER;
 
   useEffect(() => {
     if (id && dataWorkspaceDetail) {
@@ -39,9 +42,10 @@ export default function WorkspacePage() {
 
       if (firstChannel && categories) {
         chooseChannelWorkspace(id, firstChannel.id);
+        setWorkspaceRole(workspaceRole);
       }
     }
-  }, [id, workSpaceDetail, dataWorkspaceDetail, chooseChannelWorkspace]);
+  }, [id, workSpaceDetail, dataWorkspaceDetail, workspaceRole, chooseChannelWorkspace, setWorkspaceRole]);
 
   return (
     <>

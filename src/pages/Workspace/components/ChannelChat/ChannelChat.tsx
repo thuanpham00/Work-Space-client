@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Phone, Video, Pin, Search, Hash, Lock, PanelRight } from "lucide-react";
-import styles from "./Channel.module.scss";
-import Messages from "../../../components/Messages/Messages";
-import Composer from "../../../components/Composer/Composer";
+import styles from "./ChannelChat.module.scss";
+import Messages from "../../../../components/Messages/Messages";
+import Composer from "../../../../components/Composer/Composer";
 import { useQuery } from "react-query";
-import { useChannelStore } from "../../../store/channelStore";
-import { useUserStore } from "../../../store/userStore";
-import { channelApi } from "../../../apis/channel.api";
+import { useChannelStore } from "../../../../store/channelStore";
+import { useUserStore } from "../../../../store/userStore";
+import { channelApi } from "../../../../apis/channel.api";
 import { Spin } from "antd";
-import InfoChannel from "./InfoChannel/InfoChannel";
-import type { ChannelMemberNickname, MemberChannel } from "../../../types/channel.type";
-import { useChannelSocket } from "../../../Hooks/useChannelSocket";
-import useScrollMessage from "../../../Hooks/useScrollMessage";
+import InfoChannel from "../InfoChannel/InfoChannel";
+import type { ChannelMemberNickname, MemberChannel } from "../../../../types/channel.type";
+import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
+import useScrollMessage from "../../../../Hooks/useScrollMessage";
 
 export default function ChannelChat() {
   const channelId = useChannelStore((app) => app.channelId);

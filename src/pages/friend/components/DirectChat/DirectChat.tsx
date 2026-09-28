@@ -114,7 +114,7 @@ export default function DirectChat() {
               name: displayName || "",
               subtitle: infoReceiver?.username || "",
               avatar: infoReceiver?.avatar,
-              status: infoReceiver?.status,
+              // status: infoReceiver?.status,
             }}
           />
           <Composer channelId={channelId as string} />

@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { App, Button, Dropdown, Empty, Input, Modal, Segmented, Spin, Tabs } from "antd";
+import { App, Button, Dropdown, Empty, Input, Modal, Spin, Tabs } from "antd";
 import type { DropdownProps } from "antd";
 import {
   UserPlus,
   Users,
-  Copy,
-  CheckCircle,
   Search,
   UserMinus,
   Shield,
@@ -17,15 +17,24 @@ import styles from "./WorkspaceMemberModal.module.scss";
 import { useQuery } from "react-query";
 import { workspaceAPI } from "../../../../apis/workspace.api";
 import type { QueryBase } from "../../../../types/query.type";
-import { WorkspaceMemberRole, type WorkspaceMemberItem, type WorkspaceRequestItem } from "../../../../types/workspace.type";
+import {
+  WorkspaceMemberRole,
+  type WorkspaceMemberItem,
+  type WorkspaceRequestItem,
+} from "../../../../types/workspace.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { ProfileModal, type ProfileModalRef } from "../../../Friend/components/ProfileModal/ProfileModal";
 import { useUserStore } from "../../../../store/userStore";
 
+import {
+  InviteMemberWorkspaceModal,
+  type InviteMemberWorkspaceModalRef,
+} from "../InviteMemberWorkspaceModal/InviteMemberWorkspaceModal";
+import { useChannelStore } from "../../../../store/channelStore";
+
 export interface WorkspaceMemberModalRef {
   handleOpen: (workspaceId: string, workspaceName: string) => void;
-  handleClose: () => void;
 }
 
 interface WorkspaceMemberModalProps {
@@ -96,19 +105,19 @@ const MemberItem = ({
 const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMemberModalProps>(
   ({ onClose }, ref) => {
     const { message } = App.useApp();
+    const userId = useUserStore((app) => app.user?.id);
+    const workspaceRole = useChannelStore((app) => app.workspaceRole);
+    const isOwner = workspaceRole === WorkspaceMemberRole.OWNER;
+    const isAdmin = workspaceRole === WorkspaceMemberRole.ADMIN;
+
     const [open, setOpen] = useState(false);
     const [wsId, setWsId] = useState("");
     const [wsName, setWsName] = useState("");
-    const [activeTab, setActiveTab] = useState<string>("members");
+    const [activeTab, setActiveTab] = useState<"pending" | "members">("members");
     const [searchKeyword, setSearchKeyword] = useState("");
-    const [inviteModalOpen, setInviteModalOpen] = useState(false);
-    const [inviteMode, setInviteMode] = useState<string>("link");
-    const [inviteSearch, setInviteSearch] = useState("");
-    const [copied, setCopied] = useState(false);
-
-    const userId = useUserStore((app) => app.user?.id);
 
     const profileModalRef = useRef<ProfileModalRef>(null);
+    const inviteMemberWorkspaceModal = useRef<InviteMemberWorkspaceModalRef>(null);
 
     const [page, setPage] = useState(1);
     const [query, setQuery] = useState<QueryBase>({ page: 1, limit: PAGE_SIZE, search: "" });
@@ -129,15 +138,12 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
         setPage(1);
         setQuery({ page: 1, limit: PAGE_SIZE, search: "" });
       },
-      handleClose: () => {
-        setOpen(false);
-      },
     }));
 
     const { data: dataMemberRequestsWorkspace, isLoading: isLoadingMemberRequestsWorkspace } = useQuery({
       queryKey: ["memberRequestsWorkspace", wsId],
       queryFn: () => workspaceAPI.getMemberWorkspaceRequests(wsId),
-      enabled: Boolean(wsId) && open,
+      enabled: Boolean(wsId) && open && (isOwner || isAdmin), // chỉ owner/admin mới xem được yêu cầu
       keepPreviousData: true,
     });
 
@@ -169,15 +175,6 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
       const nextPage = page + 1;
       setPage(nextPage);
       setQuery((prev) => ({ ...prev, page: nextPage }));
-    };
-
-    const inviteLink = `https://workspacex.app/invite/${wsId.slice(0, 8)}abc123`;
-
-    const handleCopyLink = () => {
-      navigator.clipboard.writeText(inviteLink);
-      setCopied(true);
-      message.success("Đã sao chép link mời!");
-      setTimeout(() => setCopied(false), 2000);
     };
 
     const handleApproveRequest = (userId: string) => {
@@ -276,10 +273,14 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
         key: "members",
         label: `Thành viên (${totalMembers})`,
       },
-      {
-        key: "pending",
-        label: <>Lượt duyệt</>,
-      },
+      ...(isOwner || isAdmin
+        ? [
+            {
+              key: "pending",
+              label: `Lượt duyệt (${inviteCount + joinCount})`,
+            },
+          ]
+        : []),
     ];
 
     return (
@@ -307,13 +308,18 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
               type="primary"
               className={styles.wmInviteBtn}
               icon={<UserPlus size={16} />}
-              onClick={() => setInviteModalOpen(true)}
+              onClick={() => inviteMemberWorkspaceModal.current?.openModal(wsId)}
             >
               Mời thành viên
             </Button>
           </div>
 
-          <Tabs activeKey={activeTab} onChange={setActiveTab} className={styles.wmTabs} items={tabsItems} />
+          <Tabs
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as "pending" | "members")}
+            className={styles.wmTabs}
+            items={tabsItems}
+          />
 
           <div className={styles.wmBody}>
             {activeTab === "members" && (
@@ -376,10 +382,7 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
                     <Spin />
                   </div>
                 ) : requestsWorkspace.length === 0 ? (
-                  <Empty
-                    description="Không có yêu cầu nào đang chờ"
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  />
+                  <Empty description="Không có yêu cầu nào đang chờ" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 ) : (
                   <>
                     <div className={styles.wmPendingSummary}>
@@ -408,9 +411,7 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
                               {isInvite && request.invitedByName && (
                                 <span> · mời bởi {request.invitedByName}</span>
                               )}
-                              {!isInvite && request.requestedById && (
-                                <span> · yêu cầu tham gia</span>
-                              )}
+                              {!isInvite && request.requestedById && <span> · yêu cầu tham gia</span>}
                             </div>
                           </div>
                           <span
@@ -430,67 +431,7 @@ const WorkspaceMemberModal = forwardRef<WorkspaceMemberModalRef, WorkspaceMember
           </div>
         </Modal>
 
-        <Modal
-          open={inviteModalOpen}
-          onCancel={() => setInviteModalOpen(false)}
-          title="Mời thành viên"
-          width={520}
-          className={styles.wmInviteModal}
-          centered
-          footer={null}
-          mask={{ closable: false }}
-        >
-          <Segmented
-            block
-            options={[
-              { label: "Link mời", value: "link" },
-              { label: "Tìm người dùng", value: "search" },
-            ]}
-            value={inviteMode}
-            onChange={(value) => setInviteMode(value as string)}
-            className={styles.wmInviteTab}
-          />
-
-          {inviteMode === "link" && (
-            <div className={styles.wmInviteLink}>
-              <div className={styles.wmInviteLinkLabel}>Link mời workspace của bạn</div>
-              <div className={styles.wmInviteLinkBox}>
-                <Input value={inviteLink} readOnly />
-                <Button
-                  type="primary"
-                  icon={copied ? <CheckCircle size={16} /> : <Copy size={16} />}
-                  onClick={handleCopyLink}
-                >
-                  {copied ? "Đã sao chép" : "Sao chép"}
-                </Button>
-              </div>
-              <div style={{ marginTop: 12, fontSize: 13, color: "var(--color-text-secondary)" }}>
-                <p style={{ margin: 0 }}>
-                  Link mời sẽ hết hạn sau <strong>7 ngày</strong>. Bất kỳ ai có link này đều có thể tham gia
-                  workspace.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {inviteMode === "search" && (
-            <div>
-              <Input
-                placeholder="Tìm kiếm theo username, email..."
-                prefix={<Search size={16} style={{ color: "var(--color-text-secondary)" }} />}
-                value={inviteSearch}
-                onChange={(e) => setInviteSearch(e.target.value)}
-                className={styles.wmInviteSearch}
-                allowClear
-              />
-              <Empty
-                description="Tính năng tìm người dùng sẽ được tích hợp sau"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                style={{ marginTop: 24 }}
-              />
-            </div>
-          )}
-        </Modal>
+        <InviteMemberWorkspaceModal ref={inviteMemberWorkspaceModal} />
 
         <ProfileModal ref={profileModalRef} />
       </>

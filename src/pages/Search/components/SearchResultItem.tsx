@@ -1,73 +1,14 @@
 import type { ReactNode } from "react";
 import AvatarFallback from "../../../components/AvatarFallback/AvatarFallback";
+import { FriendStatusPill } from "../../../components/FriendStatusPill/FriendStatusPill";
+import { WorkspaceStatusPill } from "../../../components/WorkspaceStatusPill/WorkspaceStatusPill";
 import type { SearchItem } from "../../../types/search.type";
-import { StatusRequest } from "../../../types/user.type";
-import type { StatusUser } from "../../../types/friend.type";
 import styles from "./SearchResultItem.module.scss";
-import { WorkspaceMemberStatus } from "../../../types/workspace.type";
 
 type Props = {
   item: SearchItem;
   keyword: string;
   onUserClick?: (userId: string, type: "user" | "workspace") => void;
-};
-
-const friendStatusLabel: Record<string, string> = {
-  [StatusRequest.ONLINE]: "Trực tuyến",
-  [StatusRequest.ACCEPTED]: "Bạn bè",
-  [StatusRequest.REQUESTED]: "Đã gửi lời mời",
-  [StatusRequest.RECEIVED]: "Có lời mời kết bạn",
-};
-
-const friendStatusTone: Record<string, "success" | "warning" | "info" | "default"> = {
-  [StatusRequest.ONLINE]: "success",
-  [StatusRequest.ACCEPTED]: "success",
-  [StatusRequest.REQUESTED]: "warning",
-  [StatusRequest.RECEIVED]: "info",
-};
-
-type WorkspaceTone = "active" | "pending" | "rejected" | "offline";
-
-const workspaceStatusLabel: Record<string, string> = {
-  [WorkspaceMemberStatus.ACTIVE]: "Đã tham gia",
-  [WorkspaceMemberStatus.PENDING_INVITE]: "Lời mời đang chờ",
-  [WorkspaceMemberStatus.PENDING_REQUEST]: "Yêu cầu đang chờ",
-  [WorkspaceMemberStatus.REJECTED]: "Đã bị từ chối",
-  [WorkspaceMemberStatus.LEFT]: "Đã rời khỏi",
-  [WorkspaceMemberStatus.CANCELLED]: "Đã hủy tham gia",
-};
-
-const workspaceStatusTone: Record<string, WorkspaceTone> = {
-  [WorkspaceMemberStatus.ACTIVE]: "active",
-  [WorkspaceMemberStatus.PENDING_INVITE]: "pending",
-  [WorkspaceMemberStatus.PENDING_REQUEST]: "pending",
-  [WorkspaceMemberStatus.REJECTED]: "rejected",
-  [WorkspaceMemberStatus.LEFT]: "offline",
-  [WorkspaceMemberStatus.CANCELLED]: "offline",
-};
-
-const userStatusPill = (friendStatus?: string) => {
-  if (!friendStatus) return null;
-  const tone = friendStatusTone[friendStatus] ?? "default";
-  const label = friendStatusLabel[friendStatus] || friendStatus;
-  return (
-    <span className={`${styles.statusPill} ${styles[`tone_${tone}`]}`}>
-      <span className={styles.statusDot} />
-      {label}
-    </span>
-  );
-};
-
-const workspaceStatusPill = (workspaceStatus?: string) => {
-  if (!workspaceStatus) return null;
-  const tone = workspaceStatusTone[workspaceStatus] ?? "offline";
-  const label = workspaceStatusLabel[workspaceStatus] || workspaceStatus;
-  return (
-    <span className={`${styles.statusPill} ${styles[`wsTone_${tone}`]}`}>
-      <span className={styles.statusDot} />
-      {label}
-    </span>
-  );
 };
 
 export default function SearchResultItem({ item, keyword, onUserClick }: Props) {
@@ -99,7 +40,7 @@ function UserResultCard({
           src={item.avatar || null}
           alt={displayName}
           showStatus
-          status={item.status as StatusUser}
+          // status={item.status as StatusUser}
           size={44}
         />
       </div>
@@ -107,7 +48,7 @@ function UserResultCard({
         <div className={styles.nameRow}>
           <div className={styles.name}>
             <span className={styles.nameText}>{highlight(displayName, keyword)}</span>
-            {userStatusPill(item.friendStatus)}
+            <FriendStatusPill friendStatus={item.friendStatus} />
           </div>
         </div>
         <div className={styles.meta}>
@@ -140,7 +81,7 @@ function WorkspaceResultCard({
         <div className={styles.nameRow}>
           <div className={styles.name}>
             <span className={styles.nameText}>{highlight(item.name, keyword)}</span>
-            {workspaceStatusPill(item.workspaceStatus)}
+            <WorkspaceStatusPill workspaceStatus={item.workspaceStatus} />
           </div>
         </div>
         <div className={styles.meta}>

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, App, Modal } from "antd";
 import React, { useImperativeHandle, useState } from "react";
-import type { ModalStatus } from "../../../types/utils.type";
-import { workspaceAPI } from "../../../apis/workspace.api";
 import type { Rule } from "antd/es/form";
-import type { CategoryChannel, CategoryChannelBody } from "../../../types/CategoryChannel.type";
+import type { ModalStatus } from "../../../../types/utils.type";
+import { workspaceAPI } from "../../../../apis/workspace.api";
+import type { CategoryChannel, CategoryChannelBody } from "../../../../types/categoryChannel.type";
 
 const rules: Rule[] = [{ required: true }];
 

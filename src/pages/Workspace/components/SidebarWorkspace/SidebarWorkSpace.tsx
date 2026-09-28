@@ -1,14 +1,14 @@
 import { useMemo, useRef, useState } from "react";
 import styles from "./SidebarWorkSpace.module.scss";
-import type { WorkspaceType } from "../../../types/workspace.type";
+import type { WorkspaceType } from "../../../../types/workspace.type";
 import { Button, Tooltip } from "antd";
 import { FolderPlus, Hash, Lock, Pencil, Plus, Users } from "lucide-react";
-import { CategoryChannelModal } from "./CategoryChannelModal";
-import { queryClient } from "../../../main";
-import { ChannelModal } from "./ChannelModal";
-import { useChannelStore } from "../../../store/channelStore";
-import type { WorkspaceMemberModalRef } from "./WorkspaceMemberModal/WorkspaceMemberModal";
-import WorkspaceMemberModal from "./WorkspaceMemberModal/WorkspaceMemberModal";
+import { CategoryChannelModal } from "../CategoryChannelModal/CategoryChannelModal";
+import { queryClient } from "../../../../main";
+import { useChannelStore } from "../../../../store/channelStore";
+import type { WorkspaceMemberModalRef } from "../WorkspaceMemberModal/WorkspaceMemberModal";
+import WorkspaceMemberModal from "../WorkspaceMemberModal/WorkspaceMemberModal";
+import { ChannelModal } from "../ChannelModal/ChannelModal";
 
 interface SidebarWorkSpaceProps {
   data: WorkspaceType;

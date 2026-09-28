@@ -22,11 +22,10 @@ export default function useScrollMessage() {
     total_page: 0,
   });
 
-
   const { data: dataMessage } = useQuery({
     queryKey: ["messageChannel", channelId, query, token],
     queryFn: () => channelApi.getMessagesChannel(channelId as string, query),
-    enabled: Boolean(channelId),
+    enabled: Boolean(channelId) && Boolean(token),
     staleTime: 60 * 1000 * 1,
   });
 

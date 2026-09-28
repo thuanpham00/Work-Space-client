@@ -1,4 +1,5 @@
-import { Button, Empty, Input, Spin, Tabs, Modal, App } from "antd";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Empty, Input, Spin, Tabs, App } from "antd";
 import styles from "./StatusUsers.module.scss";
 import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
@@ -132,8 +133,8 @@ function FriendStatusPanel({
   isLoading: boolean;
   search: string;
   onSearchChange: (value: string) => void;
-  onAccept: (friendId: string, name: string) => void;
-  onReject: (friendId: string, name: string) => void;
+  onAccept?: (friendId: string, name: string) => void;
+  onReject?: (friendId: string, name: string) => void;
   type: "statusFriends" | "channelFriends";
   onUserClick?: (userId: string) => void;
 }) {
@@ -242,10 +243,6 @@ export default function StatusUsers() {
     (channel) => channel.friend?.status === StatusUser.ONLINE,
   );
 
-  const [confirmAcceptOpen, setConfirmAcceptOpen] = useState(false);
-  const [confirmRejectOpen, setConfirmRejectOpen] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState<{ id: string; name: string } | null>(null);
-
   const acceptedFriend = useMutation({
     mutationFn: (friendId: string) => friendApi.acceptFriend(friendId),
   });
@@ -254,42 +251,28 @@ export default function StatusUsers() {
     mutationFn: (friendId: string) => friendApi.rejectedFriend(friendId),
   });
 
-  const handleAccept = (friendId: string, name: string) => {
-    setSelectedFriend({ id: friendId, name });
-    setConfirmAcceptOpen(true);
+  const refreshQuery = () => {
+    queryClient.invalidateQueries({ queryKey: ["friends"] });
+    queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
+    queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
   };
 
-  const handleReject = (friendId: string, name: string) => {
-    setSelectedFriend({ id: friendId, name });
-    setConfirmRejectOpen(true);
-  };
-
-  const handleConfirmAccept = async () => {
-    if (!selectedFriend) return;
+  const handleConfirmAccept = async (friendId: string, name: string) => {
     try {
-      await acceptedFriend.mutateAsync(selectedFriend.id);
-      message.success(`Đã đồng ý kết bạn với ${selectedFriend.name}`);
-      queryClient.invalidateQueries({ queryKey: ["friends"] });
-      queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
-      queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
-      setConfirmAcceptOpen(false);
-      setSelectedFriend(null);
+      await acceptedFriend.mutateAsync(friendId);
+      message.success(`Đã đồng ý kết bạn với ${name}`);
+      refreshQuery();
     } catch (error) {
       console.error(error);
       message.error("Có lỗi xảy ra khi đồng ý kết bạn");
     }
   };
 
-  const handleConfirmReject = async () => {
-    if (!selectedFriend) return;
+  const handleConfirmReject = async (friendId: string, name: string) => {
     try {
-      await rejectedFriend.mutateAsync(selectedFriend.id);
-      message.success(`Đã từ chối kết bạn với ${selectedFriend.name}`);
-      queryClient.invalidateQueries({ queryKey: ["friends"] });
-      queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
-      queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
-      setConfirmRejectOpen(false);
-      setSelectedFriend(null);
+      await rejectedFriend.mutateAsync(friendId);
+      message.success(`Đã từ chối kết bạn với ${name}`);
+      refreshQuery();
     } catch (error) {
       console.error(error);
       message.error("Có lỗi xảy ra khi từ chối kết bạn");
@@ -318,8 +301,6 @@ export default function StatusUsers() {
             isLoading={isLoadingChannelsFriends}
             search={search}
             onSearchChange={setSearch}
-            onAccept={handleAccept}
-            onReject={handleReject}
           />
         ),
       },
@@ -339,8 +320,6 @@ export default function StatusUsers() {
             isLoading={isLoadingChannelsFriends}
             search={search}
             onSearchChange={setSearch}
-            onAccept={handleAccept}
-            onReject={handleReject}
           />
         ),
       },
@@ -359,8 +338,6 @@ export default function StatusUsers() {
             isLoading={isLoadingFriendStatus}
             search={search}
             onSearchChange={setSearch}
-            onAccept={handleAccept}
-            onReject={handleReject}
             onUserClick={handleUserClick}
           />
         ),
@@ -381,14 +358,22 @@ export default function StatusUsers() {
             isLoading={isLoadingFriendStatus}
             search={search}
             onSearchChange={setSearch}
-            onAccept={handleAccept}
-            onReject={handleReject}
+            onAccept={handleConfirmAccept}
+            onReject={handleConfirmReject}
             onUserClick={handleUserClick}
           />
         ),
       },
     ],
-    [statusFriendsCount, channelsFriendsData, friendsData, search],
+    [
+      statusFriendsCount,
+      channelsFriendsData,
+      friendsData,
+      search,
+      isLoadingFriendStatus,
+      isLoadingChannelsFriends,
+      onlineChannelsFriends,
+    ],
   );
 
   return (
@@ -407,41 +392,6 @@ export default function StatusUsers() {
         }}
         className={styles.tab}
       />
-
-      <Modal
-        open={confirmAcceptOpen}
-        title="Xác nhận kết bạn"
-        onCancel={() => {
-          setConfirmAcceptOpen(false);
-          setSelectedFriend(null);
-        }}
-        onOk={handleConfirmAccept}
-        okText="Đồng ý"
-        cancelText="Hủy"
-        confirmLoading={acceptedFriend.isLoading}
-      >
-        <p style={{ marginBottom: 0 }}>
-          Bạn có chắc chắn muốn đồng ý kết bạn với <b>{selectedFriend?.name}</b>?
-        </p>
-      </Modal>
-
-      <Modal
-        open={confirmRejectOpen}
-        title="Từ chối kết bạn"
-        onCancel={() => {
-          setConfirmRejectOpen(false);
-          setSelectedFriend(null);
-        }}
-        onOk={handleConfirmReject}
-        okText="Từ chối"
-        okButtonProps={{ danger: true }}
-        cancelText="Hủy"
-        confirmLoading={rejectedFriend.isLoading}
-      >
-        <p style={{ marginBottom: 0 }}>
-          Bạn có chắc chắn muốn từ chối kết bạn với <b>{selectedFriend?.name}</b>?
-        </p>
-      </Modal>
 
       <ProfileModal ref={profileModalRef} onFriendRequestChange={() => {}} onMessageClick={() => {}} />
     </div>

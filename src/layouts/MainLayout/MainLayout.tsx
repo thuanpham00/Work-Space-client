@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Avatar, Layout, Tooltip } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./MainLayout.module.scss";

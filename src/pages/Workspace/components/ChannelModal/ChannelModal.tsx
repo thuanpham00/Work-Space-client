@@ -3,10 +3,10 @@ import { Col, Form, Input, App, Modal, Row, Switch } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useQuery } from "react-query";
-import type { ChannelBody } from "../../../types/channel.type";
-import { channelApi } from "../../../apis/channel.api";
-import { workspaceAPI } from "../../../apis/workspace.api";
-import SelectorCategoryWorkspace from "../../../components/Selector/SelectorCategoryWorkspace";
+import type { ChannelBody } from "../../../../types/channel.type";
+import { channelApi } from "../../../../apis/channel.api";
+import { workspaceAPI } from "../../../../apis/workspace.api";
+import SelectorCategoryWorkspace from "../../../../components/Selector/SelectorCategoryWorkspace";
 
 const rules: Rule[] = [{ required: true }];
 const defaultJoinHelpText =

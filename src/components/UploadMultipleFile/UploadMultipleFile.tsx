@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Image, App, Upload } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
@@ -25,7 +26,7 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-const UploadMutipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Props, ref) => {
+const UploadMultipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Props, ref) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const { message } = App.useApp();
@@ -134,4 +135,4 @@ const UploadMutipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Props
   );
 });
 
-export default UploadMutipleFile;
+export default UploadMultipleFile;

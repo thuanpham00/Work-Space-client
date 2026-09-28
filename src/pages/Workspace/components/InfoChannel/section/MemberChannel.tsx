@@ -1,13 +1,5 @@
 import { useCallback } from "react";
-import {
-  MessageSquare,
-  MoreHorizontal,
-  Phone,
-  UserCircle,
-  UserPlus,
-  UserX,
-  Video,
-} from "lucide-react";
+import { MessageSquare, MoreHorizontal, Phone, UserCircle, UserPlus, UserX, Video } from "lucide-react";
 import { Dropdown, type MenuProps } from "antd";
 import CollapsibleSection from "../../../../../components/CollapsibleSection/CollapsibleSection";
 import AvatarFallback from "../../../../../components/AvatarFallback/AvatarFallback";
@@ -15,7 +7,6 @@ import {
   RoleMemberChannel,
   type MemberChannel as MemberChannelType,
 } from "../../../../../types/channel.type";
-import type { StatusUser } from "../../../../../types/friend.type";
 import styles from "./MemberChannel.module.scss";
 
 interface MemberChannelProps {
@@ -72,7 +63,7 @@ export default function MemberChannel({ members }: MemberChannelProps) {
               src={member.avatar}
               alt={member.displayName}
               size={32}
-              status={member.status as StatusUser}
+              // status={member.status as StatusUser}
               showStatus={false}
             />
 
@@ -83,11 +74,7 @@ export default function MemberChannel({ members }: MemberChannelProps) {
               </span>
             </div>
 
-            <Dropdown
-              menu={{ items: getMemberMenuItems(member) }}
-              trigger={["click"]}
-              placement="leftTop"
-            >
+            <Dropdown menu={{ items: getMemberMenuItems(member) }} trigger={["click"]} placement="leftTop">
               <button
                 type="button"
                 className={styles.menuBtn}

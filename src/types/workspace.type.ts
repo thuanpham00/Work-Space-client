@@ -1,5 +1,5 @@
 import type { Channel } from "./channel.type";
-import type { UserType } from "./user.type";
+import type { StatusRequest, UserType, WorkspaceInvitePolicy } from "./user.type";
 
 export type WorkspaceType = {
   id: string;
@@ -12,6 +12,7 @@ export type WorkspaceType = {
   categories: CategoryWorkspace[];
   countUnread?: number;
   owner: UserType;
+  role?: WorkspaceMemberRole;
   workspaceStatus?: WorkspaceMemberStatus;
 };
 
@@ -41,6 +42,7 @@ export enum WorkspaceMemberRole {
 }
 
 export interface WorkspaceMember {
+  id: string;
   workspaceId: string;
   userId: string;
   role: string;
@@ -84,4 +86,42 @@ export interface WorkspaceRequestsResponse {
   requests: WorkspaceRequestItem[];
   inviteCount: number;
   joinCount: number;
+}
+
+export enum InviteDenialReason {
+  OK = "OK",
+  ALREADY_MEMBER = "ALREADY_MEMBER",
+  ALREADY_PENDING_INVITE = "ALREADY_PENDING_INVITE",
+  ALREADY_PENDING_REQUEST = "ALREADY_PENDING_REQUEST",
+  FRIENDS_ONLY_POLICY = "FRIENDS_ONLY_POLICY",
+  NO_FRIEND_REQUEST = "NO_FRIEND_REQUEST",
+  SELF_INVITE = "SELF_INVITE",
+}
+
+export interface InviteSearchItem {
+  id: string;
+  username: string;
+  displayName: string;
+  fullName: string | null;
+  avatar: string | null;
+  friendStatus: StatusRequest | null;
+  workspaceInvitePolicy: WorkspaceInvitePolicy | null;
+  existingWorkspaceStatus: WorkspaceMemberStatus | null;
+  canInvite: boolean;
+  reason: InviteDenialReason;
+}
+
+export interface InviteSearchResponse {
+  items: InviteSearchItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  workspaceId: string;
+}
+
+export interface InviteSearchParams {
+  search?: string;
+  page?: number;
+  limit?: number;
 }

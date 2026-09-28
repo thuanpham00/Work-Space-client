@@ -2,6 +2,7 @@ import type { CategoryChannel, CategoryChannelBody } from "../types/categoryChan
 import type { QueryBase } from "../types/query.type";
 import type { SuccessResponse } from "../types/utils.type";
 import type {
+  InviteSearchResponse,
   WorkspaceMember,
   WorkspaceMemberItem,
   WorkspaceRequestItem,
@@ -40,6 +41,12 @@ export const workspaceAPI = {
     >(`/workspaces/${workspaceId}/requests`);
   },
 
+  searchInviteMembers: (workspaceId: string, params: QueryBase) => {
+    return Http.get<SuccessResponse<InviteSearchResponse>>(`/workspaces/${workspaceId}/invite-search`, {
+      params,
+    });
+  },
+
   createCategory: (data: CategoryChannelBody) => {
     return Http.post<SuccessResponse<{ category: CategoryChannel }>>(`/workspaces/categories`, data);
   },
@@ -61,15 +68,38 @@ export const workspaceAPI = {
     return Http.get<SuccessResponse<{ workspace: WorkspaceType }>>(`/workspaces/${workspaceId}/status`);
   },
 
+  // dành cho user
   requestInvite: (workspaceId: string) => {
     return Http.post<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
       `/workspaces/${workspaceId}/request-invite`,
     );
   },
 
-  cancelRequest: (workspaceId: string) => {
+  // dành cho user
+  requestCancel: (workspaceId: string) => {
     return Http.delete<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
       `/workspaces/${workspaceId}/request-invite`,
     );
+  },
+
+  // dành cho owner/admin
+  inviteUser: (workspaceId: string, userId: string) => {
+    return Http.post<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
+      `/workspaces/${workspaceId}/invite`,
+      { userId },
+    );
+  },
+
+  // dành cho owner/admin
+  cancelInvite: (workspaceId: string, userId: string) => {
+    return Http.delete<SuccessResponse<{ workspaceMember: WorkspaceMember }>>(
+      `/workspaces/${workspaceId}/invite`,
+      { data: { userId } },
+    );
+  },
+
+  // lấy link workspace
+  getWorkspaceLink: (workspaceId: string) => {
+    return Http.get<SuccessResponse<{ url: string; expiresAt: string }>>(`/workspaces/${workspaceId}/link`);
   },
 };

@@ -82,7 +82,7 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
     }, [workspaceId, message, requestWorkspaceMutation, refetch]);
 
     const cancelRequestMutation = useMutation({
-      mutationFn: (id: string) => workspaceAPI.cancelRequest(id),
+      mutationFn: (id: string) => workspaceAPI.requestCancel(id),
     });
 
     const handleCancelRequest = useCallback(async () => {

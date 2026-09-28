@@ -1,0 +1,32 @@
+.friendStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.friendStatusTone_success {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.friendStatusTone_warning {
+  background: rgba(234, 179, 8, 0.15);
+  color: #ca8a04;
+}
+
+.friendStatusTone_info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+}
+
+.friendStatusTone_default {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+}

@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { App } from "antd";
 import type {
   Channel,
-  ChannelDM,
   ChannelMemberNickname,
   ChannelNicknamesBody,
   ChannelNicknameUpdate,
@@ -15,7 +14,7 @@ import ChangeBackgroundChannel from "../ChangeBackgroundChannel/ChangeBackground
 import SettingNickName from "../SettingNickName/SettingNickName";
 
 interface CustomizationSectionProps {
-  channelDMDetail: ChannelDM | Channel;
+  channelDMDetail: Channel;
   backgroundUrlDM: string;
   accentDM: string;
   nickNames: ChannelMemberNickname[];

@@ -18,7 +18,6 @@ import {
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
 import styles from "./ProfileModal.module.scss";
-import { StatusUser } from "../../../../types/friend.type";
 import { useMutation, useQuery } from "react-query";
 import { userAPI } from "../../../../apis/user.api";
 import type { UserType } from "../../../../types/user.type";
@@ -41,11 +40,11 @@ interface ProfileModalProps {
   onMessageClick?: () => void;
 }
 
-const STATUS_CONFIG: Record<StatusUser, { label: string; className: string }> = {
-  [StatusUser.ONLINE]: { label: "Đang hoạt động", className: styles.statusOnline },
-  [StatusUser.BUSY]: { label: "Bận", className: styles.statusBusy },
-  [StatusUser.OFFLINE]: { label: "Offline", className: styles.statusOffline },
-};
+// const STATUS_CONFIG: Record<StatusUser, { label: string; className: string }> = {
+//   [StatusUser.ONLINE]: { label: "Đang hoạt động", className: styles.statusOnline },
+//   [StatusUser.BUSY]: { label: "Bận", className: styles.statusBusy },
+//   [StatusUser.OFFLINE]: { label: "Offline", className: styles.statusOffline },
+// };
 
 const MASKED_VALUE = "••••••••";
 
@@ -133,7 +132,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       onFriendRequestChange?.();
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
-      queryClient.invalidateQueries({ queryKey: ["listUser"] });
+      queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
     }, [refetch, onFriendRequestChange]);
 
     const handleAddRequest = useCallback(async () => {
@@ -264,57 +263,40 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
           label: "Gia nhập",
           value: formatDateString(userData.createdAt),
         },
-      ];
-
-      if (userData.email) {
-        items.push({
+        {
           key: "email",
           icon: Mail,
           label: "Email",
-          value: userData.privacySettings?.showEmail ? userData.email : MASKED_VALUE,
-          isPrivate: !userData.privacySettings?.showEmail,
-        });
-      }
-
-      if (userData.phone) {
-        items.push({
+          value: userData.email !== "" ? userData.email : MASKED_VALUE,
+          isPrivate: userData.email === "",
+        },
+        {
           key: "phone",
           icon: Phone,
           label: "Số điện thoại",
-          value: userData.privacySettings?.showPhone ? userData.phone : MASKED_VALUE,
-          isPrivate: !userData.privacySettings?.showPhone,
-        });
-      }
-
-      if (userData.gender) {
-        items.push({
+          value: userData.phone !== "" ? userData.phone : MASKED_VALUE,
+          isPrivate: userData.phone === "",
+        },
+        {
           key: "gender",
           icon: User,
           label: "Giới tính",
-          value: userData.privacySettings?.showGender ? getGenderLabel(userData.gender) : MASKED_VALUE,
-          isPrivate: !userData.privacySettings?.showGender,
-        });
-      }
-
-      if (userData.dateOfBirth) {
-        items.push({
+          value: userData.gender ? getGenderLabel(userData.gender) : MASKED_VALUE,
+          isPrivate: userData.gender === null,
+        },
+        {
           key: "birthday",
           icon: Cake,
           label: "Ngày sinh",
-          value: userData.privacySettings?.showBirthday
-            ? formatDateString(userData.dateOfBirth as string)
-            : MASKED_VALUE,
-          isPrivate: !userData.privacySettings?.showBirthday,
-        });
-      }
+          value: userData.dateOfBirth ? formatDateString(userData.dateOfBirth as string) : MASKED_VALUE,
+          isPrivate: userData.dateOfBirth === "",
+        },
+      ];
 
       return items;
     }, [userData]);
 
     const friendStatus = userData?.friendStatus;
-
-    const status = (userData?.status as StatusUser) ?? StatusUser.OFFLINE;
-    const statusConfig = STATUS_CONFIG[status] ?? STATUS_CONFIG[StatusUser.OFFLINE];
 
     const tabItems = [
       {
@@ -442,8 +424,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
                   src={userData.avatar}
                   alt={userData.username}
                   size={96}
-                  status={status}
-                  showStatus={true}
+                  showStatus={false}
                   statusStyle={{
                     bottom: "6px",
                     right: "6px",
@@ -459,10 +440,10 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
               <div className={styles.meta}>
                 <h2 className={styles.fullName}>{userData.fullName}</h2>
                 <p className={styles.username}>@{userData.username}</p>
-                <span className={`${styles.statusPill} ${statusConfig.className}`}>
+                {/* <span className={`${styles.statusPill} ${statusConfig.className}`}>
                   <span className={styles.statusDot} />
                   {statusConfig.label}
-                </span>
+                </span> */}
               </div>
 
               <div className={`${styles.actions}`}>{renderActions()}</div>

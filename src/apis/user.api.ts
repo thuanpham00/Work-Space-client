@@ -5,7 +5,7 @@ import type {
   UpdateUserBodyType,
 } from "../types/auth.type";
 import type { Media } from "../types/media.type";
-import type { UserType } from "../types/user.type";
+import type { Setting, UpdateSettingsBodyType, UserType } from "../types/user.type";
 import type { AuthResponse, SuccessResponse } from "../types/utils.type";
 import Http from "../utils/http";
 
@@ -24,6 +24,14 @@ export const userAPI = {
 
   getProfile: () => {
     return Http.get<SuccessResponse<{ user: UserType }>>("/users/me");
+  },
+
+  getSettings: () => {
+    return Http.get<SuccessResponse<{ settings: Setting }>>("/users/settings");
+  },
+
+  updateSettings: (data: UpdateSettingsBodyType) => {
+    return Http.patch<SuccessResponse<{ settings: Setting }>>("/users/settings", data);
   },
 
   refreshToken: () => {

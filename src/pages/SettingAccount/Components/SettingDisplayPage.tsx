@@ -1,53 +1,68 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Checkbox, Col, Form, Row, Select, App } from "antd";
 import styles from "./InfoUserPage.module.scss";
-import type { UserType } from "../../../types/user.type";
+import type { Setting, UpdateSettingsBodyType } from "../../../types/user.type";
 import { useEffect } from "react";
-import type { UpdateUserBodyType } from "../../../types/auth.type";
 import { userAPI } from "../../../apis/user.api";
 import { useMutation } from "react-query";
 import { queryClient } from "../../../main";
-import { StatusUser } from "../../../types/friend.type";
+import { WorkMode, WorkspaceInvitePolicy } from "../../../types/user.type";
 
 const { Option } = Select;
 
-export default function SettingDisplayPage({ infoUser }: { infoUser: UserType }) {
+export default function SettingDisplayPage({ settings }: { settings: Setting }) {
   const [form] = Form.useForm();
   const { message } = App.useApp();
 
   const handleReset = () => {
+    if (!settings) return;
     form.setFieldsValue({
-      status: infoUser.status,
-      privacySettings: infoUser.privacySettings,
+      workMode: settings.workMode,
+      showEmail: settings.showEmail,
+      showPhone: settings.showPhone,
+      showDateOfBirth: settings.showDateOfBirth,
+      showGender: settings.showGender,
+      workspaceInvitePolicy: settings.workspaceInvitePolicy,
     });
   };
 
   useEffect(() => {
-    if (infoUser) {
-      form.setFieldValue("status", infoUser.status);
-      form.setFieldValue("privacySettings", infoUser.privacySettings);
+    if (settings) {
+      form.setFieldsValue({
+        workMode: settings.workMode,
+        showEmail: settings.showEmail,
+        showPhone: settings.showPhone,
+        showDateOfBirth: settings.showDateOfBirth,
+        showGender: settings.showGender,
+        workspaceInvitePolicy: settings.workspaceInvitePolicy,
+      });
     }
-  }, [infoUser]);
+  }, [settings]);
 
-  const updateUser = useMutation({
-    mutationFn: (data: UpdateUserBodyType) => userAPI.update(data),
+  const updateSettings = useMutation({
+    mutationFn: (data: UpdateSettingsBodyType) => userAPI.updateSettings(data),
   });
 
   const onFinish = async () => {
     const valid = await form.validateFields();
     if (!valid) return;
 
-    const data: UpdateUserBodyType = {
-      status: valid.status,
-      privacySettings: valid.privacySettings,
+    const data: UpdateSettingsBodyType = {
+      workMode: valid.workMode,
+      showEmail: valid.showEmail,
+      showPhone: valid.showPhone,
+      showDateOfBirth: valid.showDateOfBirth,
+      showGender: valid.showGender,
+      workspaceInvitePolicy: valid.workspaceInvitePolicy,
     };
 
-    updateUser.mutate(data, {
+    updateSettings.mutate(data, {
       onSuccess: () => {
-        message.success("Cập nhật thông tin thành công");
-        queryClient.invalidateQueries({ queryKey: ["me"] });
+        message.success("Cập nhật cài đặt thành công");
+        queryClient.invalidateQueries({ queryKey: ["settings"] });
       },
       onError: () => {
-        message.error("Cập nhật thông tin thất bại");
+        message.error("Cập nhật cài đặt thất bại");
       },
     });
   };
@@ -57,11 +72,20 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
       <Form form={form} layout="vertical" className={styles.form} onFinish={onFinish}>
         <Row>
           <Col span={24}>
-            <Form.Item name="status" label="Trạng thái tài khoản">
+            <Form.Item name="workMode" label="Chế độ làm việc">
               <Select style={{ width: "100%" }}>
-                <Option value={StatusUser.ONLINE}>Online</Option>
-                <Option value={StatusUser.OFFLINE}>Offline</Option>
-                <Option value={StatusUser.BUSY}>Busy</Option>
+                <Option value={WorkMode.ONLINE}>Online</Option>
+                <Option value={WorkMode.OFFLINE}>Offline</Option>
+                <Option value={WorkMode.BUSY}>Busy</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+
+          <Col span={24}>
+            <Form.Item name="workspaceInvitePolicy" label="Ai có thể mời bạn vào Workspace">
+              <Select style={{ width: "100%" }}>
+                <Option value={WorkspaceInvitePolicy.EVERYONE}>Mọi người</Option>
+                <Option value={WorkspaceInvitePolicy.FRIENDS_ONLY}>Chỉ bạn bè</Option>
               </Select>
             </Form.Item>
           </Col>
@@ -70,25 +94,22 @@ export default function SettingDisplayPage({ infoUser }: { infoUser: UserType })
             <h3 style={{ marginBottom: 16, marginTop: 8 }}>Cấu hình hiển thị thông tin cá nhân</h3>
             <Row gutter={[6, 6]}>
               <Col span={6}>
-                <Form.Item name={["privacySettings", "showEmail"]} valuePropName="checked">
+                <Form.Item name="showEmail" valuePropName="checked">
                   <Checkbox>Hiển thị Email</Checkbox>
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Form.Item name={["privacySettings", "showPhone"]} valuePropName="checked">
+                <Form.Item name="showPhone" valuePropName="checked">
                   <Checkbox>Hiển thị Số điện thoại</Checkbox>
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Form.Item
-                  name={["privacySettings", "showBirthday"]} // cấu hình thế này sẽ ra { privacySettings: { showEmail: true, showPhone: false, showBirthday: true, showGender: false } }
-                  valuePropName="checked"
-                >
+                <Form.Item name="showDateOfBirth" valuePropName="checked">
                   <Checkbox>Hiển thị Ngày sinh</Checkbox>
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Form.Item name={["privacySettings", "showGender"]} valuePropName="checked">
+                <Form.Item name="showGender" valuePropName="checked">
                   <Checkbox>Hiển thị Giới tính</Checkbox>
                 </Form.Item>
               </Col>

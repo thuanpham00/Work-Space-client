@@ -6,6 +6,17 @@ export enum GenderType {
   OTHER = "OTHER",
 }
 
+export enum WorkMode {
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+  BUSY = "BUSY",
+}
+
+export enum WorkspaceInvitePolicy {
+  EVERYONE = "EVERYONE",
+  FRIENDS_ONLY = "FRIENDS_ONLY",
+}
+
 export const genderTranslate = {
   [GenderType.MALE]: "Nam",
   [GenderType.FEMALE]: "Nữ",
@@ -26,7 +37,6 @@ export type UserType = {
   displayName: string;
   avatar: string;
   fullName: string;
-  status: string;
   bio: string;
   phone: string;
   dateOfBirth: string | Dayjs;
@@ -34,7 +44,6 @@ export type UserType = {
   updatedAt: string;
   gender: GenderType;
   friendStatus?: StatusRequest | null;
-  privacySettings?: PrivacySettings;
 };
 
 export type ListUserParamsType = {
@@ -48,4 +57,22 @@ export type PrivacySettings = {
   showPhone: boolean;
   showBirthday: boolean;
   showGender: boolean;
+};
+
+export type Setting = {
+  showEmail: boolean;
+  showPhone: boolean;
+  showDateOfBirth: boolean;
+  showGender: boolean;
+  workMode: WorkMode;
+  workspaceInvitePolicy: WorkspaceInvitePolicy;
+};
+
+export type UpdateSettingsBodyType = {
+  showEmail: boolean;
+  showPhone: boolean;
+  showDateOfBirth: boolean;
+  showGender: boolean;
+  workMode: WorkMode;
+  workspaceInvitePolicy: WorkspaceInvitePolicy;
 };

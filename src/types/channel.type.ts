@@ -1,4 +1,4 @@
-import type { PrivacySettings, UserType } from "./user.type";
+import type { UserType } from "./user.type";
 import type { CategoryWorkspace } from "./workspace.type";
 
 export type ChannelDM = {
@@ -69,9 +69,7 @@ export interface MemberChannel {
   username: string;
   displayName: string;
   avatar: string;
-  status: string;
   fullName: string;
-  privacySettings?: PrivacySettings;
   phone: string;
   dateOfBirth: string;
   gender: string;
@@ -91,14 +89,6 @@ export interface ChannelConfig {
 export interface ChannelSettingsBody {
   backgroundUrl: string;
   accent: string;
-}
-
-export interface NicknameMember {
-  userId: string;
-  username: string;
-  displayName: string;
-  avatar: string;
-  status?: string;
 }
 
 export interface ChannelNicknameUpdate {
