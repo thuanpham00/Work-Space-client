@@ -1,18 +1,16 @@
 import React, { useCallback, useImperativeHandle, useMemo, useState } from "react";
 import { Modal, Button, Spin, App } from "antd";
-import { X, Calendar, User, Users, UserPlus } from "lucide-react";
+import { X, Calendar, User, Users, UserPlus, MessageSquare, Check } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
 import styles from "./ChannelProfileModal.module.scss";
 import { useMutation, useQuery } from "react-query";
-import { workspaceAPI } from "../../../../apis/workspace.api";
 import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
 import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelProfile } from "../../../../types/channel.type";
 
 export interface ChannelProfileModalRef {
   openModal: (idChannelId: string) => void;
-  closeModal: () => void;
 }
 
 interface ChannelProfileModalProps {
@@ -37,24 +35,19 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       enabled: !!channelId && visible,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const channelData = (data as any)?.data?.data?.channel as ChannelProfile;
+    const channelData = data?.data?.data?.channel as ChannelProfile;
 
     useImperativeHandle(ref, () => ({
       openModal: (idChannelId: string) => {
         setVisible(true);
         setChannelId(idChannelId);
       },
-      closeModal: () => {
-        setVisible(false);
-      },
     }));
 
-    const handleClose = useCallback(() => {
+    const handleClose = () => {
       setVisible(false);
       setChannelId("");
-      onChannelChange?.();
-    }, [onChannelChange]);
+    };
 
     const bannerStyle = useMemo(() => {
       if (backgroundUrlDM) {
@@ -66,37 +59,20 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       return undefined;
     }, [backgroundUrlDM, accentDM]);
 
-    const status = (channelData?.channelStatus as WorkspaceMemberStatus) ?? undefined;
+    const status = channelData?.channelStatus as WorkspaceMemberStatus;
+
+    const refreshChannelQueries = useCallback(() => {
+      refetch();
+      onChannelChange?.();
+    }, [refetch, onChannelChange]);
 
     const requestWorkspaceMutation = useMutation({
-      mutationFn: (id: string) => workspaceAPI.requestInvite(id),
+      mutationFn: (id: string) => channelApi.requestToJoin(id),
     });
-
-    const handleRequestInvite = useCallback(async () => {
-      if (!channelId) return;
-      try {
-        await requestWorkspaceMutation.mutateAsync(channelId);
-        message.success("Yêu cầu tham gia workspace đã được gửi");
-        refetch();
-      } catch (error) {
-        console.error(error);
-      }
-    }, [channelId, message, requestWorkspaceMutation, refetch]);
 
     const cancelRequestMutation = useMutation({
-      mutationFn: (id: string) => workspaceAPI.requestCancel(id),
+      mutationFn: (id: string) => channelApi.cancelRequestToJoin(id),
     });
-
-    const handleCancelRequest = useCallback(async () => {
-      if (!channelId) return;
-      try {
-        await cancelRequestMutation.mutateAsync(channelId);
-        message.success("Đã hủy yêu cầu tham gia workspace");
-        refetch();
-      } catch (error) {
-        console.error(error);
-      }
-    }, [channelId, message, cancelRequestMutation, refetch]);
 
     const infoItems = useMemo(() => {
       if (!channelData) return [];
@@ -130,6 +106,78 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       return items;
     }, [channelData]);
 
+    const handleRequestInvite = useCallback(async () => {
+      if (!channelId) return;
+      try {
+        await requestWorkspaceMutation.mutateAsync(channelId);
+        message.success("Yêu cầu tham gia channel đã được gửi");
+        refreshChannelQueries();
+      } catch (error) {
+        console.error(error);
+      }
+    }, [channelId, message, requestWorkspaceMutation, refreshChannelQueries]);
+
+    const handleCancelRequest = useCallback(async () => {
+      if (!channelId) return;
+      try {
+        await cancelRequestMutation.mutateAsync(channelId);
+        message.success("Đã hủy yêu cầu tham gia channel");
+        refreshChannelQueries();
+      } catch (error) {
+        console.error(error);
+      }
+    }, [channelId, message, cancelRequestMutation, refreshChannelQueries]);
+
+    const renderActions = () => {
+      switch (status) {
+        case WorkspaceMemberStatus.PENDING_REQUEST:
+          return (
+            <Button
+              type="primary"
+              icon={<X size={16} />}
+              className={`${styles.friendRequestBtn}`}
+              onClick={handleCancelRequest}
+            >
+              Hủy yêu cầu
+            </Button>
+          );
+
+        case WorkspaceMemberStatus.ACTIVE:
+          return (
+            <div className={styles.friendActionsRow}>
+              <Button
+                disabled
+                icon={<Check size={16} />}
+                className={`${styles.friendRequestBtn} ${styles.friendRequestAccepted}`}
+              >
+                Đã tham gia
+              </Button>
+              <Button
+                type="primary"
+                // loading={openingChat}
+                icon={<MessageSquare size={16} />}
+                className={`${styles.friendRequestBtn}`}
+                // onClick={handleOpenMessage}
+              >
+                Nhắn tin
+              </Button>
+            </div>
+          );
+
+        case WorkspaceMemberStatus.CANCELED || null:
+          return (
+            <Button
+              type="primary"
+              icon={<UserPlus size={16} />}
+              className={`${styles.friendRequestBtn}`}
+              onClick={handleRequestInvite}
+            >
+              Tham gia
+            </Button>
+          );
+      }
+    };
+
     return (
       <Modal
         open={visible}
@@ -140,6 +188,7 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
         className={styles.workspaceProfileModal}
         closeIcon={<X size={18} className={styles.closeIcon} />}
         destroyOnClose
+        maskClosable={false}
       >
         {isLoading || !channelData ? (
           <div className={styles.loadingWrapper}>
@@ -163,29 +212,7 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
                 {channelData.description && <p className={styles.description}>{channelData.description}</p>}
               </div>
 
-              <div className={styles.actions}>
-                {(!status || status === WorkspaceMemberStatus.BANNED) && (
-                  <Button
-                    type="primary"
-                    icon={<UserPlus size={16} />}
-                    className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
-                    onClick={handleRequestInvite}
-                  >
-                    Tham gia
-                  </Button>
-                )}
-
-                {status === WorkspaceMemberStatus.PENDING_REQUEST && (
-                  <Button
-                    danger
-                    icon={<X size={16} />}
-                    className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
-                    onClick={handleCancelRequest}
-                  >
-                    Hủy yêu cầu
-                  </Button>
-                )}
-              </div>
+              <div className={styles.actions}>{renderActions()}</div>
 
               <div className={styles.infoSection}>
                 {infoItems.map((item) => {

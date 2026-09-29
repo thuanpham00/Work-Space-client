@@ -350,6 +350,25 @@
   height: 38px;
 }
 
+.friendActionsRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+
+  .friendRequestBtn {
+    flex: 1;
+    width: auto;
+  }
+}
+
+.friendRequestAccepted {
+  color: var(--color-text-secondary) !important;
+  background-color: var(--color-bg-secondary) !important;
+  border: 1px solid var(--color-bg-secondary) !important;
+  cursor: default;
+}
+
 @include respond-to("xs") {
   .content {
     padding: 56px $spacing-md $spacing-md;

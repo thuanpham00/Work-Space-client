@@ -409,6 +409,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
         className={styles.fullProfileModal}
         closeIcon={<X size={18} className={styles.closeIcon} />}
         destroyOnClose
+        maskClosable={false}
       >
         {isLoading || !userData ? (
           <div className={styles.loadingWrapper}>

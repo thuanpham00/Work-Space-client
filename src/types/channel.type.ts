@@ -98,7 +98,7 @@ export type ChannelSearchType = {
   categoryId: string;
   workspaceName: string;
   workspaceOwner: string;
-  channelMemberStatus: ChannelMemberRole;
+  channelMemberStatus: WorkspaceMemberStatus;
 };
 
 export type ChannelProfile = {

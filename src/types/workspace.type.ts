@@ -30,9 +30,9 @@ export enum WorkspaceMemberStatus {
   ACTIVE = "ACTIVE",
   LEFT = "LEFT",
   BANNED = "BANNED",
-  MUTED = "MUTED",
   PENDING_INVITE = "PENDING_INVITE",
   PENDING_REQUEST = "PENDING_REQUEST",
+  CANCELED = "CANCELED",
 }
 
 export enum WorkspaceMemberRole {

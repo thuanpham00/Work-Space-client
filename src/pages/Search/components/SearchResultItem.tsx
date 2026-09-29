@@ -4,6 +4,7 @@ import { FriendStatusPill } from "../../../components/FriendStatusPill/FriendSta
 import styles from "./SearchResultItem.module.scss";
 import type { ChannelSearchType } from "../../../types/channel.type";
 import type { UserType } from "../../../types/user.type";
+import { WorkspaceStatusPill } from "../../../components/WorkspaceStatusPill/WorkspaceStatusPill";
 
 type Props = {
   item: UserType | ChannelSearchType;
@@ -73,12 +74,6 @@ function ChannelResultCard({
   };
 
   const isPrivate = item.type === "DM" || item.description?.toLowerCase().includes("private");
-  const roleLabel =
-    item.channelMemberStatus === "ADMIN"
-      ? "Quản trị viên"
-      : item.channelMemberStatus === "MEMBER"
-        ? "Thành viên"
-        : null;
 
   return (
     <div className={styles.item} onClick={handleClick}>
@@ -92,17 +87,15 @@ function ChannelResultCard({
               <span className={styles.hash}>#</span>
               {highlight(item.name, keyword)}
             </span>
+            <WorkspaceStatusPill workspaceStatus={item.channelMemberStatus} />
             {isPrivate && <span className={styles.privateTag}>Riêng tư</span>}
-            {roleLabel && <span className={styles.roleTag}>{roleLabel}</span>}
           </div>
         </div>
         <div className={styles.meta}>
           {item.workspaceName && (
             <div className={styles.metaRow}>
               <span className={styles.metaLabel}>Workspace: </span>
-              <span className={styles.metaValue}>
-                {highlight(item.workspaceName, keyword)}
-              </span>
+              <span className={styles.metaValue}>{highlight(item.workspaceName, keyword)}</span>
             </div>
           )}
           {item.description && (

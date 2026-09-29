@@ -78,4 +78,12 @@ export const channelApi = {
   infoChannelStatus: (channelId: string) => {
     return Http.get<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/status`);
   },
+
+  requestToJoin: (channelId: string) => {
+    return Http.post<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/request-join`);
+  },
+
+  cancelRequestToJoin: (channelId: string) => {
+    return Http.delete<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/request-join`);
+  },
 };
