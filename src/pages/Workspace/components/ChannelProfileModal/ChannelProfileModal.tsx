@@ -3,45 +3,47 @@ import { Modal, Button, Spin, App } from "antd";
 import { X, Calendar, User, Users, UserPlus } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
-import styles from "./WorkspaceProfileModal.module.scss";
+import styles from "./ChannelProfileModal.module.scss";
 import { useMutation, useQuery } from "react-query";
 import { workspaceAPI } from "../../../../apis/workspace.api";
-import { WorkspaceMemberStatus, type WorkspaceType } from "../../../../types/workspace.type";
+import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
+import { channelApi } from "../../../../apis/channel.api";
+import type { ChannelProfile } from "../../../../types/channel.type";
 
-export interface WorkspaceProfileModalRef {
-  openModal: (idWorkspaceId: string) => void;
+export interface ChannelProfileModalRef {
+  openModal: (idChannelId: string) => void;
   closeModal: () => void;
 }
 
-interface WorkspaceProfileModalProps {
+interface ChannelProfileModalProps {
   backgroundUrlDM?: string;
   accentDM?: string;
-  onWorkspaceChange?: () => void;
+  onChannelChange?: () => void;
 }
 
 const PLACEHOLDER = "—";
 
-export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, WorkspaceProfileModalProps>(
-  ({ backgroundUrlDM, accentDM, onWorkspaceChange }, ref) => {
+export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, ChannelProfileModalProps>(
+  ({ backgroundUrlDM, accentDM, onChannelChange }, ref) => {
     const { message } = App.useApp();
 
     const [visible, setVisible] = useState(false);
-    const [workspaceId, setWorkspaceId] = useState<string>("");
+    const [channelId, setChannelId] = useState<string>("");
 
     const { data, isLoading, refetch } = useQuery({
-      queryKey: ["infoWorkspace", workspaceId],
-      queryFn: () => workspaceAPI.infoWorkspaceStatus(workspaceId),
+      queryKey: ["infoChannel", channelId],
+      queryFn: () => channelApi.infoChannelStatus(channelId),
       staleTime: 1000 * 60 * 5,
-      enabled: !!workspaceId && visible,
+      enabled: !!channelId && visible,
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const workspaceData = (data as any)?.data?.data?.workspace as WorkspaceType | undefined;
+    const channelData = (data as any)?.data?.data?.channel as ChannelProfile;
 
     useImperativeHandle(ref, () => ({
-      openModal: (idWorkspaceId: string) => {
+      openModal: (idChannelId: string) => {
         setVisible(true);
-        setWorkspaceId(idWorkspaceId);
+        setChannelId(idChannelId);
       },
       closeModal: () => {
         setVisible(false);
@@ -50,9 +52,9 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
 
     const handleClose = useCallback(() => {
       setVisible(false);
-      setWorkspaceId("");
-      onWorkspaceChange?.();
-    }, [onWorkspaceChange]);
+      setChannelId("");
+      onChannelChange?.();
+    }, [onChannelChange]);
 
     const bannerStyle = useMemo(() => {
       if (backgroundUrlDM) {
@@ -64,40 +66,40 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
       return undefined;
     }, [backgroundUrlDM, accentDM]);
 
-    const status = (workspaceData?.workspaceStatus as WorkspaceMemberStatus) ?? undefined;
+    const status = (channelData?.channelStatus as WorkspaceMemberStatus) ?? undefined;
 
     const requestWorkspaceMutation = useMutation({
       mutationFn: (id: string) => workspaceAPI.requestInvite(id),
     });
 
     const handleRequestInvite = useCallback(async () => {
-      if (!workspaceId) return;
+      if (!channelId) return;
       try {
-        await requestWorkspaceMutation.mutateAsync(workspaceId);
+        await requestWorkspaceMutation.mutateAsync(channelId);
         message.success("Yêu cầu tham gia workspace đã được gửi");
         refetch();
       } catch (error) {
         console.error(error);
       }
-    }, [workspaceId, message, requestWorkspaceMutation, refetch]);
+    }, [channelId, message, requestWorkspaceMutation, refetch]);
 
     const cancelRequestMutation = useMutation({
       mutationFn: (id: string) => workspaceAPI.requestCancel(id),
     });
 
     const handleCancelRequest = useCallback(async () => {
-      if (!workspaceId) return;
+      if (!channelId) return;
       try {
-        await cancelRequestMutation.mutateAsync(workspaceId);
+        await cancelRequestMutation.mutateAsync(channelId);
         message.success("Đã hủy yêu cầu tham gia workspace");
         refetch();
       } catch (error) {
         console.error(error);
       }
-    }, [workspaceId, message, cancelRequestMutation, refetch]);
+    }, [channelId, message, cancelRequestMutation, refetch]);
 
     const infoItems = useMemo(() => {
-      if (!workspaceData) return [];
+      if (!channelData) return [];
 
       const items: {
         key: string;
@@ -109,13 +111,13 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
           key: "owner",
           icon: User,
           label: "Chủ sở hữu",
-          value: workspaceData.owner?.fullName || workspaceData.owner?.username || PLACEHOLDER,
+          value: channelData.workspaceOwner?.fullName || channelData.workspaceOwner?.username || PLACEHOLDER,
         },
         {
           key: "joined",
           icon: Calendar,
           label: "Ngày tạo",
-          value: formatDateString(workspaceData.createdAt),
+          value: formatDateString(channelData.createdAt),
         },
         {
           key: "members",
@@ -126,7 +128,7 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
       ];
 
       return items;
-    }, [workspaceData]);
+    }, [channelData]);
 
     return (
       <Modal
@@ -139,7 +141,7 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
         closeIcon={<X size={18} className={styles.closeIcon} />}
         destroyOnClose
       >
-        {isLoading || !workspaceData ? (
+        {isLoading || !channelData ? (
           <div className={styles.loadingWrapper}>
             <Spin size="medium" tip="Loading..." />
           </div>
@@ -151,26 +153,18 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
                 style={bannerStyle}
               />
               <div className={styles.avatarWrapper}>
-                <AvatarFallback
-                  className={styles.avatarOverride}
-                  src={workspaceData.avatar}
-                  alt={workspaceData.name}
-                  size={96}
-                  showStatus={false}
-                />
+                <AvatarFallback src={null} alt={channelData.name} showStatus={false} size={64} />
               </div>
             </div>
 
             <div className={styles.content}>
               <div className={styles.meta}>
-                <h2 className={styles.workspaceName}>{workspaceData.name}</h2>
-                {workspaceData.description && (
-                  <p className={styles.description}>{workspaceData.description}</p>
-                )}
+                <h2 className={styles.workspaceName}>{channelData.name}</h2>
+                {channelData.description && <p className={styles.description}>{channelData.description}</p>}
               </div>
 
               <div className={styles.actions}>
-                {(!status || status === WorkspaceMemberStatus.CANCELLED) && (
+                {(!status || status === WorkspaceMemberStatus.BANNED) && (
                   <Button
                     type="primary"
                     icon={<UserPlus size={16} />}
@@ -217,4 +211,4 @@ export const WorkspaceProfileModal = React.forwardRef<WorkspaceProfileModalRef, 
   },
 );
 
-WorkspaceProfileModal.displayName = "WorkspaceProfileModal";
+ChannelProfileModal.displayName = "ChannelProfileModal";

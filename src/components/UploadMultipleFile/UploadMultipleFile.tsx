@@ -14,7 +14,7 @@ interface Props {
   setFileList: (fileList: UploadFile[]) => void;
 }
 
-export interface UploadMultipleFile {
+export interface UploadMultipleFileRef {
   handleClick: (channel_id: string) => void;
 }
 
@@ -46,7 +46,7 @@ const UploadMultipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Prop
 
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => setFileList(newFileList);
 
-  useImperativeHandle<any, UploadMultipleFile>(
+  useImperativeHandle<any, UploadMultipleFileRef>(
     ref,
     () => ({
       handleClick(channelId: string) {

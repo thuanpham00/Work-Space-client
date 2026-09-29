@@ -80,3 +80,7 @@ input.ant-input:-webkit-autofill:focus,
   height: 38px !important;
   border-radius: 12px;
 }
+
+.ant-modal .ant-modal-container {
+  background-color: var(--color-bg);
+}

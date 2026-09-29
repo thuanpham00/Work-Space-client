@@ -15,7 +15,6 @@ export type ModeListFriend = "list" | "chat";
 export default function WorkspacePage() {
   const { slug } = useParams();
   const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
-  const setWorkspaceRole = useChannelStore((app) => app.setWorkspaceRole);
 
   const id = useMemo(() => {
     if (!slug) return undefined;
@@ -33,7 +32,7 @@ export default function WorkspacePage() {
   });
 
   const dataWorkspaceDetail = workSpaceDetail?.data.data.workspace;
-  const workspaceRole = dataWorkspaceDetail?.role ?? WorkspaceMemberRole.MEMBER;
+  const workSpaceRole = dataWorkspaceDetail?.role ?? WorkspaceMemberRole.MEMBER;
 
   useEffect(() => {
     if (id && dataWorkspaceDetail) {
@@ -41,11 +40,10 @@ export default function WorkspacePage() {
       const firstChannel = categories.flatMap((category) => category.channels)[0];
 
       if (firstChannel && categories) {
-        chooseChannelWorkspace(id, firstChannel.id);
-        setWorkspaceRole(workspaceRole);
+        chooseChannelWorkspace(id, firstChannel.id, firstChannel.name, workSpaceRole, firstChannel.role);
       }
     }
-  }, [id, workSpaceDetail, dataWorkspaceDetail, workspaceRole, chooseChannelWorkspace, setWorkspaceRole]);
+  }, [id, workSpaceDetail, dataWorkspaceDetail, workSpaceRole, chooseChannelWorkspace]);
 
   return (
     <>

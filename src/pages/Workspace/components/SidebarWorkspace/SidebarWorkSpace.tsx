@@ -1,13 +1,13 @@
 import { useMemo, useRef, useState } from "react";
 import styles from "./SidebarWorkSpace.module.scss";
-import type { WorkspaceType } from "../../../../types/workspace.type";
+import type { WorkspaceMemberRole, WorkspaceType } from "../../../../types/workspace.type";
 import { Button, Tooltip } from "antd";
-import { FolderPlus, Hash, Lock, Pencil, Plus, Users } from "lucide-react";
+import { FolderPlus, Hash, Lock, Pencil, Plus, UserRoundPlus } from "lucide-react";
 import { CategoryChannelModal } from "../CategoryChannelModal/CategoryChannelModal";
 import { queryClient } from "../../../../main";
 import { useChannelStore } from "../../../../store/channelStore";
-import type { WorkspaceMemberModalRef } from "../WorkspaceMemberModal/WorkspaceMemberModal";
-import WorkspaceMemberModal from "../WorkspaceMemberModal/WorkspaceMemberModal";
+import type { WorkspaceMemberModalRef } from "../ChannelMemberModal/ChannelMemberModal";
+import WorkspaceMemberModal from "../ChannelMemberModal/ChannelMemberModal";
 import { ChannelModal } from "../ChannelModal/ChannelModal";
 
 interface SidebarWorkSpaceProps {
@@ -48,10 +48,10 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
             <Button
               type="text"
               className={styles.swMemberBtn}
-              onClick={() => modalMemberRef.current?.handleOpen(workspaceId, data.name)}
+              onClick={() => modalMemberRef.current?.handleOpen()}
               aria-label="Xem thành viên workspace"
             >
-              <Users size={18} />
+              <UserRoundPlus size={18} />
             </Button>
           </Tooltip>
         </div>
@@ -104,7 +104,13 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
                   className={`${styles.swChannel} ${activeChannelId === ch.id ? styles.swSelected : ""}`}
                   onClick={() => {
                     setSelected(ch.id);
-                    chooseChannelWorkspace(data.id, ch.id);
+                    chooseChannelWorkspace(
+                      data.id,
+                      ch.id,
+                      ch.name || "",
+                      data.role as WorkspaceMemberRole,
+                      ch.role,
+                    );
                   }}
                   title={ch.name}
                 >

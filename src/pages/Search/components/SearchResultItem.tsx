@@ -1,21 +1,21 @@
 import type { ReactNode } from "react";
 import AvatarFallback from "../../../components/AvatarFallback/AvatarFallback";
 import { FriendStatusPill } from "../../../components/FriendStatusPill/FriendStatusPill";
-import { WorkspaceStatusPill } from "../../../components/WorkspaceStatusPill/WorkspaceStatusPill";
-import type { SearchItem } from "../../../types/search.type";
 import styles from "./SearchResultItem.module.scss";
+import type { ChannelSearchType } from "../../../types/channel.type";
+import type { UserType } from "../../../types/user.type";
 
 type Props = {
-  item: SearchItem;
+  item: UserType | ChannelSearchType;
   keyword: string;
-  onUserClick?: (userId: string, type: "user" | "workspace") => void;
+  onUserClick: (userId: string, type: "user" | "channel") => void;
 };
 
 export default function SearchResultItem({ item, keyword, onUserClick }: Props) {
-  if (item.type === "user") {
-    return <UserResultCard item={item} keyword={keyword} onUserClick={onUserClick} />;
+  if ((item as UserType)?.type === "user") {
+    return <UserResultCard item={item as UserType} keyword={keyword} onUserClick={onUserClick} />;
   }
-  return <WorkspaceResultCard item={item} keyword={keyword} onUserClick={onUserClick} />;
+  return <ChannelResultCard item={item as ChannelSearchType} keyword={keyword} onUserClick={onUserClick} />;
 }
 
 function UserResultCard({
@@ -23,9 +23,9 @@ function UserResultCard({
   keyword,
   onUserClick,
 }: {
-  item: Extract<SearchItem, { type: "user" }>;
+  item: UserType;
   keyword: string;
-  onUserClick?: (userId: string, type: "user" | "workspace") => void;
+  onUserClick: (userId: string, type: "user" | "channel") => void;
 }) {
   const displayName = item.fullName || item.displayName || item.username;
 
@@ -59,35 +59,62 @@ function UserResultCard({
   );
 }
 
-function WorkspaceResultCard({
+function ChannelResultCard({
   item,
   keyword,
   onUserClick,
 }: {
-  item: Extract<SearchItem, { type: "workspace" }>;
+  item: ChannelSearchType;
   keyword: string;
-  onUserClick?: (userId: string, type: "user" | "workspace") => void;
+  onUserClick?: (userId: string, type: "user" | "channel") => void;
 }) {
   const handleClick = () => {
-    onUserClick?.(item.id, "workspace");
+    onUserClick?.(item.id, "channel");
   };
+
+  const isPrivate = item.type === "DM" || item.description?.toLowerCase().includes("private");
+  const roleLabel =
+    item.channelMemberStatus === "ADMIN"
+      ? "Quản trị viên"
+      : item.channelMemberStatus === "MEMBER"
+        ? "Thành viên"
+        : null;
 
   return (
     <div className={styles.item} onClick={handleClick}>
       <div className={styles.avatarWrap}>
-        <AvatarFallback src={item.avatar || null} alt={item.name} showStatus={false} size={44} />
+        <AvatarFallback src={null} alt={item.name} showStatus={false} size={44} />
       </div>
       <div className={styles.info}>
         <div className={styles.nameRow}>
           <div className={styles.name}>
-            <span className={styles.nameText}>{highlight(item.name, keyword)}</span>
-            <WorkspaceStatusPill workspaceStatus={item.workspaceStatus} />
+            <span className={styles.nameText}>
+              <span className={styles.hash}>#</span>
+              {highlight(item.name, keyword)}
+            </span>
+            {isPrivate && <span className={styles.privateTag}>Riêng tư</span>}
+            {roleLabel && <span className={styles.roleTag}>{roleLabel}</span>}
           </div>
         </div>
         <div className={styles.meta}>
-          {item.owner && (
-            <div className={styles.description}>
-              Chủ workspace: {item.owner.fullName || item.owner.username}
+          {item.workspaceName && (
+            <div className={styles.metaRow}>
+              <span className={styles.metaLabel}>Workspace: </span>
+              <span className={styles.metaValue}>
+                {highlight(item.workspaceName, keyword)}
+              </span>
+            </div>
+          )}
+          {item.description && (
+            <div className={styles.metaRow}>
+              <span className={styles.metaLabel}>Mô tả: </span>
+              <span className={styles.metaValue}>{item.description}</span>
+            </div>
+          )}
+          {item.workspaceOwner && (
+            <div className={styles.metaRow}>
+              <span className={styles.metaLabel}>Chủ workspace: </span>
+              <span className={styles.metaValue}>{item.workspaceOwner}</span>
             </div>
           )}
         </div>

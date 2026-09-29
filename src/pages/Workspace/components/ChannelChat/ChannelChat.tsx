@@ -9,7 +9,7 @@ import { useUserStore } from "../../../../store/userStore";
 import { channelApi } from "../../../../apis/channel.api";
 import { Spin } from "antd";
 import InfoChannel from "../InfoChannel/InfoChannel";
-import type { ChannelMemberNickname, MemberChannel } from "../../../../types/channel.type";
+import type { ChannelMember, ChannelMemberNickname } from "../../../../types/channel.type";
 import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
 import useScrollMessage from "../../../../Hooks/useScrollMessage";
 
@@ -29,7 +29,7 @@ export default function ChannelChat() {
   const accentChannel = dataChannelDetail?.config?.accent;
   const backgroundUrlChannel = dataChannelDetail?.config?.backgroundUrl;
   const nickNamesChannel = dataChannelDetail?.nicknames;
-  const membersChannel = (dataChannelDetail?.members || []) as MemberChannel[];
+  const membersChannel = (dataChannelDetail?.members || []) as ChannelMember[];
 
   const { messages, setMessages, fetchConversationDataMore, pagination, scrollToBottom } = useScrollMessage();
 

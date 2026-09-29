@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Attachment } from "../types/attachment.type";
 import type {
   Channel,
   ChannelBody,
   ChannelConfig,
   ChannelNicknamesBody,
+  ChannelProfile,
   ChannelSettingsBody,
   ChannelUnread,
 } from "../types/channel.type";
@@ -21,7 +23,7 @@ export const channelApi = {
   getMessagesChannel: (channelId: string, params: QueryBase) => {
     return Http.get<
       SuccessResponse<{ messages: Message[]; total_page: number; page: number; limit: number }>
-    >(`/channels/messages/${channelId}`, {
+    >(`/channels/${channelId}/messages`, {
       params,
     });
   },
@@ -29,7 +31,15 @@ export const channelApi = {
   getAttachmentsChannel: (channelId: string, params: QueryBase) => {
     return Http.get<
       SuccessResponse<{ attachments: Attachment[]; total_page: number; page: number; limit: number }>
-    >(`/channels/attachments/${channelId}`, {
+    >(`/channels/${channelId}/attachments`, {
+      params,
+    });
+  },
+
+  getFriendsInviteChannel: (channelId: string, params: QueryBase) => {
+    return Http.get<
+      SuccessResponse<{ friends: any[]; total_page: number; page: number; limit: number; total: number }>
+    >(`/channels/${channelId}/invite-friends`, {
       params,
     });
   },
@@ -63,5 +73,9 @@ export const channelApi = {
 
   unreadChannel: () => {
     return Http.get<SuccessResponse<{ unreadFriends: ChannelUnread[] }>>(`/channels/unread`);
+  },
+
+  infoChannelStatus: (channelId: string) => {
+    return Http.get<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/status`);
   },
 };

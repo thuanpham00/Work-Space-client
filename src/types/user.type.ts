@@ -43,7 +43,8 @@ export type UserType = {
   createdAt: string;
   updatedAt: string;
   gender: GenderType;
-  friendStatus?: StatusRequest | null;
+  type?: string;
+  friendStatus?: StatusRequest;
 };
 
 export type ListUserParamsType = {

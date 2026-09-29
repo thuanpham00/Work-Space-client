@@ -37,7 +37,7 @@ export function FriendChannelRow({ channelFriend }: { channelFriend: FriendDMCha
     <div
       className={styles.friendRow}
       onClick={() => {
-        chooseChannelFriend(channelFriend.channelId, modeListFriend.chat);
+        chooseChannelFriend(channelFriend.channelId, channelFriend.name || "", modeListFriend.chat);
       }}
     >
       <div className={styles.friendIdentity}>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { WorkspaceMemberRole } from "../types/workspace.type";
+import { ChannelMemberRole } from "../types/channel.type";
 
 export const modeListFriend = {
   list: "list",
@@ -12,50 +13,62 @@ export type ModeListFriend = (typeof modeListFriend)[keyof typeof modeListFriend
 type AppStoreType = {
   modeListFriend: ModeListFriend;
   channelId: string;
-  workspaceId: string;
-  workspaceRole: WorkspaceMemberRole;
+  channelName: string;
+  workSpaceId: string;
+  workSpaceRole: WorkspaceMemberRole | null;
+  channelRole: ChannelMemberRole | null;
 
-  setWorkspaceRole: (workspaceRole: WorkspaceMemberRole) => void;
-  chooseChannelFriend: (channelId: string, mode: ModeListFriend) => void;
-  chooseChannelWorkspace: (workspaceId: string, channelId: string) => void;
+  chooseChannelFriend: (channelId: string, channelName: string, mode: ModeListFriend) => void;
+  chooseChannelWorkspace: (
+    workSpaceId: string,
+    channelId: string,
+    channelName: string,
+    workSpaceRole: WorkspaceMemberRole,
+    channelRole: ChannelMemberRole,
+  ) => void;
   reset: () => void;
 };
 
 export const useChannelStore = create<AppStoreType>()(
   persist(
     (set) => ({
-      channelId: "",
-      workspaceId: "",
       modeListFriend: modeListFriend.list,
-      workspaceRole: WorkspaceMemberRole.MEMBER,
+      channelId: "",
+      channelName: "",
+      channelRole: null,
+      workSpaceId: "",
+      workSpaceRole: null, 
 
-      setWorkspaceRole: (workspaceRole) => {
-        set({ workspaceRole });
-      },
-
-      chooseChannelFriend: (channelId, modeListFriend) => {
+      chooseChannelFriend: (channelId, channelName, modeListFriend) => {
         set({
           modeListFriend,
           channelId,
-          workspaceId: "",
-          workspaceRole: WorkspaceMemberRole.MEMBER,
+          channelName,
+          channelRole: ChannelMemberRole.MEMBER,
+          workSpaceId: "",
+          workSpaceRole: null,
         });
       },
 
-      chooseChannelWorkspace: (workspaceId, channelId) => {
+      chooseChannelWorkspace: (workSpaceId, channelId, channelName, workSpaceRole, channelRole) => {
         set({
           modeListFriend: modeListFriend.list,
           channelId,
-          workspaceId,
+          channelName,
+          channelRole,
+          workSpaceId,
+          workSpaceRole,
         });
       },
 
       reset: () => {
         set({
-          modeListFriend: modeListFriend.list,
           channelId: "",
-          workspaceId: "",
-          workspaceRole: WorkspaceMemberRole.MEMBER,
+          channelName: "",
+          workSpaceId: "",
+          modeListFriend: modeListFriend.list,
+          workSpaceRole: null,
+          channelRole: null,
         });
       },
     }),

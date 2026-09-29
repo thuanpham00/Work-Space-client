@@ -23,7 +23,7 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
     <button
       className="w-full"
       onClick={() => {
-        chooseChannelFriend(channelFriend.channelId, modeListFriend.chat);
+        chooseChannelFriend(channelFriend.channelId, channelFriend.name || "", modeListFriend.chat);
       }}
     >
       <FriendCard
@@ -47,7 +47,6 @@ export default function SidebarFriend() {
   const { data: dataChannelsFriends, isLoading } = useQuery({
     queryKey: ["friendsChannels", StatusRequest.ACCEPTED, accessToken, ""],
     queryFn: () => friendApi.getChannelsFriends({ search: "" }),
-    staleTime: 1000 * 60 * 15, // 15 minutes
     keepPreviousData: true,
     enabled: Boolean(accessToken),
   });
@@ -59,7 +58,7 @@ export default function SidebarFriend() {
       <Button
         type="link"
         onClick={() => {
-          chooseChannelFriend("", modeListFriend.list);
+          chooseChannelFriend("", "", modeListFriend.list);
         }}
         className={`${styles.buttonListFriend} ${modeListFriendState === "list" ? styles.buttonListFriendActive : ""}`}
         icon={<List size={16} />}

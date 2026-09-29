@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo } from "react";
 import { path } from "../../utils/path";
 import { useLocation, useNavigate } from "react-router-dom";

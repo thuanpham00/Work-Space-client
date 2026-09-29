@@ -211,7 +211,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       if (cachedChannelId) return cachedChannelId;
 
       const response = await friendApi.getChannelsFriends({ search: "" });
-      return response.data.data.channels.find((channel) => channel.friend.id === userId)?.channelId;
+      return response.data.data.channels.find((channel) => channel.friend.id === userId);
     }, [accessToken, userId]);
 
     const handleOpenMessage = useCallback(async () => {
@@ -219,14 +219,17 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
       setOpeningChat(true);
       try {
-        const channelId = await findFriendChannelId();
+        const channel = (await findFriendChannelId()) as FriendDMChannelResponse;
 
-        if (!channelId) {
+        if (!channel) {
           message.error("Không tìm thấy cuộc trò chuyện");
           return;
         }
 
-        chooseChannelFriend(channelId, modeListFriend.chat);
+        const channelId = channel.channelId;
+        const channelName = channel.name;
+
+        chooseChannelFriend(channelId, channelName || "", modeListFriend.chat);
         handleClose();
         onMessageClick?.();
       } catch (error) {

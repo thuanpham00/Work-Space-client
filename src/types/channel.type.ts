@@ -1,39 +1,16 @@
 import type { UserType } from "./user.type";
-import type { CategoryWorkspace } from "./workspace.type";
+import type { CategoryWorkspace, WorkspaceMemberStatus } from "./workspace.type";
 
-export type ChannelDM = {
-  id: string;
-  workspaceId: string;
-  name: string;
-  description: string;
-  type: string;
-  isPrivate: boolean;
-  createdAt: string;
-  friend: {
-    id: string;
-    email: string;
-    password: string;
-    username: string;
-    displayName: string;
-    avatar: string;
-    bio: string;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-    dateOfBirth: string;
-    phone: string;
-    gender: string;
-    fullName: string;
-    privacySettings: {
-      showEmail: boolean;
-      showPhone: boolean;
-      showGender: boolean;
-      showBirthday: boolean;
-    };
-  };
-  config: ChannelConfig;
-  nicknames: ChannelMemberNickname[];
-};
+export enum ChannelMemberRole {
+  ADMIN = "ADMIN",
+  MEMBER = "MEMBER",
+}
+
+export enum ChannelType {
+  TEXT = "TEXT",
+  VOICE = "VOICE",
+  DM = "DM",
+}
 
 export interface Channel {
   id: string;
@@ -44,11 +21,12 @@ export interface Channel {
   isPrivate: boolean;
   createdAt: string;
   updatedAt: string;
-  members: MemberChannel[];
+  members: ChannelMember[];
   config: ChannelConfig;
   isDefault: boolean;
   nicknames: ChannelMemberNickname[];
   category: CategoryWorkspace;
+  role: ChannelMemberRole;
 }
 
 export interface ChannelBody {
@@ -59,21 +37,6 @@ export interface ChannelBody {
   description: string;
   isPrivate: boolean;
   isDefault: boolean;
-}
-
-export interface MemberChannel {
-  role: RoleMemberChannel;
-  joinedAt: string;
-  userId: string;
-  email: string;
-  username: string;
-  displayName: string;
-  avatar: string;
-  fullName: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: string;
-  createdAt: string;
 }
 
 export interface ChannelConfig {
@@ -109,22 +72,53 @@ export interface ChannelMemberNickname {
   updatedAt: string;
 }
 
-export enum RoleMemberChannel {
-  ADMIN = "ADMIN",
-  MEMBER = "MEMBER",
-}
-
-export enum TypeChannelUnread {
-  TEXT = "TEXT",
-  VOICE = "VOICE",
-  DM = "DM",
-}
-
 export type ChannelUnread = {
   workspaceId: string;
   channelId: string;
-  type: TypeChannelUnread;
+  type: ChannelType;
   lastMessageId: string;
   count: number;
   unread: boolean;
+};
+
+export type ChannelMember = {
+  userId: string;
+  username: string;
+  avatar: string;
+  fullName: string;
+  role: ChannelMemberRole;
+};
+
+export type ChannelSearchType = {
+  id: string;
+  name: string;
+  description: string;
+  type: ChannelType;
+  workspaceId: string;
+  categoryId: string;
+  workspaceName: string;
+  workspaceOwner: string;
+  channelMemberStatus: ChannelMemberRole;
+};
+
+export type ChannelProfile = {
+  id: string;
+  workspaceId: string;
+  categoryId: string;
+  name: string;
+  description: string;
+  type: string;
+  isPrivate: boolean;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+  channelStatus: WorkspaceMemberStatus;
+  workspaceOwner: ChannelOwner;
+};
+
+type ChannelOwner = {
+  id: string;
+  username: string;
+  avatar: string;
+  fullName: string;
 };

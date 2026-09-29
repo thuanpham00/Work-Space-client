@@ -15,7 +15,7 @@ interface UseChannelSocketOptions {
 export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOptions) {
   const socket = useBaseStore((state) => state.socket);
   const channelId = useChannelStore((state) => state.channelId);
-  const workspaceId = useChannelStore((state) => state.workspaceId);
+  const workSpaceId = useChannelStore((state) => state.workSpaceId);
   const accessToken = useUserStore((state) => state.accessToken);
 
   /**
@@ -50,7 +50,7 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
     };
 
     const handleRefreshWorkspace = () => {
-      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ["workspace", workSpaceId] });
     };
 
     if (socket.connected) joinChannel();
@@ -79,5 +79,5 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
         socket.emit("leave_channel", channelId);
       }
     };
-  }, [socket, channelId, accessToken, workspaceId, onMessage, channelKind]);
+  }, [socket, channelId, accessToken, workSpaceId, onMessage, channelKind]);
 }

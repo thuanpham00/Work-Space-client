@@ -2,11 +2,7 @@ import { useRef } from "react";
 import { Settings } from "lucide-react";
 import { Button } from "antd";
 import styles from "./InfoChannel.module.scss";
-import type {
-  Channel,
-  ChannelMemberNickname,
-  MemberChannel as MemberChannelType,
-} from "../../../../types/channel.type";
+import type { Channel, ChannelMemberNickname, ChannelMember } from "../../../../types/channel.type";
 import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
 import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
 import MemberChannel from "./section/MemberChannel";
@@ -21,7 +17,7 @@ interface InfoChannelProps {
   accentChannel: string;
   backgroundUrlChannel: string;
   nickNames: ChannelMemberNickname[];
-  members: MemberChannelType[];
+  members: ChannelMember[];
 }
 
 export default function InfoChannel({

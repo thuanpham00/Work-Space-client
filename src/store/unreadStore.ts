@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { TypeChannelUnread, type ChannelUnread } from "../types/channel.type";
+import { ChannelType, type ChannelUnread } from "../types/channel.type";
 
 type UnreadStoreType = {
   loadDataUnreadChannel: (data: ChannelUnread[]) => void;
@@ -38,7 +38,7 @@ type UnreadStoreType = {
 function getCountUnreadChannelDM(data: Map<string, ChannelUnread>) {
   let count = 0;
   for (const value of data.values()) {
-    if (value.type === TypeChannelUnread.DM && value.workspaceId === null) {
+    if (value.type === ChannelType.DM && value.workspaceId === null) {
       count += value.count;
     }
   }
@@ -48,7 +48,7 @@ function getCountUnreadChannelDM(data: Map<string, ChannelUnread>) {
 function getCountUnreadWorkspace(data: Map<string, ChannelUnread>) {
   const countMap = new Map<string, number>();
   for (const value of data.values()) {
-    if (value.type !== TypeChannelUnread.DM && value.workspaceId !== null) {
+    if (value.type !== ChannelType.DM && value.workspaceId !== null) {
       const currentCount = countMap.get(value.workspaceId) || 0;
       countMap.set(value.workspaceId, currentCount + value.count);
     }

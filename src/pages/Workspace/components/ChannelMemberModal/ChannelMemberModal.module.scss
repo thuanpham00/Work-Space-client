@@ -48,19 +48,6 @@
   gap: 12px;
 }
 
-.wmAvatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 600;
-  font-size: 18px;
-}
-
 .wmHeaderInfo {
   display: flex;
   flex-direction: column;
@@ -285,57 +272,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.wmMemberMeta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.wmMemberRole {
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 500;
-  white-space: nowrap;
-
-  &.wmRoleOwner {
-    background: rgba(255, 215, 0, 0.15);
-    color: #ffd700;
-  }
-
-  &.wmRoleAdmin {
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
-  }
-
-  &.wmRoleMember {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
-  }
-}
-
-.wmMemberYouBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 600;
-  white-space: nowrap;
-  background: linear-gradient(135deg, #5b6cff 0%, #22c55e 100%);
-  color: #fff;
-  letter-spacing: 0.2px;
-  box-shadow: 0 1px 2px rgba(91, 108, 255, 0.25);
-
-  &::before {
-    content: "✓";
-    font-size: 10px;
-    line-height: 1;
-  }
 }
 
 .wmMemberMoreBtn {

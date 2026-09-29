@@ -28,43 +28,17 @@ export type CategoryWorkspace = {
 
 export enum WorkspaceMemberStatus {
   ACTIVE = "ACTIVE",
+  LEFT = "LEFT",
+  BANNED = "BANNED",
+  MUTED = "MUTED",
   PENDING_INVITE = "PENDING_INVITE",
   PENDING_REQUEST = "PENDING_REQUEST",
-  REJECTED = "REJECTED",
-  LEFT = "LEFT",
-  CANCELLED = "CANCELLED",
 }
 
 export enum WorkspaceMemberRole {
   ADMIN = "ADMIN",
   MEMBER = "MEMBER",
   OWNER = "OWNER",
-}
-
-export interface WorkspaceMember {
-  id: string;
-  workspaceId: string;
-  userId: string;
-  role: string;
-  status: WorkspaceMemberStatus;
-  joinedAt: string | null;
-  invitedAt: string | null;
-  acceptedAt: string | null;
-  rejectedAt: string | null;
-  invitedById: string | null;
-  requestedById: string;
-  approvedById: string | null;
-  approvedByType: string | null;
-}
-
-export interface WorkspaceMemberItem {
-  id: string;
-  username: string;
-  avatar: string | null;
-  fullName: string | null;
-  status: string;
-  role: WorkspaceMemberRole;
-  joinedAt: string | null;
 }
 
 export interface WorkspaceRequestItem {

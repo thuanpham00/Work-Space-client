@@ -3,19 +3,16 @@ import { MessageSquare, MoreHorizontal, Phone, UserCircle, UserPlus, UserX, Vide
 import { Dropdown, type MenuProps } from "antd";
 import CollapsibleSection from "../../../../../components/CollapsibleSection/CollapsibleSection";
 import AvatarFallback from "../../../../../components/AvatarFallback/AvatarFallback";
-import {
-  RoleMemberChannel,
-  type MemberChannel as MemberChannelType,
-} from "../../../../../types/channel.type";
+import { ChannelMemberRole, type ChannelMember } from "../../../../../types/channel.type";
 import styles from "./MemberChannel.module.scss";
 
 interface MemberChannelProps {
-  members: MemberChannelType[];
+  members: ChannelMember[];
 }
 
 export default function MemberChannel({ members }: MemberChannelProps) {
   const getMemberMenuItems = useCallback(
-    (member: MemberChannelType): MenuProps["items"] => [
+    (member: ChannelMember): MenuProps["items"] => [
       {
         key: "message",
         label: "Nhắn tin",
@@ -61,16 +58,16 @@ export default function MemberChannel({ members }: MemberChannelProps) {
           <div key={member.userId} className={styles.memberItem}>
             <AvatarFallback
               src={member.avatar}
-              alt={member.displayName}
+              alt={member.fullName}
               size={32}
               // status={member.status as StatusUser}
               showStatus={false}
             />
 
             <div className={styles.memberInfo}>
-              <span className={styles.memberName}>{member.displayName}</span>
+              <span className={styles.memberName}>{member.fullName}</span>
               <span className={styles.memberDesc}>
-                {member.role === RoleMemberChannel.ADMIN ? "Người tạo kênh" : "Thành viên"}
+                {member.role === ChannelMemberRole.ADMIN ? "Người tạo kênh" : "Thành viên"}
               </span>
             </div>
 

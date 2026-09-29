@@ -9,20 +9,20 @@ import { PAGE } from "../../constants/config";
 import type { SearchItem, SearchQuery } from "../../types/search.type";
 import styles from "./SearchPage.module.scss";
 import { ProfileModal, type ProfileModalRef } from "../Friend/components/ProfileModal/ProfileModal";
-import {
-  WorkspaceProfileModal,
-  type WorkspaceProfileModalRef,
-} from "../Workspace/components/WorkspaceProfileModal/WorkspaceProfileModal";
 import { Spin } from "antd";
+import {
+  ChannelProfileModal,
+  type ChannelProfileModalRef,
+} from "../Workspace/components/ChannelProfileModal/ChannelProfileModal";
 
 const SEARCH_LIMIT = 10;
 
-type SearchTab = "all" | "users" | "workspaces";
+type SearchTab = "all" | "users" | "channels";
 
 const TABS: { key: SearchTab; label: string }[] = [
   { key: "all", label: "Tất cả" },
   { key: "users", label: "Mọi người" },
-  { key: "workspaces", label: "Workspace" },
+  { key: "channels", label: "Kênh" },
 ];
 
 export default function SearchPage() {
@@ -30,7 +30,7 @@ export default function SearchPage() {
   const [activeTab, setActiveTab] = useState<SearchQuery>("all");
   const debouncedKeyword = useDebounce(keyword, 200);
   const profileModalRef = useRef<ProfileModalRef>(null);
-  const workspaceModalRef = useRef<WorkspaceProfileModalRef>(null);
+  const channelModalRef = useRef<ChannelProfileModalRef>(null);
 
   const [query, setQuery] = useState<{ limit: number; page: number; type: SearchQuery }>({
     limit: SEARCH_LIMIT,
@@ -72,11 +72,11 @@ export default function SearchPage() {
     setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
   };
 
-  const handleUserClick = useCallback((id: string, type: "user" | "workspace") => {
+  const handleUserClick = useCallback((id: string, type: "user" | "channel") => {
     if (type === "user") {
       profileModalRef.current?.openModal(id);
     } else {
-      workspaceModalRef.current?.openModal(id);
+      channelModalRef.current?.openModal(id);
     }
   }, []);
 
@@ -149,7 +149,7 @@ export default function SearchPage() {
       </div>
 
       <ProfileModal ref={profileModalRef} onFriendRequestChange={handleFriendRequestChange} />
-      <WorkspaceProfileModal ref={workspaceModalRef} onWorkspaceChange={handleFriendRequestChange} />
+      <ChannelProfileModal ref={channelModalRef} onChannelChange={handleFriendRequestChange} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Smile, Send, FileChartColumn, Plus, UploadIcon, ChartNoAxesCombined } from "lucide-react";
 import styles from "./Composer.module.scss";
@@ -8,7 +9,8 @@ import GifPicker from "../GiphyMesage/GiphyMessage";
 import { AiOutlineGif } from "react-icons/ai";
 import { useBaseStore } from "../../store/baseStore";
 import { Button, Dropdown, type UploadFile } from "antd";
-import UploadMutipleFile, { type UploadMultipleFile } from "../UploadMultipleFile/UploadMultipleFile";
+import type { UploadMultipleFileRef } from "../UploadMultipleFile/UploadMultipleFile";
+import UploadMultipleFile from "../UploadMultipleFile/UploadMultipleFile";
 
 export default function Composer({ channelId }: { channelId: string }) {
   const [inputValue, setInputValue] = useState("");
@@ -16,7 +18,7 @@ export default function Composer({ channelId }: { channelId: string }) {
   const [typeMessage, setTypeMessage] = useState<MessageType>(messageType.TEXT);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-  const uploadRef = useRef<UploadMultipleFile>(null);
+  const uploadRef = useRef<UploadMultipleFileRef>(null);
 
   const [typeDisplayMessage, setTypeDisplayMessage] = useState<TypeDisplayMessage | null>(null);
   const actionBtnWrapperRef = useRef<HTMLDivElement>(null);
@@ -83,7 +85,7 @@ export default function Composer({ channelId }: { channelId: string }) {
     <div className={styles.inputForm}>
       <form onSubmit={handleSendMessage}>
         <div className={styles.inputContainer}>
-          <UploadMutipleFile
+          <UploadMultipleFile
             ref={uploadRef}
             onSubmit={setFileList}
             fileList={fileList}

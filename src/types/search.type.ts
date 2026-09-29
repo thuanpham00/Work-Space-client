@@ -1,13 +1,11 @@
+import type { ChannelSearchType } from "./channel.type";
 import type { UserType } from "./user.type";
-import type { WorkspaceType } from "./workspace.type";
 
 export type SearchItemType = "user" | "workspace";
 
-export type SearchQuery = "all" | "users" | "workspaces";
+export type SearchQuery = "all" | "users" | "channels";
 
-export type SearchItem =
-  | (UserType & { type: "user"; friendStatus: string })
-  | (WorkspaceType & { type: "workspace" });
+export type SearchItem = UserType | ChannelSearchType;
 
 export type SearchResponse = {
   items: SearchItem[];
