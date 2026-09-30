@@ -60,11 +60,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--color-bg-secondary);
+    background: var(--color-text-secondary);
     border-radius: 3px;
 
     &:hover {
-      background: var(--color-text);
+      background: var(--color-text-secondary);
     }
   }
 }

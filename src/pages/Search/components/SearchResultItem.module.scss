@@ -3,10 +3,11 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: var(--color-bg-secondary);
+  background: var(--color-bg);
   border: 1px solid var(--color-bg-secondary);
   border-radius: 10px;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   transition:
     background 0.15s ease,
     border-color 0.15s ease,

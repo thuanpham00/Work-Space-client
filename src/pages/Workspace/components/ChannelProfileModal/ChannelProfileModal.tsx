@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "react-query";
 import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
 import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelProfile } from "../../../../types/channel.type";
+import { MASKED_VALUE } from "../../../../constants/config";
 
 export interface ChannelProfileModalRef {
   openModal: (idChannelId: string) => void;
@@ -18,8 +19,6 @@ interface ChannelProfileModalProps {
   accentDM?: string;
   onChannelChange?: () => void;
 }
-
-const PLACEHOLDER = "—";
 
 export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, ChannelProfileModalProps>(
   ({ backgroundUrlDM, accentDM, onChannelChange }, ref) => {
@@ -87,7 +86,7 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
           key: "owner",
           icon: User,
           label: "Chủ sở hữu",
-          value: channelData.workspaceOwner?.fullName || channelData.workspaceOwner?.username || PLACEHOLDER,
+          value: channelData.workspaceOwner?.fullName || channelData.workspaceOwner?.username || MASKED_VALUE,
         },
         {
           key: "joined",
@@ -106,7 +105,7 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       return items;
     }, [channelData]);
 
-    const handleRequestInvite = useCallback(async () => {
+    const handleRequestInvite = async () => {
       if (!channelId) return;
       try {
         await requestWorkspaceMutation.mutateAsync(channelId);
@@ -115,9 +114,9 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       } catch (error) {
         console.error(error);
       }
-    }, [channelId, message, requestWorkspaceMutation, refreshChannelQueries]);
+    };
 
-    const handleCancelRequest = useCallback(async () => {
+    const handleCancelRequest = async () => {
       if (!channelId) return;
       try {
         await cancelRequestMutation.mutateAsync(channelId);
@@ -126,7 +125,7 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       } catch (error) {
         console.error(error);
       }
-    }, [channelId, message, cancelRequestMutation, refreshChannelQueries]);
+    };
 
     const renderActions = () => {
       switch (status) {
@@ -164,7 +163,8 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
             </div>
           );
 
-        case WorkspaceMemberStatus.CANCELED || null:
+        case WorkspaceMemberStatus.CANCELED:
+        case null:
           return (
             <Button
               type="primary"
@@ -183,7 +183,7 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
         open={visible}
         onCancel={handleClose}
         footer={null}
-        width={480}
+        width={450}
         centered
         className={styles.workspaceProfileModal}
         closeIcon={<X size={18} className={styles.closeIcon} />}

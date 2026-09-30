@@ -1,23 +1,24 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Button, Empty, Input, Modal, Spin, Tabs } from "antd";
-import { Search, ChevronDown } from "lucide-react";
+import { App, Empty, Input, Modal, Spin, Tabs } from "antd";
+import { Copy, Link as LinkIcon, Search } from "lucide-react";
 import styles from "./ChannelMemberModal.module.scss";
 import type { QueryBase } from "../../../../types/query.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { useChannelStore } from "../../../../store/channelStore";
-import { ChannelMemberRole, type ChannelMember } from "../../../../types/channel.type";
+import { ChannelMemberRole } from "../../../../types/channel.type";
 import { channelApi } from "../../../../apis/channel.api";
 import { useQuery } from "react-query";
+import type { UserBasic } from "../../../../types/user.type";
+import { LIMIT, PAGE } from "../../../../constants/config";
 
 export interface WorkspaceMemberModalRef {
   handleOpen: () => void;
 }
 
-const PAGE_SIZE = 10;
-
-const MemberItem = ({ member }: { member: ChannelMember }) => {
+const MemberItem = ({ member }: { member: UserBasic }) => {
   const displayName = member.fullName || member.username || "Người dùng";
   return (
     <div className={styles.wmMemberItem}>
@@ -25,6 +26,44 @@ const MemberItem = ({ member }: { member: ChannelMember }) => {
       <div className={styles.wmMemberInfo}>
         <div className={styles.wmMemberName}>{displayName}</div>
         <div className={styles.wmMemberEmail}>@{member.username}</div>
+      </div>
+    </div>
+  );
+};
+
+const InviteLinkSection = ({ link, expiresAt }: { link: string; expiresAt: string | null }) => {
+  const { message } = App.useApp();
+  const handleCopyInviteLink = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      message.success("Đã sao chép link mời");
+    } catch (error) {
+      console.error("Copy failed", error);
+      message.error("Lỗi khi sao chép link mời");
+    }
+  };
+
+  return (
+    <div className={styles.inviteLinkWrap}>
+      <div className={styles.inviteLinkLabel}>
+        <LinkIcon size={16} />
+        <span>Link mời</span>
+      </div>
+      <div className={styles.inviteLinkRow}>
+        <Input value={link} readOnly className={styles.inviteLinkInput} />
+        <button
+          type="button"
+          className={styles.inviteLinkCopy}
+          onClick={handleCopyInviteLink}
+          aria-label="Sao chép link"
+        >
+          <Copy size={16} />
+        </button>
+      </div>
+      <div className={styles.inviteLinkHint}>
+        {expiresAt === null
+          ? "Link mời không hết hạn"
+          : `Link mời sẽ hết hạn sau ${expiresAt} ngày. Bạn có thể tạo link mới bất cứ lúc nào.`}
       </div>
     </div>
   );
@@ -40,8 +79,9 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
   const [activeTab, setActiveTab] = useState<"invite" | "members">("invite");
   const [searchKeyword, setSearchKeyword] = useState("");
 
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState<QueryBase>({ page: 1, limit: PAGE_SIZE, search: "" });
+  const [query, setQuery] = useState<QueryBase>({ page: 1, limit: LIMIT, search: "" });
+  const [inviteItems, setInviteItems] = useState<UserBasic[]>([]);
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
 
   const debouncedSearchKeyword = useDebounce(searchKeyword, 500);
 
@@ -54,12 +94,11 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
       setOpen(true);
       setActiveTab("invite");
       setSearchKeyword("");
-      setPage(1);
-      setQuery({ page: 1, limit: PAGE_SIZE, search: "" });
+      setQuery({ page: 1, limit: LIMIT, search: "" });
     },
   }));
 
-  const { data: dataFriendInvite, isLoading: isLoadingMemberRequestsWorkspace } = useQuery({
+  const { data: dataFriendInvite, isFetching: isFetchingFriendInvite } = useQuery({
     queryKey: ["friendInviteChannel", channelId, query],
     queryFn: () => channelApi.getFriendsInviteChannel(channelId, query),
     enabled: Boolean(channelId) && open,
@@ -68,29 +107,33 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
   });
 
   const friendInvite = dataFriendInvite?.data.data.friends ?? [];
-  const total = dataFriendInvite?.data.data.total ?? 0;
-  const totalPages = dataFriendInvite?.data.data.total_page ?? 1;
-  const hasMore = page < totalPages;
+  const totalPages = dataFriendInvite?.data.data.totalPages ?? 1;
+  const page = dataFriendInvite?.data.data.page ?? 1;
+  const hasMore = pagination.page < pagination.totalPages;
 
-  // const { data: dataMemberRequestsWorkspace, isLoading: isLoadingMemberRequestsWorkspace } = useQuery({
-  //   queryKey: ["memberRequestsWorkspace", wsId],
-  //   queryFn: () => workspaceAPI.getMemberWorkspaceRequests(wsId),
-  //   enabled: Boolean(wsId) && open && (isOwner || isAdmin), // chỉ owner/admin mới xem được yêu cầu
-  //   keepPreviousData: true,
-  // });
+  const { data: dataLinkInvite } = useQuery({
+    queryKey: ["linkInviteChannel", channelId],
+    queryFn: () => channelApi.getLinkInviteChannel(channelId),
+    enabled: Boolean(channelId) && open,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+  });
 
-  // const requestsResponse = dataMemberRequestsWorkspace?.data.data;
-  // const requestsWorkspace = useMemo<WorkspaceRequestItem[]>(
-  //   () => requestsResponse?.requests ?? [],
-  //   [requestsResponse?.requests],
-  // );
-  // const inviteCount = requestsResponse?.inviteCount ?? 0;
-  // const joinCount = requestsResponse?.joinCount ?? 0;
+  const linkInvite = dataLinkInvite?.data.data.url ?? "";
+  const expiresAt = dataLinkInvite?.data.data.expiresAt ?? null;
+
+  useEffect(() => {
+    if (!dataFriendInvite) return;
+    if (query.page === PAGE) {
+      setInviteItems(friendInvite);
+    } else {
+      setInviteItems((prev) => [...prev, ...friendInvite]);
+    }
+    setPagination({ page: page, totalPages: totalPages });
+  }, [dataFriendInvite, query.page]);
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    setQuery((prev) => ({ ...prev, page: nextPage }));
+    setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
   };
 
   const tabsItems = [
@@ -113,7 +156,7 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
       <Modal
         open={open}
         onCancel={() => setOpen(false)}
-        width={760}
+        width={450}
         className={styles.wmModal}
         centered
         mask={{ closable: false }}
@@ -122,7 +165,7 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
         <div className={styles.wmHeader}>
           <div className={styles.wmHeaderLeft}>
             <div className={styles.wmHeaderInfo}>
-              <div className={styles.wmHeaderTitle}>Thêm thành viên vào kênh {channelName}</div>
+              <div className={styles.wmHeaderTitle}>Mời bạn bè vào kênh {channelName}</div>
             </div>
           </div>
         </div>
@@ -148,37 +191,37 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
                 />
               </div>
 
-              {isLoadingMemberRequestsWorkspace && friendInvite.length === 0 ? (
+              {isFetchingFriendInvite && inviteItems.length === 0 ? (
                 <div className={styles.wmLoading}>
                   <Spin size="medium" tip="Loading..." />
                 </div>
-              ) : friendInvite.length > 0 ? (
+              ) : inviteItems.length > 0 ? (
                 <>
                   <div className={styles.wmMemberList}>
-                    {friendInvite.map((member) => (
-                      <MemberItem key={member.userId} member={member} />
+                    {inviteItems.map((member) => (
+                      <MemberItem key={member.id} member={member} />
                     ))}
                   </div>
 
                   {hasMore && (
                     <div className={styles.wmLoadMore}>
-                      <Button
-                        type="default"
+                      <button
+                        className={styles.loadMore}
                         onClick={handleLoadMore}
-                        loading={isLoadingMemberRequestsWorkspace}
-                        icon={<ChevronDown size={16} />}
-                        block
+                        disabled={isFetchingFriendInvite}
                       >
-                        Xem thêm thành viên
-                      </Button>
-                      <div className={styles.wmLoadMoreHint}>
-                        Đang hiển thị {friendInvite.length} / {total} thành viên
-                      </div>
+                        {isFetchingFriendInvite ? "Đang tải..." : "Xem thêm"}
+                      </button>
                     </div>
                   )}
+
+                  <InviteLinkSection link={linkInvite} expiresAt={expiresAt} />
                 </>
               ) : (
-                <Empty description="Không tìm thấy thành viên nào" style={{ marginTop: 48 }} />
+                <>
+                  <Empty description="Không tìm thấy bạn bè nào" style={{ marginTop: 48 }} />
+                  <InviteLinkSection link={linkInvite} expiresAt={expiresAt} />
+                </>
               )}
             </>
           )}

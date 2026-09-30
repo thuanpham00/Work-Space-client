@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import SearchHeader from "./components/SearchHeader";
 import SearchResultItem from "./components/SearchResultItem";
@@ -72,17 +72,17 @@ export default function SearchPage() {
     setQuery((prev) => ({ ...prev, page: prev.page + 1 }));
   };
 
-  const handleUserClick = useCallback((id: string, type: "user" | "channel") => {
+  const handleUserClick = (id: string, type: "user" | "channel") => {
     if (type === "user") {
       profileModalRef.current?.openModal(id);
     } else {
       channelModalRef.current?.openModal(id);
     }
-  }, []);
+  };
 
-  const handleFriendRequestChange = useCallback(() => {
+  const handleFriendRequestChange = () => {
     refetch();
-  }, [refetch]);
+  };
 
   return (
     <div className={styles.container}>

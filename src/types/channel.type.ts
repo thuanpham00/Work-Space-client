@@ -1,4 +1,4 @@
-import type { UserType } from "./user.type";
+import type { UserBasic, UserType } from "./user.type";
 import type { CategoryWorkspace, WorkspaceMemberStatus } from "./workspace.type";
 
 export enum ChannelMemberRole {
@@ -113,12 +113,5 @@ export type ChannelProfile = {
   createdAt: string;
   updatedAt: string;
   channelStatus: WorkspaceMemberStatus;
-  workspaceOwner: ChannelOwner;
-};
-
-type ChannelOwner = {
-  id: string;
-  username: string;
-  avatar: string;
-  fullName: string;
+  workspaceOwner: UserBasic;
 };

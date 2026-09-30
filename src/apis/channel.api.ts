@@ -38,7 +38,7 @@ export const channelApi = {
 
   getFriendsInviteChannel: (channelId: string, params: QueryBase) => {
     return Http.get<
-      SuccessResponse<{ friends: any[]; total_page: number; page: number; limit: number; total: number }>
+      SuccessResponse<{ friends: any[]; totalPages: number; page: number; limit: number; total: number }>
     >(`/channels/${channelId}/invite-friends`, {
       params,
     });
@@ -85,5 +85,11 @@ export const channelApi = {
 
   cancelRequestToJoin: (channelId: string) => {
     return Http.delete<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/request-join`);
+  },
+
+  getLinkInviteChannel: (channelId: string) => {
+    return Http.get<SuccessResponse<{ url: string; expiresAt: string | null }>>(
+      `/channels/${channelId}/link`,
+    );
   },
 };

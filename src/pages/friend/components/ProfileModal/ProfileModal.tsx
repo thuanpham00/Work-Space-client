@@ -27,6 +27,7 @@ import { queryClient } from "../../../../main";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
 import type { FriendDMChannelResponse } from "../../../../types/friend.type";
+import { MASKED_VALUE } from "../../../../constants/config";
 
 export interface ProfileModalRef {
   openModal: (idUserId: string) => void;
@@ -45,8 +46,6 @@ interface ProfileModalProps {
 //   [StatusUser.BUSY]: { label: "Bận", className: styles.statusBusy },
 //   [StatusUser.OFFLINE]: { label: "Offline", className: styles.statusOffline },
 // };
-
-const MASKED_VALUE = "••••••••";
 
 function getGenderLabel(gender: string) {
   if (gender === "MALE") return "Nam";
@@ -120,22 +119,22 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       },
     }));
 
-    const handleClose = useCallback(() => {
+    const handleClose = () => {
       setVisible(false);
       setSending(false);
       setOpeningChat(false);
       setUserId("");
-    }, []);
+    };
 
-    const refreshFriendQueries = useCallback(() => {
+    const refreshFriendQueries = () => {
       refetch();
       onFriendRequestChange?.();
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["friendsChannels"] });
       queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
-    }, [refetch, onFriendRequestChange]);
+    };
 
-    const handleAddRequest = useCallback(async () => {
+    const handleAddRequest = async () => {
       if (!userId || !userData) return;
 
       setSending(true);
@@ -149,9 +148,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } finally {
         setSending(false);
       }
-    }, [userId, userData, addFriendMutation, message, refreshFriendQueries]);
+    };
 
-    const handleCancelRequest = useCallback(async () => {
+    const handleCancelRequest = async () => {
       if (!userId || !userData) return;
 
       setSending(true);
@@ -165,9 +164,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } finally {
         setSending(false);
       }
-    }, [userId, userData, addFriendMutation, message, refreshFriendQueries]);
+    };
 
-    const handleAcceptRequest = useCallback(async () => {
+    const handleAcceptRequest = async () => {
       if (!userId || !userData) return;
 
       setSending(true);
@@ -181,9 +180,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } finally {
         setSending(false);
       }
-    }, [userId, userData, acceptFriendMutation, message, refreshFriendQueries]);
+    };
 
-    const handleRejectRequest = useCallback(async () => {
+    const handleRejectRequest = async () => {
       if (!userId || !userData) return;
 
       setSending(true);
@@ -197,7 +196,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } finally {
         setSending(false);
       }
-    }, [userId, userData, rejectFriendMutation, message, refreshFriendQueries]);
+    };
 
     const findFriendChannelId = useCallback(async () => {
       const cached = queryClient.getQueryData<{
@@ -214,7 +213,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       return response.data.data.channels.find((channel) => channel.friend.id === userId);
     }, [accessToken, userId]);
 
-    const handleOpenMessage = useCallback(async () => {
+    const handleOpenMessage = async () => {
       if (!userId) return;
 
       setOpeningChat(true);
@@ -238,7 +237,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } finally {
         setOpeningChat(false);
       }
-    }, [userId, findFriendChannelId, chooseChannelFriend, handleClose, onMessageClick, message]);
+    };
 
     const bannerStyle = useMemo(() => {
       if (backgroundUrlDM) {
@@ -375,7 +374,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
               <Button
                 loading={sending}
                 icon={<X size={16} />}
-                className={styles.friendRequestBtn}
+                className={`${styles.friendRequestBtn}`}
                 onClick={handleRejectRequest}
               >
                 Từ chối
@@ -385,16 +384,18 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
         default:
           return (
-            <Button
-              block
-              type="primary"
-              loading={sending}
-              icon={<UserPlus size={16} />}
-              className={styles.friendRequestBtn}
-              onClick={handleAddRequest}
-            >
-              Kết bạn
-            </Button>
+            <div className={styles.friendActionsRow}>
+              <Button
+                block
+                type="primary"
+                loading={sending}
+                icon={<UserPlus size={16} />}
+                className={styles.friendRequestBtn}
+                onClick={handleAddRequest}
+              >
+                Kết bạn
+              </Button>
+            </div>
           );
       }
     };
@@ -404,7 +405,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
         open={visible}
         onCancel={handleClose}
         footer={null}
-        width={480}
+        width={450}
         centered
         className={styles.fullProfileModal}
         closeIcon={<X size={18} className={styles.closeIcon} />}

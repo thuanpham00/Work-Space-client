@@ -45,6 +45,7 @@ export type UserType = {
   gender: GenderType;
   type?: string;
   friendStatus?: StatusRequest;
+  nickname?: string;
 };
 
 export type ListUserParamsType = {
@@ -76,4 +77,11 @@ export type UpdateSettingsBodyType = {
   showGender: boolean;
   workMode: WorkMode;
   workspaceInvitePolicy: WorkspaceInvitePolicy;
+};
+
+export type UserBasic = {
+  id: string;
+  username: string;
+  avatar: string;
+  fullName: string;
 };
