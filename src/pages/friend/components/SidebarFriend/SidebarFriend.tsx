@@ -1,4 +1,4 @@
-import { Button, Spin } from "antd";
+import { Button } from "antd";
 import styles from "./SidebarFriend.module.scss";
 import { List, Plus } from "lucide-react";
 import { useQuery } from "react-query";
@@ -9,6 +9,7 @@ import { useUserStore } from "../../../../store/userStore";
 import FriendCard from "../../../../components/FriendCard/FriendCard";
 import { StatusRequest } from "../../../../types/user.type";
 import type { LastMessageType } from "../../../../types/message.type";
+import Loading from "../../../../components/Loading/Loading";
 
 const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse }) => {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
@@ -44,7 +45,7 @@ export default function SidebarFriend() {
   const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
 
-  const { data: dataChannelsFriends, isLoading } = useQuery({
+  const { data: dataChannelsFriends, isFetching } = useQuery({
     queryKey: ["friendsChannels", StatusRequest.ACCEPTED, accessToken, ""],
     queryFn: () => friendApi.getChannelsFriends({ search: "" }),
     keepPreviousData: true,
@@ -76,10 +77,8 @@ export default function SidebarFriend() {
       </div>
 
       <div className={styles.layoutList}>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-4 w-full">
-            <Spin size="medium" tip="Loading..." />
-          </div>
+        {isFetching ? (
+          <Loading tip="Đang tải..." size="default" />
         ) : channelsFriends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
         ) : (

@@ -1,5 +1,5 @@
-import React, { useCallback, useImperativeHandle, useMemo, useState } from "react";
-import { Modal, Button, Spin, App } from "antd";
+import React, { useImperativeHandle, useMemo, useState } from "react";
+import { Modal, Button, App } from "antd";
 import { X, Calendar, User, Users, UserPlus, MessageSquare, Check } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
@@ -30,11 +30,12 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
     const [visible, setVisible] = useState(false);
     const [channelId, setChannelId] = useState<string>("");
 
-    const { data, isLoading, refetch } = useQuery({
+    const { data, isFetching, refetch } = useQuery({
       queryKey: ["infoChannel", channelId],
       queryFn: () => channelApi.infoChannelStatus(channelId),
-      staleTime: 1000 * 60 * 5,
       enabled: !!channelId && visible,
+      staleTime: 1000 * 60 * 5,
+      keepPreviousData: true,
     });
 
     const channelData = data?.data?.data?.channel as ChannelProfile;
@@ -63,10 +64,10 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
 
     const status = channelData?.channelStatus as WorkspaceMemberStatus;
 
-    const refreshChannelQueries = useCallback(() => {
+    const refreshChannelQueries = () => {
       refetch();
       onChannelChange?.();
-    }, [refetch, onChannelChange]);
+    };
 
     const requestWorkspaceMutation = useMutation({
       mutationFn: (id: string) => channelApi.requestToJoin(id),
@@ -196,12 +197,9 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
         closeIcon={<X size={18} className={styles.closeIcon} />}
         destroyOnClose
         maskClosable={false}
+        loading={isFetching}
       >
-        {isLoading || !channelData ? (
-          <div className={styles.loadingWrapper}>
-            <Spin size="medium" tip="Loading..." />
-          </div>
-        ) : (
+        {!isFetching && channelData && (
           <div className={styles.modalBody}>
             <div className={styles.header}>
               <div

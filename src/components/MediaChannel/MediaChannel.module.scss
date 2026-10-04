@@ -27,7 +27,7 @@
 }
 
 .mediaContent {
-  height: 300px;
+  max-height: 300px;
   overflow-y: auto;
   @include custom-scrollbar;
 }
@@ -42,6 +42,9 @@
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   background-color: var(--color-bg-secondary, #2a2a2a);
   transition: transform $transition-fast;

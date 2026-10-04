@@ -5,14 +5,11 @@ import { queryClient } from "../main";
 import { useChannelStore } from "../store/channelStore";
 import { useUserStore } from "../store/userStore";
 
-type ChannelKind = "dm" | "workspace";
-
 interface UseChannelSocketOptions {
-  channelKind: ChannelKind;
   onMessage: (message: Message) => void;
 }
 
-export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOptions) {
+export function useChannelSocket({ onMessage }: UseChannelSocketOptions) {
   const socket = useBaseStore((state) => state.socket);
   const channelId = useChannelStore((state) => state.channelId);
   const workSpaceId = useChannelStore((state) => state.workSpaceId);
@@ -30,8 +27,6 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
   useEffect(() => {
     if (!socket || !channelId) return;
 
-    const detailQueryKey = channelKind === "dm" ? "channelDM" : "channelWorkspace";
-
     const joinChannel = () => {
       socket.emit("join_channel", channelId);
     };
@@ -46,7 +41,7 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
     };
 
     const handleRefreshChannelSettings = () => {
-      queryClient.invalidateQueries({ queryKey: [detailQueryKey, channelId, accessToken] });
+      queryClient.invalidateQueries({ queryKey: ["channelDetail", channelId, accessToken] });
     };
 
     const handleRefreshWorkspace = () => {
@@ -79,5 +74,5 @@ export function useChannelSocket({ onMessage, channelKind }: UseChannelSocketOpt
         socket.emit("leave_channel", channelId);
       }
     };
-  }, [socket, channelId, accessToken, workSpaceId, onMessage, channelKind]);
+  }, [socket, channelId, accessToken, workSpaceId, onMessage]);
 }

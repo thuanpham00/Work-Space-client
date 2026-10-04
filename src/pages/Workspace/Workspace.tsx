@@ -2,13 +2,13 @@ import { useParams } from "react-router-dom";
 import styles from "./Workspace.module.scss";
 import { workspaceAPI } from "../../apis/workspace.api";
 import { useQuery } from "react-query";
-import { Spin } from "antd";
 import { useEffect, useMemo } from "react";
 import { useChannelStore } from "../../store/channelStore";
 import { parseWorkspacePath } from "../../utils/workspaceKey.util";
 import SidebarWorkSpace from "./components/SidebarWorkspace/SidebarWorkSpace";
 import ChannelChat from "./components/ChannelChat/ChannelChat";
 import { WorkspaceMemberRole } from "../../types/workspace.type";
+import Loading from "../../components/Loading/Loading";
 
 export type ModeListFriend = "list" | "chat";
 
@@ -52,20 +52,12 @@ export default function WorkspacePage() {
           {dataWorkspaceDetail && id ? (
             <SidebarWorkSpace data={dataWorkspaceDetail} workspaceId={id} />
           ) : (
-            <div className={styles.loading}>
-              <Spin size="medium" tip="Loading..." />
-            </div>
+            <Loading tip="Đang tải..." size="default" />
           )}
         </div>
 
         <div className={styles.workSpaceContent}>
-          {dataWorkspaceDetail && id ? (
-            <ChannelChat />
-          ) : (
-            <div className={styles.loading}>
-              <Spin size="medium" tip="Loading..." />
-            </div>
-          )}
+          {dataWorkspaceDetail && id ? <ChannelChat /> : <Loading tip="Đang tải..." size="default" />}
         </div>
       </div>
     </>

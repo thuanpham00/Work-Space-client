@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { App, Empty, Input, Modal, Spin, Tabs } from "antd";
+import { App, Empty, Input, Modal, Tabs } from "antd";
 import { Copy, Link as LinkIcon, Search } from "lucide-react";
 import styles from "./ChannelMemberModal.module.scss";
 import type { QueryBase } from "../../../../types/query.type";
@@ -13,6 +13,7 @@ import { channelApi } from "../../../../apis/channel.api";
 import { useQuery } from "react-query";
 import type { UserBasic } from "../../../../types/user.type";
 import { LIMIT, PAGE } from "../../../../constants/config";
+import Loading from "../../../../components/Loading/Loading";
 
 export interface WorkspaceMemberModalRef {
   handleOpen: () => void;
@@ -192,9 +193,7 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
               </div>
 
               {isFetchingFriendInvite && inviteItems.length === 0 ? (
-                <div className={styles.wmLoading}>
-                  <Spin size="medium" tip="Loading..." />
-                </div>
+                <Loading tip="Đang tải..." size="default" />
               ) : inviteItems.length > 0 ? (
                 <>
                   <div className={styles.wmMemberList}>

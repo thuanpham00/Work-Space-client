@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Empty, Input, Spin, Tabs, App } from "antd";
+import { Button, Empty, Input, Tabs, App } from "antd";
 import styles from "./StatusUsers.module.scss";
 import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
@@ -14,6 +14,7 @@ import { StatusRequest } from "../../../../types/user.type";
 import { useUserStore } from "../../../../store/userStore";
 import { useNavigate } from "react-router-dom";
 import { ProfileModal, type ProfileModalRef } from "../ProfileModal/ProfileModal";
+import Loading from "../../../../components/Loading/Loading";
 
 const userStatusLabel: Record<StatusUser, string> = {
   [StatusUser.ONLINE]: "Trực tuyến",
@@ -141,11 +142,7 @@ function FriendStatusPanel({
   const listLength = type === "statusFriends" ? friends.length : channelsFriends.length;
 
   if (isLoading) {
-    return (
-      <div className={styles.stateBox}>
-        <Spin size="medium" tip="Loading..." />
-      </div>
-    );
+    return <Loading tip="Đang tải..." size="default" />;
   }
 
   if (listLength === 0) {
@@ -170,6 +167,18 @@ function FriendStatusPanel({
       </div>
 
       <div className={styles.friendList}>
+        {type === "statusFriends" &&
+          friends.map((friend) => (
+            <FriendStatusRow
+              key={friend.id}
+              friend={friend}
+              status={status}
+              onAccept={onAccept}
+              onReject={onReject}
+              onUserClick={onUserClick}
+            />
+          ))}
+
         {type === "statusFriends" &&
           friends.map((friend) => (
             <FriendStatusRow

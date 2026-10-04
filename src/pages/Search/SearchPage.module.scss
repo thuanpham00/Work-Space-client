@@ -106,17 +106,6 @@
   }
 }
 
-.empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  text-align: center;
-  padding: 24px;
-}
-
 .hint {
   color: var(--color-text-secondary);
   font-size: 13px;

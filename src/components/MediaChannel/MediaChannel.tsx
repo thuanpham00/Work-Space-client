@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, type ReactNode } from "react";
-import { Tabs, Image, Tooltip, Empty, Button, Spin } from "antd";
+import { Tabs, Image, Tooltip, Empty, Button } from "antd";
 import { Download, FileText, FileImage, FileVideo, FileAudio, FileArchive, ChevronDown } from "lucide-react";
 import styles from "./MediaChannel.module.scss";
 import { AttachmentType, type Attachment } from "../../types/attachment.type";
 import CollapsibleSection from "../CollapsibleSection/CollapsibleSection";
 import { formatFileSize } from "../../utils/utils";
+import Loading from "../Loading/Loading";
 
 const getFileIcon = (mimeType: string): ReactNode => {
   if (mimeType.startsWith("image/")) return <FileImage size={18} />;
@@ -110,7 +111,9 @@ const MediaChannel = ({ attachments, pagination, fetchMore, setQuery, query, isF
                   className={styles.loadMoreBtn}
                   onClick={fetchMore}
                   disabled={isFetchingMore}
-                  icon={isFetchingMore ? <Spin size="medium" tip="Loading..." /> : <ChevronDown size={16} />}
+                  icon={
+                    isFetchingMore ? <Loading tip="Đang tải..." size="default" /> : <ChevronDown size={16} />
+                  }
                 >
                   {isFetchingMore ? "Đang tải..." : "Xem thêm"}
                 </Button>

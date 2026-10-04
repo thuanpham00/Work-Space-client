@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useMemo, useState } from "react";
-import { Modal, Tabs, Button, Spin, App } from "antd";
+import { Modal, Tabs, Button, App } from "antd";
 import {
   MessageSquare,
   UserPlus,
@@ -84,7 +84,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
     const {
       data: dataUser,
-      isLoading,
+      isFetching,
       refetch,
     } = useQuery({
       queryKey: ["infoUser", userId],
@@ -382,12 +382,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
         closeIcon={<X size={18} className={styles.closeIcon} />}
         destroyOnClose
         maskClosable={false}
+        loading={isFetching}
       >
-        {isLoading || !userData ? (
-          <div className={styles.loadingWrapper}>
-            <Spin size="medium" tip="Loading..." />
-          </div>
-        ) : (
+        {!isFetching && userData && (
           <div className={styles.modalBody}>
             <div className={styles.header}>
               <div

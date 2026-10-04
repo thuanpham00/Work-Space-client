@@ -5,32 +5,18 @@
   padding: 0 8px;
 }
 
-.searchBar {
-  margin-bottom: 8px;
-  padding: 0 8px;
-
-  :global(.ant-input) {
-    background: transparent;
-  }
-}
-
 .statusUsersInner {
-  height: 100%;
   background: var(--color-bg);
 }
 
-.stateBox {
-  min-height: 320px;
-  display: grid;
-  place-items: center;
-  color: var(--color-text-secondary, #9aa0aa);
+.searchBar {
+  padding: 0 8px;
 }
 
 .friendList {
-  display: flex;
-  flex-direction: column;
-  max-height: calc(100vh - 250px);
+  margin-top: 10px;
   overflow-y: auto;
+  max-height: calc(100vh - 165px);
   padding-right: 10px;
   @include custom-scrollbar;
 }
@@ -42,7 +28,6 @@
   justify-content: space-between;
   gap: 16px;
   padding: 8px;
-  border-top: 1px solid var(--color-bg-secondary);
   transition: background-color 0.3s ease;
   border-radius: 4px;
 

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { App, Button, Col, Form, Input, Row, Spin, Switch } from "antd";
+import { App, Button, Col, Form, Input, Row, Switch } from "antd";
 import { useQueryClient } from "react-query";
 import { channelApi } from "../../../../../apis/channel.api";
 import type { Channel, ChannelBody } from "../../../../../types/channel.type";
 import styles from "../ChannelSettingsModal.module.scss";
 import SelectorCategoryWorkspace from "../../../../../components/Selector/SelectorCategoryWorkspace";
+import Loading from "../../../../../components/Loading/Loading";
 
 interface ChannelInfoFormProps {
   channel: Channel;
@@ -56,11 +57,7 @@ const ChannelInfoForm = ({ channel, isLoading, onCancel }: ChannelInfoFormProps)
   };
 
   if (isLoading) {
-    return (
-      <div className={styles.loading}>
-        <Spin size="medium" tip="Loading..." />
-      </div>
-    );
+    return <Loading tip="Đang tải..." size="default" />;
   }
 
   return (

@@ -9,9 +9,9 @@ import Messages from "../../../../components/Messages/Messages";
 import Composer from "../../../../components/Composer/Composer";
 import { useUserStore } from "../../../../store/userStore";
 import { useChannelStore } from "../../../../store/channelStore";
-import { Spin } from "antd";
 import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
 import useScrollMessage from "../../../../Hooks/useScrollMessage";
+import Loading from "../../../../components/Loading/Loading";
 
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);
@@ -20,7 +20,7 @@ export default function DirectChat() {
   const [showInfoPanel, setShowInfoPanel] = useState(true);
 
   const { data: dataChannelDM } = useQuery({
-    queryKey: ["channelDM", channelId, accessToken],
+    queryKey: ["channelDetail", channelId, accessToken],
     queryFn: () => channelApi.getChannelDetail(channelId as string),
     enabled: Boolean(channelId),
     staleTime: 60 * 1000 * 5,
@@ -38,19 +38,13 @@ export default function DirectChat() {
   const { messages, setMessages, fetchConversationDataMore, pagination, scrollToBottom } = useScrollMessage();
 
   useChannelSocket({
-    channelKind: "dm",
     onMessage: (message) => {
       setMessages((prev) => [message, ...prev]);
       setTimeout(scrollToBottom, 50);
     },
   });
 
-  if (!channelDMDetail)
-    return (
-      <div className={styles.loading}>
-        <Spin size="medium" tip="Loading..." />
-      </div>
-    );
+  if (!channelDMDetail) return <Loading tip="Đang tải..." size="default" />;
 
   return (
     <div className={styles.chatContainer}>

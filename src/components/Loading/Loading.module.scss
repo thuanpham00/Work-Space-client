@@ -1,0 +1,7 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.wrapper {
+  background-color: var(--color-bg);
+  @include loading;
+}

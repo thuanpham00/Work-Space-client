@@ -9,11 +9,11 @@ import { PAGE } from "../../constants/config";
 import type { SearchItem, SearchQuery } from "../../types/search.type";
 import styles from "./SearchPage.module.scss";
 import { ProfileModal, type ProfileModalRef } from "../Friend/components/ProfileModal/ProfileModal";
-import { Spin } from "antd";
 import {
   ChannelProfileModal,
   type ChannelProfileModalRef,
 } from "../Workspace/components/ChannelProfileModal/ChannelProfileModal";
+import Loading from "../../components/Loading/Loading";
 
 const SEARCH_LIMIT = 10;
 
@@ -110,11 +110,7 @@ export default function SearchPage() {
       </div>
 
       <div className={styles.body}>
-        {isFirstLoad && (
-          <div className={styles.empty}>
-            <Spin size="medium" tip="Loading..." />
-          </div>
-        )}
+        {isFirstLoad && <Loading tip="Đang tải..." size="default" />}
 
         {!isFirstLoad && items.length === 0 && debouncedKeyword.trim() !== "" && (
           <div className={styles.empty}>Không tìm thấy kết quả nào cho "{debouncedKeyword}".</div>

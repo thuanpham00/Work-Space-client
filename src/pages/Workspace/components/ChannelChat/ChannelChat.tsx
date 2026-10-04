@@ -7,11 +7,11 @@ import { useQuery } from "react-query";
 import { useChannelStore } from "../../../../store/channelStore";
 import { useUserStore } from "../../../../store/userStore";
 import { channelApi } from "../../../../apis/channel.api";
-import { Spin } from "antd";
 import InfoChannel from "../InfoChannel/InfoChannel";
 import type { ChannelMember, ChannelMemberNickname } from "../../../../types/channel.type";
 import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
 import useScrollMessage from "../../../../Hooks/useScrollMessage";
+import Loading from "../../../../components/Loading/Loading";
 
 export default function ChannelChat() {
   const channelId = useChannelStore((app) => app.channelId);
@@ -19,7 +19,7 @@ export default function ChannelChat() {
   const [showInfoPanel, setShowInfoPanel] = useState(true);
 
   const { data: dataChannel } = useQuery({
-    queryKey: ["channelWorkspace", channelId, accessToken],
+    queryKey: ["channelDetail", channelId, accessToken],
     queryFn: () => channelApi.getChannelDetail(channelId as string),
     enabled: Boolean(channelId),
     staleTime: 60 * 1000 * 5,
@@ -34,7 +34,6 @@ export default function ChannelChat() {
   const { messages, setMessages, fetchConversationDataMore, pagination, scrollToBottom } = useScrollMessage();
 
   useChannelSocket({
-    channelKind: "workspace",
     onMessage: (message) => {
       setMessages((prev) => [message, ...prev]);
       setTimeout(scrollToBottom, 50);
@@ -42,11 +41,7 @@ export default function ChannelChat() {
   });
 
   if (!dataChannelDetail) {
-    return (
-      <div className={styles.loading}>
-        <Spin size="medium" tip="Loading..." />
-      </div>
-    );
+    return <Loading tip="Đang tải..." size="default" />;
   }
 
   return (
