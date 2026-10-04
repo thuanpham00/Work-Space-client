@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   App,
   Button,
@@ -13,19 +14,22 @@ import {
 } from "antd";
 import { UserOutlined, MailOutlined, PhoneOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import styles from "./InfoUserPage.module.scss";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useEffect, useState } from "react";
 import type { GenderType, UserType } from "../../../types/user.type";
 import type { Dayjs } from "dayjs";
 import type { UpdateUserBodyType } from "../../../types/auth.type";
-import { queryClient } from "../../../main";
 import dayjs from "dayjs";
 import { userAPI } from "../../../apis/user.api";
+import type { SuccessResponse } from "../../../types/utils.type";
+import { useUserStore } from "../../../store/userStore";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
   const { message } = App.useApp();
+  const token = useUserStore((state) => state.accessToken);
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const avatarUrl = Form.useWatch("avatar", form);
@@ -70,9 +74,20 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
     }
 
     updateUser.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         message.success("Cập nhật thông tin thành công");
-        queryClient.invalidateQueries({ queryKey: ["me"] });
+
+        const updatedUser = response.data.data.user;
+        queryClient.setQueryData<SuccessResponse<{ user: UserType }>>(["me", token], (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              data: { user: updatedUser },
+            },
+          };
+        });
       },
       onError: () => {
         message.error("Cập nhật thông tin thất bại");

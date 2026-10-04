@@ -1,6 +1,6 @@
 1/ bug
-- check lại modal profileModal chỗ nút nhắn tin -> cho nó vào khung chat
-- check lại modal ChannelProfileModal chỗ nút nhắn tin -> cho nó vào khung chat
+- còn phải cho nó vào đúng channel -> modal ChannelProfile nút nhắn tin
+- chuyển queryClient.invalidate -> sang setQueryData
 
 2/ tính năng
 - lấy lời mời + duyệt tham gia

@@ -1,4 +1,4 @@
-import React, { useCallback, useImperativeHandle, useMemo, useState } from "react";
+import React, { useImperativeHandle, useMemo, useState } from "react";
 import { Modal, Tabs, Button, Spin, App } from "antd";
 import {
   MessageSquare,
@@ -25,9 +25,8 @@ import { StatusRequest } from "../../../../types/user.type";
 import { friendApi } from "../../../../apis/friend.api";
 import { queryClient } from "../../../../main";
 import { modeListFriend, useChannelStore } from "../../../../store/channelStore";
-import { useUserStore } from "../../../../store/userStore";
-import type { FriendDMChannelResponse } from "../../../../types/friend.type";
 import { MASKED_VALUE } from "../../../../constants/config";
+import { useNavigate } from "react-router-dom";
 
 export interface ProfileModalRef {
   openModal: (idUserId: string) => void;
@@ -74,15 +73,14 @@ function EmptyState({
 }
 
 export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>(
-  ({ backgroundUrlDM, accentDM, onFriendRequestChange, onMessageClick }, ref) => {
+  ({ backgroundUrlDM, accentDM, onFriendRequestChange }, ref) => {
     const [visible, setVisible] = useState(false);
     const [sending, setSending] = useState(false);
-    const [openingChat, setOpeningChat] = useState(false);
     const [userId, setUserId] = useState<string>("");
+    const navigate = useNavigate();
 
     const { message } = App.useApp();
     const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
-    const accessToken = useUserStore((app) => app.accessToken);
 
     const {
       data: dataUser,
@@ -95,7 +93,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       enabled: !!userId && visible,
     });
 
-    const userData = dataUser?.data.data.user as UserType | undefined;
+    const userData = dataUser?.data.data.user as UserType;
+    const channelId = dataUser?.data.data.channel.id as string;
+    const channelName = dataUser?.data.data.channel.name as string;
 
     const addFriendMutation = useMutation({
       mutationFn: (friendId: string) => friendApi.addFriend(friendId),
@@ -122,7 +122,6 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
     const handleClose = () => {
       setVisible(false);
       setSending(false);
-      setOpeningChat(false);
       setUserId("");
     };
 
@@ -198,44 +197,17 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       }
     };
 
-    const findFriendChannelId = useCallback(async () => {
-      const cached = queryClient.getQueryData<{
-        data: { data: { channels: FriendDMChannelResponse[] } };
-      }>(["friendsChannels", StatusRequest.ACCEPTED, accessToken, ""]);
-
-      const cachedChannelId = cached?.data?.data?.channels?.find(
-        (channel) => channel.friend.id === userId,
-      )?.channelId;
-
-      if (cachedChannelId) return cachedChannelId;
-
-      const response = await friendApi.getChannelsFriends({ search: "" });
-      return response.data.data.channels.find((channel) => channel.friend.id === userId);
-    }, [accessToken, userId]);
-
     const handleOpenMessage = async () => {
       if (!userId) return;
 
-      setOpeningChat(true);
       try {
-        const channel = (await findFriendChannelId()) as FriendDMChannelResponse;
-
-        if (!channel) {
-          message.error("Không tìm thấy cuộc trò chuyện");
-          return;
-        }
-
-        const channelId = channel.channelId;
-        const channelName = channel.name;
-
-        chooseChannelFriend(channelId, channelName || "", modeListFriend.chat);
+        chooseChannelFriend(channelId, channelName, modeListFriend.chat);
         handleClose();
-        onMessageClick?.();
+        navigate(`/friends`);
+        console.log("navigate", navigate);
       } catch (error) {
         console.log(error);
         message.error("Không thể mở cuộc trò chuyện");
-      } finally {
-        setOpeningChat(false);
       }
     };
 
@@ -335,7 +307,6 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
               </Button>
               <Button
                 type="primary"
-                loading={openingChat}
                 icon={<MessageSquare size={16} />}
                 className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
                 onClick={handleOpenMessage}

@@ -9,6 +9,7 @@ import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
 import { channelApi } from "../../../../apis/channel.api";
 import type { ChannelProfile } from "../../../../types/channel.type";
 import { MASKED_VALUE } from "../../../../constants/config";
+import { useNavigate } from "react-router-dom";
 
 export interface ChannelProfileModalRef {
   openModal: (idChannelId: string) => void;
@@ -23,6 +24,8 @@ interface ChannelProfileModalProps {
 export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, ChannelProfileModalProps>(
   ({ backgroundUrlDM, accentDM, onChannelChange }, ref) => {
     const { message } = App.useApp();
+
+    const navigate = useNavigate();
 
     const [visible, setVisible] = useState(false);
     const [channelId, setChannelId] = useState<string>("");
@@ -127,6 +130,11 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       }
     };
 
+    const handleOpenMessage = () => {
+      if (!channelId) return;
+      navigate(`/workspaces/${channelData.workspaceName}-i-${channelData.workspaceId}`);
+    };
+
     const renderActions = () => {
       switch (status) {
         case WorkspaceMemberStatus.PENDING_REQUEST:
@@ -153,10 +161,9 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
               </Button>
               <Button
                 type="primary"
-                // loading={openingChat}
                 icon={<MessageSquare size={16} />}
                 className={`${styles.friendRequestBtn}`}
-                // onClick={handleOpenMessage}
+                onClick={handleOpenMessage}
               >
                 Nhắn tin
               </Button>

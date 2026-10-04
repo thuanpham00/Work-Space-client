@@ -55,6 +55,8 @@ export const userAPI = {
   },
 
   infoUserStatus: (userId: string) => {
-    return Http.get<SuccessResponse<{ user: UserType }>>(`/users/${userId}/status`);
+    return Http.get<SuccessResponse<{ user: UserType; channel: { id: string; name: string } }>>(
+      `/users/${userId}/status`,
+    );
   },
 };

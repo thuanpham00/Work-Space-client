@@ -393,7 +393,7 @@ export default function StatusUsers() {
         className={styles.tab}
       />
 
-      <ProfileModal ref={profileModalRef} onFriendRequestChange={() => {}} onMessageClick={() => {}} />
+      <ProfileModal ref={profileModalRef} onFriendRequestChange={() => {}} />
     </div>
   );
 }

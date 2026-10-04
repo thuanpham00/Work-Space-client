@@ -104,6 +104,7 @@ export type ChannelSearchType = {
 export type ChannelProfile = {
   id: string;
   workspaceId: string;
+  workspaceName: string;
   categoryId: string;
   name: string;
   description: string;
