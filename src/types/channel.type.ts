@@ -116,3 +116,15 @@ export type ChannelProfile = {
   channelStatus: WorkspaceMemberStatus;
   workspaceOwner: UserBasic;
 };
+
+// Request body cho POST /:channelId/invite
+export interface InviteUserToChannelBody {
+  userId: string;
+}
+
+export interface InfoStatusChannelResponse {
+  channelId: string;
+  userId: string;
+  status: string;
+}
+

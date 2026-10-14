@@ -77,6 +77,14 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       mutationFn: (id: string) => channelApi.cancelRequestToJoin(id),
     });
 
+    const acceptInviteMutation = useMutation({
+      mutationFn: (id: string) => channelApi.acceptInvite(id),
+    });
+
+    const rejectInviteMutation = useMutation({
+      mutationFn: (id: string) => channelApi.rejectInvite(id),
+    });
+
     const infoItems = useMemo(() => {
       if (!channelData) return [];
 
@@ -131,18 +139,65 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       }
     };
 
+    const handleAcceptInvite = async () => {
+      if (!channelId) return;
+      try {
+        await acceptInviteMutation.mutateAsync(channelId);
+        message.success("Chấp nhận lời mời thành công");
+        refetch();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const handleRejectInvite = async () => {
+      if (!channelId) return;
+      try {
+        await rejectInviteMutation.mutateAsync(channelId);
+        message.success("Đã từ chối lời mời");
+        refetch();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const handleOpenMessage = () => {
       if (!channelId) return;
-      navigate(`/workspaces/${channelData.workspaceName}-i-${channelData.workspaceId}`);
+      navigate(`/workspaces/${channelData.workspaceId}`);
     };
 
     const renderActions = () => {
       switch (status) {
+        case WorkspaceMemberStatus.PENDING_INVITE:
+          return (
+            <div className={styles.friendActionsRow}>
+              <Button
+                disabled
+                icon={<Check size={16} />}
+                className={`${styles.friendRequestBtn} ${styles.friendRequestAccepted}`}
+                loading={acceptInviteMutation.isLoading}
+                onClick={handleAcceptInvite}
+              >
+                Chấp nhận lời mời
+              </Button>
+              <Button
+                type="primary"
+                icon={<MessageSquare size={16} />}
+                className={`${styles.friendRequestBtn}`}
+                loading={rejectInviteMutation.isLoading}
+                onClick={handleRejectInvite}
+              >
+                Từ chối lời mời
+              </Button>
+            </div>
+          );
+
         case WorkspaceMemberStatus.PENDING_REQUEST:
           return (
             <Button
               type="primary"
               icon={<X size={16} />}
+              loading={cancelRequestMutation.isLoading}
               className={`${styles.friendRequestBtn}`}
               onClick={handleCancelRequest}
             >
@@ -172,11 +227,13 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
           );
 
         case WorkspaceMemberStatus.CANCELED:
+        case WorkspaceMemberStatus.LEFT:
         case null:
           return (
             <Button
               type="primary"
               icon={<UserPlus size={16} />}
+              loading={requestWorkspaceMutation.isLoading}
               className={`${styles.friendRequestBtn}`}
               onClick={handleRequestInvite}
             >

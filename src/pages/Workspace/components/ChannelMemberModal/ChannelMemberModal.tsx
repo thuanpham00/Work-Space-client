@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { App, Empty, Input, Modal, Tabs } from "antd";
-import { Copy, Link as LinkIcon, Search } from "lucide-react";
+import { App, Button, Empty, Input, Modal, Tabs } from "antd";
+import { Clock, Copy, Link as LinkIcon, Search, X } from "lucide-react";
 import styles from "./ChannelMemberModal.module.scss";
 import type { QueryBase } from "../../../../types/query.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
@@ -10,17 +10,89 @@ import { useDebounce } from "../../../../Hooks/useDebounce";
 import { useChannelStore } from "../../../../store/channelStore";
 import { ChannelMemberRole } from "../../../../types/channel.type";
 import { channelApi } from "../../../../apis/channel.api";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import type { UserBasic } from "../../../../types/user.type";
 import { LIMIT, PAGE } from "../../../../constants/config";
 import Loading from "../../../../components/Loading/Loading";
+import { UserPlus } from "lucide-react";
+import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
 
 export interface WorkspaceMemberModalRef {
   handleOpen: () => void;
 }
 
-const MemberItem = ({ member }: { member: UserBasic }) => {
+const MemberItem = ({
+  member,
+  channelId,
+  onInvited,
+}: {
+  member: UserBasic;
+  channelId: string;
+  onInvited: () => void;
+}) => {
   const displayName = member.fullName || member.username || "Người dùng";
+  const { message } = App.useApp();
+
+  const inviteMutation = useMutation({
+    mutationFn: () => channelApi.inviteUserToChannel(channelId, { userId: member.id }),
+    onSuccess: () => {
+      message.success(`Đã gửi lời mời tới ${displayName}`);
+      onInvited();
+    },
+  });
+
+  const revokeInviteMutation = useMutation({
+    mutationFn: () => channelApi.revokeInvite(channelId, member.id),
+    onSuccess: () => {
+      message.success(`Đã hủy lời mời tới ${displayName}`);
+      onInvited();
+    },
+  });
+
+  const renderAction = () => {
+    switch (member.status) {
+      case WorkspaceMemberStatus.PENDING_INVITE:
+        return (
+          <Button
+            type="primary"
+            className={styles.friendRequestBtn}
+            loading={revokeInviteMutation.isLoading}
+            onClick={() => revokeInviteMutation.mutate()}
+            icon={<X size={14} />}
+          >
+            Hủy
+          </Button>
+        );
+      case WorkspaceMemberStatus.PENDING_REQUEST:
+        return (
+          <Button
+            type="primary"
+            className={styles.friendRequestBtn}
+            disabled={true}
+            icon={<Clock size={14} />}
+          >
+            Đợi duyệt
+          </Button>
+        );
+      case null:
+      case WorkspaceMemberStatus.LEFT:
+      case WorkspaceMemberStatus.CANCELED:
+        return (
+          <Button
+            type="primary"
+            className={styles.friendRequestBtn}
+            loading={inviteMutation.isLoading}
+            onClick={() => inviteMutation.mutate()}
+            icon={<UserPlus size={14} />}
+          >
+            Mời
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={styles.wmMemberItem}>
       <AvatarFallback src={member.avatar} alt={displayName} size={40} showStatus={false} />
@@ -28,6 +100,8 @@ const MemberItem = ({ member }: { member: UserBasic }) => {
         <div className={styles.wmMemberName}>{displayName}</div>
         <div className={styles.wmMemberEmail}>@{member.username}</div>
       </div>
+
+      {renderAction()}
     </div>
   );
 };
@@ -99,6 +173,14 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
     },
   }));
 
+  const { data: dataChannelRequestList, isFetching: isFetchingChannelRequestList } = useQuery({
+    queryKey: ["ChannelRequestList", channelId],
+    queryFn: () => channelApi.getRequestListChannel(channelId),
+    enabled: Boolean(channelId) && open,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const { data: dataFriendInvite, isFetching: isFetchingFriendInvite } = useQuery({
     queryKey: ["friendInviteChannel", channelId, query],
     queryFn: () => channelApi.getFriendsInviteChannel(channelId, query),
@@ -111,6 +193,11 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
   const totalPages = dataFriendInvite?.data.data.totalPages ?? 1;
   const page = dataFriendInvite?.data.data.page ?? 1;
   const hasMore = pagination.page < pagination.totalPages;
+
+  const queryClient = useQueryClient();
+  const handleInvited = () => {
+    queryClient.invalidateQueries({ queryKey: ["friendInviteChannel", channelId] });
+  };
 
   const { data: dataLinkInvite } = useQuery({
     queryKey: ["linkInviteChannel", channelId],
@@ -198,7 +285,12 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
                 <>
                   <div className={styles.wmMemberList}>
                     {inviteItems.map((member) => (
-                      <MemberItem key={member.id} member={member} />
+                      <MemberItem
+                        key={member.id}
+                        member={member}
+                        channelId={channelId}
+                        onInvited={handleInvited}
+                      />
                     ))}
                   </div>
 

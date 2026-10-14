@@ -8,6 +8,16 @@ import { useUserStore } from "../store/userStore";
 import { useBaseStore } from "../store/baseStore";
 import { useChannelStore } from "../store/channelStore";
 
+// Mở rộng meta trong axios config để interceptor có thể tắt toast lỗi mặc định
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    silentOnError?: boolean;
+  }
+  export interface InternalAxiosRequestConfig {
+    silentOnError?: boolean;
+  }
+}
+
 class Http {
   instance: AxiosInstance;
   public accessToken: string;
@@ -80,11 +90,15 @@ class Http {
             useChannelStore.getState().reset();
           }
         }
-        let errorMessage = error.response?.data?.message || "Đã có lỗi xảy ra";
-        if (errorMessage.includes("RefreshToken đã hết hạn!")) {
-          errorMessage = "Phiên làm việc đã hết hạn, vui lòng đăng nhập lại";
+        // Cho phép API tự tắt toast mặc định khi caller muốn hiển thị UI lỗi riêng
+        const silentOnError = (error.config as InternalAxiosRequestConfig | undefined)?.silentOnError;
+        if (!silentOnError) {
+          let errorMessage = error.response?.data?.message || "Đã có lỗi xảy ra";
+          if (errorMessage.includes("RefreshToken đã hết hạn!")) {
+            errorMessage = "Phiên làm việc đã hết hạn, vui lòng đăng nhập lại";
+          }
+          message.error(errorMessage);
         }
-        message.error(errorMessage);
         return Promise.reject(error);
       },
     );

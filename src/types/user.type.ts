@@ -1,4 +1,5 @@
 import type { Dayjs } from "dayjs";
+import type { WorkspaceMemberStatus } from "./workspace.type";
 
 export enum GenderType {
   MALE = "MALE",
@@ -84,4 +85,5 @@ export type UserBasic = {
   username: string;
   avatar: string;
   fullName: string;
+  status: WorkspaceMemberStatus | null;
 };

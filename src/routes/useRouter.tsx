@@ -12,6 +12,7 @@ import SettingAccount from "../pages/SettingAccount/SettingAccount";
 import { useUserStore } from "../store/userStore";
 import SearchPage from "../pages/Search/SearchPage";
 import InvitePage from "../pages/Invite/InvitePage";
+import NotFoundPage from "../pages/NotFound/NotFoundPage";
 
 const ProjectRouter = () => {
   const isLogin = useUserStore((state) => state.accessToken);
@@ -114,6 +115,14 @@ export default function useRouter() {
           ],
         },
       ],
+    },
+    {
+      path: "*",
+      element: (
+        <Suspense>
+          <NotFoundPage />
+        </Suspense>
+      ),
     },
   ]);
   return routerElement;

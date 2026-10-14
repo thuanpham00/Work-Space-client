@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Checkbox, Col, Form, Row, Select, App } from "antd";
 import styles from "./InfoUserPage.module.scss";
@@ -7,11 +8,13 @@ import { userAPI } from "../../../apis/user.api";
 import { useMutation } from "react-query";
 import { queryClient } from "../../../main";
 import { WorkMode, WorkspaceInvitePolicy } from "../../../types/user.type";
+import { useUserStore } from "../../../store/userStore";
 
 const { Option } = Select;
 
 export default function SettingDisplayPage({ settings }: { settings: Setting }) {
   const [form] = Form.useForm();
+  const token = useUserStore((state) => state.accessToken);
   const { message } = App.useApp();
 
   const handleReset = () => {
@@ -57,9 +60,16 @@ export default function SettingDisplayPage({ settings }: { settings: Setting }) 
     };
 
     updateSettings.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
         message.success("Cập nhật cài đặt thành công");
-        queryClient.invalidateQueries({ queryKey: ["settings"] });
+        const updatedSettings = response.data.data.settings;
+        queryClient.setQueryData(["settings", token], (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: { ...old.data, data: { settings: updatedSettings } },
+          };
+        });
       },
       onError: () => {
         message.error("Cập nhật cài đặt thất bại");

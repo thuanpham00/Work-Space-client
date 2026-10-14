@@ -2,7 +2,7 @@
 import { useEffect, useMemo } from "react";
 import { path } from "../../utils/path";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getWorkspaceMenuKey, parseWorkspaceKey, parseWorkspacePath } from "../../utils/workspaceKey.util";
+import { parseWorkspaceIdFromPath } from "../../utils/workspaceKey.util";
 import type { WorkspaceType } from "../../types/workspace.type";
 import { useUnreadStore } from "../../store/unreadStore";
 import { Avatar, Badge, Menu, Tooltip } from "antd";
@@ -49,10 +49,12 @@ export default function ListMenu() {
     if (pathname === path.search) return ["search"];
 
     if (pathname.startsWith("/workspaces/")) {
-      const parsed = parseWorkspacePath(pathname);
-      if (parsed) {
-        const ws = mappingWorkspaceUnread.find((w: WorkspaceType) => w.id === parsed.id);
-        if (ws) return [getWorkspaceMenuKey(ws.name, ws.id)];
+      const idFromPath = parseWorkspaceIdFromPath(pathname);
+      if (idFromPath) {
+        const ws = mappingWorkspaceUnread.find(
+          (w: WorkspaceType) => String(w.id) === idFromPath,
+        );
+        if (ws) return [String(ws.id)];
       }
       return [];
     }
@@ -85,8 +87,8 @@ export default function ListMenu() {
         ),
       },
       ...mappingWorkspaceUnread.map((workspace: WorkspaceType) => ({
-        // VD: "workspace-mac-dinh-i-2"
-        key: getWorkspaceMenuKey(workspace.name, workspace.id),
+        // Dùng id thuần làm key menu, không kèm slug
+        key: String(workspace.id),
         icon: (
           <Tooltip title={workspace.name} placement="right">
             <Badge count={workspace.countUnread ?? 0} overflowCount={99} size="small" offset={[-2, 2]}>
@@ -106,10 +108,8 @@ export default function ListMenu() {
       return;
     }
 
-    const parsed = parseWorkspaceKey(key);
-    if (parsed) {
-      navigate(`/workspaces/${parsed.slug}-i-${parsed.id}`);
-    }
+    // key chính là String(workspace.id) — navigate thẳng không cần slug
+    navigate(`/workspaces/${key}`);
   };
 
   useUnreadCHannel(token);

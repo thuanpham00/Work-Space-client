@@ -9,11 +9,10 @@ export const workspaceAPI = {
   },
 
   getWorkspaceById: (workspaceId: string) => {
-    return Http.get<SuccessResponse<{ workspace: WorkspaceType }>>(`/workspaces/${workspaceId}`);
-  },
-
-  infoWorkspaceStatus: (workspaceId: string) => {
-    return Http.get<SuccessResponse<{ workspace: WorkspaceType }>>(`/workspaces/${workspaceId}/status`);
+    return Http.get<SuccessResponse<{ workspace: WorkspaceType }>>(
+      `/workspaces/${workspaceId}`,
+      { silentOnError: true },
+    );
   },
 
   getCategoryById: (categoryId: string) => {

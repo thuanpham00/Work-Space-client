@@ -1,0 +1,177 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  box-sizing: border-box;
+  background: var(--color-bg);
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  padding: $spacing-2xl $spacing-xl;
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: cardFadeIn 0.4s ease;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.illustration {
+  position: relative;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+}
+
+.icon {
+  color: var(--color-primary-500);
+  z-index: 2;
+  position: relative;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.glow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+  filter: blur(20px);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 $spacing-sm 0;
+  transition: color $transition-normal;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 $spacing-xl 0;
+  transition: color $transition-normal;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.primaryBtn {
+  height: 42px !important;
+  font-weight: 600 !important;
+  padding: 0 $spacing-lg !important;
+  border-radius: $radius-sm !important;
+}
+
+.secondaryBtn {
+  height: 42px !important;
+  font-weight: 500 !important;
+  padding: 0 $spacing-lg !important;
+  border-radius: $radius-sm !important;
+}
+
+.searchLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-primary-500);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: $radius-full;
+  background: var(--color-bg);
+  transition: all $transition-fast;
+  margin-bottom: $spacing-sm;
+
+  &:hover {
+    color: var(--color-primary-600);
+    background: var(--color-bg-secondary);
+    transform: translateY(-1px);
+  }
+}
+
+.backText {
+  display: block;
+  margin: $spacing-sm auto 0;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+@include respond-to("xs") {
+  .card {
+    padding: $spacing-xl $spacing-md;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+
+    .link {
+      width: 100%;
+    }
+
+    .primaryBtn,
+    .secondaryBtn {
+      width: 100% !important;
+    }
+  }
+}

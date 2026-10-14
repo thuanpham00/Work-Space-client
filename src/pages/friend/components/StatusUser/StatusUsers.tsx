@@ -179,18 +179,6 @@ function FriendStatusPanel({
             />
           ))}
 
-        {type === "statusFriends" &&
-          friends.map((friend) => (
-            <FriendStatusRow
-              key={friend.id}
-              friend={friend}
-              status={status}
-              onAccept={onAccept}
-              onReject={onReject}
-              onUserClick={onUserClick}
-            />
-          ))}
-
         {type === "channelFriends" &&
           channelsFriends.map((channelFriend) => (
             <FriendChannelRow key={channelFriend.channelId} channelFriend={channelFriend} />

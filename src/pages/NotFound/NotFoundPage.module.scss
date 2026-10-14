@@ -1,0 +1,158 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.notFoundPage {
+  min-height: 90vh;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  box-sizing: border-box;
+}
+
+.notFoundCard {
+  width: 100%;
+  max-width: 520px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  padding: $spacing-2xl $spacing-xl;
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: cardFadeIn 0.5s ease;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.illustration {
+  position: relative;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+}
+
+.bigText {
+  font-size: 140px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-primary-500);
+  letter-spacing: -4px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-300, #93c5fd) 50%,
+    var(--color-primary-700, #1d4ed8) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  z-index: 2;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+  filter: blur(20px);
+}
+
+.glowTwo {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+  filter: blur(16px);
+  top: 20px;
+  right: 30px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 $spacing-sm 0;
+  transition: color $transition-normal;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 $spacing-xl 0;
+  transition: color $transition-normal;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.homeLink {
+  text-decoration: none;
+}
+
+.primaryBtn {
+  height: 42px !important;
+  font-weight: 600 !important;
+  padding: 0 $spacing-lg !important;
+  border-radius: $radius-sm !important;
+}
+
+@include respond-to("xs") {
+  .notFoundCard {
+    padding: $spacing-xl $spacing-md;
+  }
+
+  .bigText {
+    font-size: 100px;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+
+    .homeLink {
+      width: 100%;
+    }
+
+    .primaryBtn {
+      width: 100% !important;
+    }
+  }
+}

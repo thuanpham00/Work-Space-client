@@ -75,7 +75,6 @@ function EmptyState({
 export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>(
   ({ backgroundUrlDM, accentDM, onFriendRequestChange }, ref) => {
     const [visible, setVisible] = useState(false);
-    const [sending, setSending] = useState(false);
     const [userId, setUserId] = useState<string>("");
     const navigate = useNavigate();
 
@@ -121,7 +120,6 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
     const handleClose = () => {
       setVisible(false);
-      setSending(false);
       setUserId("");
     };
 
@@ -136,7 +134,6 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
     const handleAddRequest = async () => {
       if (!userId || !userData) return;
 
-      setSending(true);
       try {
         await addFriendMutation.mutateAsync(userId);
         message.success(`Đã gửi lời mời kết bạn tới ${userData.fullName}`);
@@ -144,15 +141,12 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } catch (error) {
         console.log(error);
         message.error("Có lỗi xảy ra khi gửi lời mời kết bạn");
-      } finally {
-        setSending(false);
       }
     };
 
     const handleCancelRequest = async () => {
       if (!userId || !userData) return;
 
-      setSending(true);
       try {
         await addFriendMutation.mutateAsync(userId);
         message.success(`Đã hủy lời mời tới ${userData.fullName}`);
@@ -160,15 +154,12 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } catch (error) {
         console.log(error);
         message.error("Có lỗi xảy ra khi hủy lời mời");
-      } finally {
-        setSending(false);
       }
     };
 
     const handleAcceptRequest = async () => {
       if (!userId || !userData) return;
 
-      setSending(true);
       try {
         await acceptFriendMutation.mutateAsync(userId);
         message.success(`Đã đồng ý kết bạn với ${userData.fullName}`);
@@ -176,15 +167,12 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } catch (error) {
         console.log(error);
         message.error("Có lỗi xảy ra khi đồng ý kết bạn");
-      } finally {
-        setSending(false);
       }
     };
 
     const handleRejectRequest = async () => {
       if (!userId || !userData) return;
 
-      setSending(true);
       try {
         await rejectFriendMutation.mutateAsync(userId);
         message.success(`Đã từ chối kết bạn với ${userData.fullName}`);
@@ -192,8 +180,6 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
       } catch (error) {
         console.log(error);
         message.error("Có lỗi xảy ra khi từ chối kết bạn");
-      } finally {
-        setSending(false);
       }
     };
 
@@ -321,7 +307,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
             <Button
               block
               type="primary"
-              loading={sending}
+              loading={addFriendMutation.isLoading}
               icon={<X size={16} />}
               className={styles.friendRequestBtn}
               onClick={handleCancelRequest}
@@ -335,7 +321,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
             <div className={styles.friendActionsRow}>
               <Button
                 type="primary"
-                loading={sending}
+                loading={acceptFriendMutation.isLoading}
                 icon={<Check size={16} />}
                 className={`${styles.friendRequestBtn} ${styles.messageBtn}`}
                 onClick={handleAcceptRequest}
@@ -343,7 +329,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
                 Chấp nhận
               </Button>
               <Button
-                loading={sending}
+                loading={rejectFriendMutation.isLoading}
                 icon={<X size={16} />}
                 className={`${styles.friendRequestBtn}`}
                 onClick={handleRejectRequest}
@@ -359,7 +345,7 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
               <Button
                 block
                 type="primary"
-                loading={sending}
+                loading={addFriendMutation.isLoading}
                 icon={<UserPlus size={16} />}
                 className={styles.friendRequestBtn}
                 onClick={handleAddRequest}

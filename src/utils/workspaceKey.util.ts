@@ -20,72 +20,20 @@ export function generateSlug(name: string): string {
 }
 
 /**
- * Tạo key menu từ slug + id
- * VD: slug="workspace-mac-dinh", id="2"
- *  → "workspace-mac-dinh-i-2"
+ * Tạo route path dạng id thuần: /workspaces/{id}
+ * VD: id="2" → "/workspaces/2"
  */
-export function buildWorkspaceKey(slug: string, id: string): string {
-  return `${slug}-i-${id}`;
+export function buildWorkspaceIdPath(id: string | number): string {
+  return `/workspaces/${id}`;
 }
 
 /**
- * Parse key workspace từ menu
- * Format: "{slug}-i-{id}"
- * VD: "workspace-mac-dinh-i-2"
- *  → { slug: "workspace-mac-dinh", id: "2" }
+ * Parse route path dạng id thuần
+ * VD: "/workspaces/2" → "2"
+ * Trả về null nếu path không đúng format "/workspaces/{id}"
  */
-export function parseWorkspaceKey(key: string): {
-  slug: string;
-  id: string;
-} | null {
-  // Match: {slug}-i-{id} (lấy phần cuối cùng làm id)
-  const match = key.match(/^(.*?)-i-(.+)$/);
+export function parseWorkspaceIdFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/workspaces\/([^/?#]+)$/);
   if (!match) return null;
-
-  return {
-    slug: match[1],
-    id: match[2],
-  };
+  return match[1];
 }
-
-/**
- * Tạo route path: /workspaces/{slug}-i-{id}
- * VD: /workspaces/workspace-mac-dinh-i-2
- */
-export function buildWorkspacePath(slug: string, id: string): string {
-  return `/workspaces/${slug}-i-${id}`;
-}
-
-/**
- * Parse route path
- * VD: /workspaces/workspace-mac-dinh-i-2
- *  → { slug: "workspace-mac-dinh", id: "2" }
- */
-export function parseWorkspacePath(pathname: string): {
-  slug: string;
-  id: string;
-} | null {
-  const match = pathname.match(/^\/workspaces\/(.+)-i-(.+)$/);
-  if (!match) return null;
-
-  return {
-    slug: match[1],
-    id: match[2],
-  };
-}
-
-/**
- * Tạo key menu từ workspace name + id (one-liner)
- * VD: name="Workspace Mặc Định", id="2"
- *  → "workspace-mac-dinh-i-2"
- */
-export function getWorkspaceMenuKey(name: string, id: string): string {
-  const slug = generateSlug(name);
-  return buildWorkspaceKey(slug, id);
-}
-
-/**
- * Lấy slug từ workspace name
- * (alias ngắn gọn hơn cho generateSlug)
- */
-export const toSlug = generateSlug;

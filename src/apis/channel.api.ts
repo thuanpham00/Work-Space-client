@@ -8,6 +8,8 @@ import type {
   ChannelProfile,
   ChannelSettingsBody,
   ChannelUnread,
+  InfoStatusChannelResponse,
+  InviteUserToChannelBody,
 } from "../types/channel.type";
 import type { Media } from "../types/media.type";
 import type { Message } from "../types/message.type";
@@ -42,6 +44,12 @@ export const channelApi = {
     >(`/channels/${channelId}/invite-friends`, {
       params,
     });
+  },
+
+  getRequestListChannel: (channelId: string) => {
+    return Http.get<SuccessResponse<{ requests: any[]; inviteCount: number; joinCount: number }>>(
+      `/channels/${channelId}/requests`,
+    );
   },
 
   create: (data: ChannelBody) => {
@@ -80,11 +88,29 @@ export const channelApi = {
   },
 
   requestToJoin: (channelId: string) => {
-    return Http.post<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/request-join`);
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/request-join`);
   },
 
   cancelRequestToJoin: (channelId: string) => {
-    return Http.delete<SuccessResponse<{ channel: ChannelProfile }>>(`/channels/${channelId}/request-join`);
+    return Http.delete<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/request-join`);
+  },
+
+  inviteUserToChannel: (channelId: string, data: InviteUserToChannelBody) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/invite`, data);
+  },
+
+  revokeInvite: (channelId: string, userId: string) => {
+    return Http.delete<SuccessResponse<InfoStatusChannelResponse>>(
+      `/channels/${channelId}/invites/${userId}`,
+    );
+  },
+
+  acceptInvite: (channelId: string) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/accept-invite`);
+  },
+
+  rejectInvite: (channelId: string) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/reject-invite`);
   },
 
   getLinkInviteChannel: (channelId: string) => {

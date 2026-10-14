@@ -71,10 +71,27 @@
 
 .inviteJoinBtn {
   width: 100%;
-  height: 40px;
-  background: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
-  font-weight: 500;
   font-size: 14px;
-  border-radius: 8px;
+  border-radius: 6px !important;
+  font-weight: 600;
+  height: 38px;
+}
+
+.inviteActionBtn {
+  width: 100%;
+  border-radius: 6px !important;
+  font-weight: 600;
+  height: 38px;
+}
+
+.friendActionsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+
+  .inviteActionBtn {
+    flex: 1;
+    width: auto;
+  }
 }
