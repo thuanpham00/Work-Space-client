@@ -128,3 +128,16 @@ export interface InfoStatusChannelResponse {
   status: string;
 }
 
+export interface ChannelRequestItem {
+  userId: string;
+  username: string;
+  avatar: string;
+  fullName: string;
+  role: ChannelMemberRole;
+  type: string;
+  invitedById: string;
+  invitedByName: string;
+  requestedById: string;
+  invitedAt: string;
+  joinedAt: string;
+}

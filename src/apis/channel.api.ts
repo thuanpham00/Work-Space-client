@@ -6,6 +6,7 @@ import type {
   ChannelConfig,
   ChannelNicknamesBody,
   ChannelProfile,
+  ChannelRequestItem,
   ChannelSettingsBody,
   ChannelUnread,
   InfoStatusChannelResponse,
@@ -47,9 +48,9 @@ export const channelApi = {
   },
 
   getRequestListChannel: (channelId: string) => {
-    return Http.get<SuccessResponse<{ requests: any[]; inviteCount: number; joinCount: number }>>(
-      `/channels/${channelId}/requests`,
-    );
+    return Http.get<
+      SuccessResponse<{ requests: ChannelRequestItem[]; inviteCount: number; joinCount: number }>
+    >(`/channels/${channelId}/requests`);
   },
 
   create: (data: ChannelBody) => {
@@ -95,6 +96,14 @@ export const channelApi = {
     return Http.delete<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/request-join`);
   },
 
+  acceptInvite: (channelId: string) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/accept-invite`);
+  },
+
+  rejectInvite: (channelId: string) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/reject-invite`);
+  },
+
   inviteUserToChannel: (channelId: string, data: InviteUserToChannelBody) => {
     return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/invite`, data);
   },
@@ -105,12 +114,16 @@ export const channelApi = {
     );
   },
 
-  acceptInvite: (channelId: string) => {
-    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/accept-invite`);
+  approveJoinRequest: (channelId: string, userId: string) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(
+      `/channels/${channelId}/requests/${userId}/approve`,
+    );
   },
 
-  rejectInvite: (channelId: string) => {
-    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(`/channels/${channelId}/reject-invite`);
+  rejectJoinRequest: (channelId: string, userId: string) => {
+    return Http.post<SuccessResponse<InfoStatusChannelResponse>>(
+      `/channels/${channelId}/requests/${userId}/reject`,
+    );
   },
 
   getLinkInviteChannel: (channelId: string) => {

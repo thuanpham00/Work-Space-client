@@ -4,6 +4,84 @@
 .wrapper {
   width: 100%;
   padding: $spacing-lg;
+
+  // Scale up form internals (applies to both Login + Register)
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-password,
+  .ant-select-selector,
+  .ant-picker {
+    min-height: 48px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .ant-input::placeholder {
+    font-size: 15px;
+  }
+
+  // Labels
+  .ant-form-item .ant-form-item-label > label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  // Form item spacing
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+
+  // Google/social button
+  .googleButton {
+    height: 52px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .googleIcon {
+    width: 24px;
+    height: 24px;
+  }
+
+  // Submit button
+  .submitButton {
+    height: 40px !important;
+    font-size: 16px !important;
+    border-radius: 8px;
+
+    > span {
+      font-size: 15px !important;
+    }
+  }
+
+  // Headings
+  .heading {
+    font-size: 32px;
+  }
+
+  .subheading {
+    font-size: 16px;
+  }
+
+  // Logo
+  .logoIcon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .logoText {
+    font-size: 28px;
+  }
+
+  .logoSvg {
+    width: 32px;
+    height: 32px;
+  }
+
+  // Divider text
+  .dividerText {
+    font-size: 15px;
+  }
 }
 
 // Logo section
@@ -184,9 +262,89 @@
 .submitButton {
   margin-top: 10px;
   height: 48px !important;
-  font-size: 18px !important;
+  font-size: 16px !important;
 
   > span {
     font-size: 15px !important;
+  }
+}
+
+// Heading + subheading (cho layout 2 cột mới)
+.heading {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: $spacing-sm;
+  text-align: left;
+}
+
+.subheading {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: $spacing-xl;
+  text-align: left;
+}
+
+// Social buttons row
+.socialRow {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.socialButton {
+  flex: 1;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: $radius-md;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-neutral-300);
+  }
+}
+
+// Terms checkbox row (register)
+.termsRow {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+}
+
+// Compact form density
+.formCompact {
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+}
+
+// Tighter wrapper padding
+.wrapperCompact {
+  padding: $spacing-sm $spacing-md;
+}
+
+// 2-column form row
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 $spacing-md;
+
+  .ant-form-item {
+    margin-bottom: 20px;
   }
 }

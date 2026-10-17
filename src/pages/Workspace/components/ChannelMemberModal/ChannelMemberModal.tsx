@@ -1,21 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { App, Button, Empty, Input, Modal, Tabs } from "antd";
-import { Clock, Copy, Link as LinkIcon, Search, X } from "lucide-react";
+import { App, Button, Empty, Input, Modal, Spin, Tabs } from "antd";
+import { Check, Clock, Copy, Link as LinkIcon, Search, UserPlus, X } from "lucide-react";
 import styles from "./ChannelMemberModal.module.scss";
 import type { QueryBase } from "../../../../types/query.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { useDebounce } from "../../../../Hooks/useDebounce";
 import { useChannelStore } from "../../../../store/channelStore";
-import { ChannelMemberRole } from "../../../../types/channel.type";
+import { ChannelMemberRole, type ChannelRequestItem } from "../../../../types/channel.type";
 import { channelApi } from "../../../../apis/channel.api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import type { UserBasic } from "../../../../types/user.type";
 import { LIMIT, PAGE } from "../../../../constants/config";
 import Loading from "../../../../components/Loading/Loading";
-import { UserPlus } from "lucide-react";
 import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
+import { WorkspaceStatusPill } from "../../../../components/WorkspaceStatusPill/WorkspaceStatusPill";
+import { useUserStore } from "../../../../store/userStore";
 
 export interface WorkspaceMemberModalRef {
   handleOpen: () => void;
@@ -144,14 +145,106 @@ const InviteLinkSection = ({ link, expiresAt }: { link: string; expiresAt: strin
   );
 };
 
+const InviteRequestItem = ({ request }: { request: ChannelRequestItem }) => {
+  const displayName = request.fullName || request.username || "Người dùng";
+
+  return (
+    <div className={styles.wmMemberItem}>
+      <AvatarFallback src={request.avatar} alt={displayName} size={40} showStatus={false} />
+      <div className={styles.wmMemberInfo}>
+        <div className={styles.wmMemberName}>{displayName}</div>
+        <div className={styles.wmMemberEmail}>
+          @{request.username}
+          {request.invitedByName && <span> · mời bởi {request.invitedByName}</span>}
+        </div>
+      </div>
+      <WorkspaceStatusPill
+        workspaceStatus={WorkspaceMemberStatus.PENDING_INVITE}
+        labelOverride={{ [WorkspaceMemberStatus.PENDING_INVITE]: "Lời mời" }}
+      />
+    </div>
+  );
+};
+
+const JoinRequestItem = ({
+  request,
+  channelId,
+  onResolved,
+}: {
+  request: ChannelRequestItem;
+  channelId: string;
+  onResolved: () => void;
+}) => {
+  const displayName = request.fullName || request.username;
+  const { message } = App.useApp();
+
+  const approveMutation = useMutation({
+    mutationFn: () => channelApi.approveJoinRequest(channelId, request.userId),
+    onSuccess: () => {
+      message.success(`Đã duyệt yêu cầu của ${displayName}`);
+      onResolved();
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: () => channelApi.rejectJoinRequest(channelId, request.userId),
+    onSuccess: () => {
+      message.success(`Đã từ chối yêu cầu của ${displayName}`);
+      onResolved();
+    },
+  });
+
+  const isMutating = approveMutation.isLoading || rejectMutation.isLoading;
+
+  return (
+    <div className={styles.wmMemberItem}>
+      <AvatarFallback src={request.avatar} alt={displayName} size={40} showStatus={false} />
+      <div className={styles.wmMemberInfo}>
+        <div className={styles.wmMemberName}>{displayName}</div>
+        <div className={styles.wmMemberEmail}>
+          @{request.username}
+          {request.requestedById && <span> · yêu cầu tham gia</span>}
+        </div>
+      </div>
+      <div className={styles.wmPendingActions}>
+        <Button
+          type="primary"
+          size="small"
+          className={styles.friendRequestBtn}
+          loading={approveMutation.isLoading}
+          disabled={isMutating}
+          onClick={() => approveMutation.mutate()}
+          icon={<Check size={14} />}
+        >
+          Duyệt
+        </Button>
+        <Button
+          size="small"
+          type="default"
+          danger
+          className={styles.friendRequestBtnDanger}
+          loading={rejectMutation.isLoading}
+          disabled={isMutating}
+          onClick={() => rejectMutation.mutate()}
+          icon={<X size={14} />}
+        >
+          Từ chối
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
+  const queryClient = useQueryClient();
   const channelRole = useChannelStore((app) => app.channelRole);
   const channelId = useChannelStore((app) => app.channelId);
   const channelName = useChannelStore((app) => app.channelName);
+  const accessToken = useUserStore((app) => app.accessToken);
   const isAdminChannel = channelRole === ChannelMemberRole.ADMIN;
 
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"invite" | "members">("invite");
+  const [activeTab, setActiveTab] = useState<"invite" | "pending">("invite");
   const [searchKeyword, setSearchKeyword] = useState("");
 
   const [query, setQuery] = useState<QueryBase>({ page: 1, limit: LIMIT, search: "" });
@@ -173,7 +266,11 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
     },
   }));
 
-  const { data: dataChannelRequestList, isFetching: isFetchingChannelRequestList } = useQuery({
+  const {
+    data: dataChannelRequestList,
+    isFetching: isFetchingChannelRequestList,
+    refetch: refetchChannelRequestList,
+  } = useQuery({
     queryKey: ["ChannelRequestList", channelId],
     queryFn: () => channelApi.getRequestListChannel(channelId),
     enabled: Boolean(channelId) && open,
@@ -181,7 +278,17 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: dataFriendInvite, isFetching: isFetchingFriendInvite } = useQuery({
+  const channelRequests = dataChannelRequestList?.data.data.requests ?? [];
+  const sortedChannelRequests = [...channelRequests].sort((a, b) => {
+    if (a.type === b.type) return 0;
+    return a.type === "invite" ? -1 : 1; // invite trước, join sau
+  });
+
+  const {
+    data: dataFriendInvite,
+    isFetching: isFetchingFriendInvite,
+    refetch: refetchFriendInvite,
+  } = useQuery({
     queryKey: ["friendInviteChannel", channelId, query],
     queryFn: () => channelApi.getFriendsInviteChannel(channelId, query),
     enabled: Boolean(channelId) && open,
@@ -194,9 +301,14 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
   const page = dataFriendInvite?.data.data.page ?? 1;
   const hasMore = pagination.page < pagination.totalPages;
 
-  const queryClient = useQueryClient();
   const handleInvited = () => {
-    queryClient.invalidateQueries({ queryKey: ["friendInviteChannel", channelId] });
+    refetchFriendInvite();
+  };
+
+  const handleRequestResolved = () => {
+    refetchChannelRequestList();
+    refetchFriendInvite();
+    queryClient.invalidateQueries({ queryKey: ["channelDetail", channelId, accessToken] });
   };
 
   const { data: dataLinkInvite } = useQuery({
@@ -260,7 +372,7 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
 
         <Tabs
           activeKey={activeTab}
-          onChange={(key) => setActiveTab(key as "invite" | "members")}
+          onChange={(key) => setActiveTab(key as "invite" | "pending")}
           className={styles.wmTabs}
           items={tabsItems}
         />
@@ -317,59 +429,32 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
             </>
           )}
 
-          {/* {activeTab === "pending" && (
-              <div className={styles.wmPendingList}>
-                {isLoadingMemberRequestsWorkspace ? (
-                  <div className={styles.wmPendingLoading}>
-                    <Spin />
-                  </div>
-                ) : requestsWorkspace.length === 0 ? (
-                  <Empty description="Không có yêu cầu nào đang chờ" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                ) : (
-                  <>
-                    <div className={styles.wmPendingSummary}>
-                      <span>
-                        Lời mời: <strong>{inviteCount}</strong>
-                      </span>
-                      <span>
-                        Yêu cầu tham gia: <strong>{joinCount}</strong>
-                      </span>
-                    </div>
-                    {requestsWorkspace.map((request) => {
-                      const displayName = request.fullName || request.username || "Người dùng";
-                      const isInvite = request.type === "invite";
-                      return (
-                        <div key={request.userId} className={styles.wmPendingItem}>
-                          <AvatarFallback
-                            src={request.avatar}
-                            alt={displayName}
-                            size={40}
-                            showStatus={false}
-                          />
-                          <div className={styles.wmMemberInfo}>
-                            <div className={styles.wmMemberName}>{displayName}</div>
-                            <div className={styles.wmMemberEmail}>
-                              @{request.username}
-                              {isInvite && request.invitedByName && (
-                                <span> · mời bởi {request.invitedByName}</span>
-                              )}
-                              {!isInvite && request.requestedById && <span> · yêu cầu tham gia</span>}
-                            </div>
-                          </div>
-                          <span
-                            className={`${styles.wmMemberRole} ${
-                              isInvite ? styles.wmRoleInvite : styles.wmRoleJoin
-                            }`}
-                          >
-                            {isInvite ? "Lời mời" : "Xin vào"}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </>
-                )}
-              </div>
-            )} */}
+          {activeTab === "pending" && (
+            <div className={styles.wmMemberList}>
+              {isFetchingChannelRequestList ? (
+                <div className={styles.wmPendingLoading}>
+                  <Spin />
+                </div>
+              ) : sortedChannelRequests.length === 0 ? (
+                <Empty description="Không có yêu cầu nào đang chờ" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              ) : (
+                sortedChannelRequests.map((request) => {
+                  if (request.type === "invite") {
+                    return <InviteRequestItem key={request.userId} request={request} />;
+                  }
+
+                  return (
+                    <JoinRequestItem
+                      key={request.userId}
+                      request={request}
+                      channelId={channelId}
+                      onResolved={handleRequestResolved}
+                    />
+                  );
+                })
+              )}
+            </div>
+          )}
         </div>
       </Modal>
     </>

@@ -1,12 +1,15 @@
-import { Form, Input, Button, App } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Form, Input, Button, App, Select } from "antd";
+import { useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import styles from "./auth.module.scss";
 import { useMutation } from "react-query";
 import type { RegisterBodyType } from "../../types/auth.type";
 import { useState } from "react";
 import { userAPI } from "../../apis/user.api";
-import logo from "../../assets/image/chat.png";
+import settings from "../../settings.json";
+import { GenderType } from "../../types/user.type";
+
+const PHONE_VN_REGEX = /^(0\d{9}|84\d{9})$/;
 
 export default function RegisterPage() {
   const [form] = Form.useForm();
@@ -40,65 +43,115 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.logo}>
-        <div className={styles.logoIcon}>
-          <img src={logo} alt="logo" />
-        </div>
-        <span className={styles.logoText}>WorkSpace</span>
-      </div>
-
-      <h1 className={`${styles.title} ${styles.titleLarge}`}>
-        Đăng ký
-        <span className={styles.wave}>&#128075;</span>
-      </h1>
+    <div className={`${styles.wrapper} ${styles.formCompact} ${styles.wrapperCompact}`}>
+      <h1 className={`${styles.heading} ${styles.titleLarge}`}>Đăng ký</h1>
+      <p className={styles.subheading}>Tạo tài khoản để bắt đầu trò chuyện cùng team của bạn.</p>
 
       <Form layout="vertical" requiredMark={false} form={form} onFinish={handleSubmit}>
-        <Form.Item
-          name="username"
-          label="Username"
-          rules={[{ required: true, message: "Vui lòng nhập username!" }]}
-        >
-          <Input type="text" placeholder="Username" />
-        </Form.Item>
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" },
-          ]}
-        >
-          <Input type="email" placeholder="Email" />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Mật khẩu"
-          rules={[
-            { required: true, message: "Vui lòng nhập mật khẩu!" },
-            { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
-          ]}
-        >
-          <Input.Password placeholder="Password" />
-        </Form.Item>
-        <Form.Item
-          name="confirmPassword"
-          label="Xác nhận mật khẩu"
-          dependencies={["password"]}
-          rules={[
-            { required: true, message: "Vui lòng xác nhận mật khẩu!" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("Mật khẩu xác nhận không khớp!"));
+        <div className={styles.formGrid}>
+          <Form.Item
+            name="username"
+            label="Tên tài khoản"
+            rules={[{ required: true, message: "Vui lòng nhập tên tài khoản!" }]}
+          >
+            <Input type="text" placeholder="Tên tài khoản" />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
+            ]}
+          >
+            <Input type="email" placeholder="Email" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="Mật khẩu"
+            rules={[
+              { required: true, message: "Vui lòng nhập mật khẩu!" },
+              { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
+            ]}
+          >
+            <Input.Password placeholder="Password" />
+          </Form.Item>
+          <Form.Item
+            name="confirmPassword"
+            label="Xác nhận mật khẩu"
+            dependencies={["password"]}
+            rules={[
+              { required: true, message: "Vui lòng xác nhận mật khẩu!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Mật khẩu xác nhận không khớp!"));
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Mật khẩu của bạn" />
+          </Form.Item>
+          <Form.Item
+            name="fullName"
+            label="Tên đầy đủ"
+            rules={[{ max: 50, message: "Tên tối đa 50 ký tự" }]}
+          >
+            <Input type="text" placeholder="Tên đầy đủ của bạn" />
+          </Form.Item>
+          <Form.Item
+            name="phone"
+            label="Số điện thoại"
+            rules={[
+              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              {
+                pattern: PHONE_VN_REGEX,
+                message: "Số điện thoại không hợp lệ (VD: 0912345678 hoặc 84912345678)",
               },
-            }),
-          ]}
-        >
-          <Input.Password placeholder="Confirm Password" />
-        </Form.Item>
+            ]}
+          >
+            <Input type="tel" placeholder="VD: 0912345678" maxLength={11} />
+          </Form.Item>
+          <Form.Item
+            name="dateOfBirth"
+            label="Ngày sinh"
+            rules={[
+              {
+                validator(_, value) {
+                  if (!value) return Promise.resolve();
+                  const today = new Date();
+                  today.setHours(23, 59, 59, 999);
+                  const dob = new Date(value);
+                  if (Number.isNaN(dob.getTime())) {
+                    return Promise.reject(new Error("Ngày sinh không hợp lệ!"));
+                  }
+                  if (dob.getTime() > today.getTime()) {
+                    return Promise.reject(new Error("Ngày sinh không được ở tương lai!"));
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <Input type="date" placeholder="Ngày sinh của bạn" />
+          </Form.Item>
+          <Form.Item
+            name="gender"
+            label="Giới tính"
+            rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
+          >
+            <Select
+              placeholder="Chọn giới tính"
+              options={[
+                { value: GenderType.MALE, label: "Nam" },
+                { value: GenderType.FEMALE, label: "Nữ" },
+                { value: GenderType.OTHER, label: "Khác" },
+              ]}
+            />
+          </Form.Item>
+        </div>
 
         <Form.Item className="mb-0!">
           <Button type="primary" loading={loading} htmlType="submit" block className={styles.submitButton}>
@@ -107,16 +160,7 @@ export default function RegisterPage() {
         </Form.Item>
       </Form>
 
-      {/* Login link */}
-      <p className={styles.footerText}>
-        Đã có tài khoản?{" "}
-        <Link to={path.login} className={styles.authLink}>
-          Đăng nhập
-        </Link>
-      </p>
-
-      {/* Copyright */}
-      <p className={`${styles.footerText} ${styles.footerTextSmall}`}>2026 WorkSpace. All rights reserved.</p>
+      <p className={`${styles.footerText} ${styles.footerTextSmall}`}>version: {settings.version}</p>
     </div>
   );
 }

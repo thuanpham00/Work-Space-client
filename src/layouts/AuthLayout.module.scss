@@ -1,0 +1,106 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(480px, 55fr) 45fr;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+// Panel trái - Form
+.formPanel {
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-lg $spacing-2xl;
+  background: var(--color-bg);
+  position: relative;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--color-neutral-200);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.headerLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.formContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Panel phải - Hero
+.heroPanel {
+  position: relative;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(239, 72, 21, 0.95) 0%, rgba(247, 98, 53, 0.85) 100%);
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  // background-image: url(...) sẽ thêm sau khi bạn cung cấp asset
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+  padding: $spacing-2xl;
+  max-width: 480px;
+}
+
+.heroTitle {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: $spacing-md;
+  line-height: 1.2;
+}
+
+.heroSubtitle {
+  font-size: 16px;
+  opacity: 0.9;
+  line-height: 1.5;
+}

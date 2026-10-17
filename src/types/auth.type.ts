@@ -5,6 +5,10 @@ export type RegisterBodyType = {
   email: string;
   password: string;
   confirmPassword: string;
+  fullName: string;
+  phone: string;
+  dateOfBirth: string;
+  gender: GenderType;
 };
 
 export type LoginBodyType = {

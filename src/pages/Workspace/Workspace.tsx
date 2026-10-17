@@ -21,11 +21,8 @@ import {
 export type ModeListFriend = "list" | "chat";
 
 export default function WorkspacePage() {
-  // Route đăng ký: /workspaces/:id → param tên là "id"
   const { id } = useParams<{ id: string }>();
   const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
-
-  // Validate id client-side (fail fast, tránh gọi API với id rác)
 
   const {
     data: workSpaceDetail,
@@ -60,9 +57,6 @@ export default function WorkspacePage() {
     [isError, isLoading, isSuccess, workspaceError],
   );
 
-  // Chỉ lấy data khi request hiện tại thành công.
-  // Khi isError, workSpaceDetail là undefined theo docs của react-query,
-  // kể cả khi keepPreviousData: true thì data cũ cũng không còn hợp lệ với id mới.
   const dataWorkspaceDetail = isSuccess ? workSpaceDetail?.data.data.workspace : undefined;
   const workSpaceRole = dataWorkspaceDetail?.role ?? WorkspaceMemberRole.MEMBER;
 

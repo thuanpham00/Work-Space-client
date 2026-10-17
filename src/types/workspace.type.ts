@@ -41,27 +41,6 @@ export enum WorkspaceMemberRole {
   OWNER = "OWNER",
 }
 
-export interface WorkspaceRequestItem {
-  userId: string;
-  username: string;
-  avatar: string | null;
-  fullName: string | null;
-  status: string;
-  role: WorkspaceMemberRole;
-  type: "invite" | "join";
-  invitedById: string | null;
-  invitedByName: string | null;
-  requestedById: string | null;
-  invitedAt: string | null;
-  joinedAt: string | null;
-}
-
-export interface WorkspaceRequestsResponse {
-  requests: WorkspaceRequestItem[];
-  inviteCount: number;
-  joinCount: number;
-}
-
 export enum InviteDenialReason {
   OK = "OK",
   ALREADY_MEMBER = "ALREADY_MEMBER",
