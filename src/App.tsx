@@ -45,7 +45,13 @@ const App = () => {
       socket.connect(); // chủ động kết nối
     }
 
+    // Cứ 30s client emit('heartbeat') → server nhận được → gọi ZADD với timestamp mới + EXPIRE reset về 120s → giữ user được coi là online trong Redis.
+    const heartbeatInterval = setInterval(() => {
+      socket.emit("heartbeat");
+    }, 30_000);
+
     return () => {
+      clearInterval(heartbeatInterval);
       socket.disconnect();
     };
   }, [socket, accessToken]);
