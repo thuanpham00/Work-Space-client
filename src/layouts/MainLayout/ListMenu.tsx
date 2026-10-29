@@ -8,17 +8,21 @@ import { useUnreadStore } from "../../store/unreadStore";
 import { Avatar, Badge, Menu, Tooltip } from "antd";
 import { SearchIcon, Users } from "lucide-react";
 import { workspaceAPI } from "../../apis/workspace.api";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useUserStore } from "../../store/userStore";
 import styles from "./ListMenu.module.scss";
-import { useUnreadCHannel } from "../../Hooks/useUnreadChannel";
+import { useUnreadChannels } from "../../Hooks/useUnreadChannel";
 import { useChannelStore } from "../../store/channelStore";
 import { useBaseStore } from "../../store/baseStore";
+import type { ChannelUnreadPayload } from "../../types/channel.type";
 
 export default function ListMenu() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
+  const markReadChannel = useUnreadStore((state) => state.markReadOptimistic);
+  const markUnreadChannel = useUnreadStore((state) => state.markUnread);
   const countUnreadChannelDM = useUnreadStore((state) => state.countUnreadChannelDM);
   const countUnreadWorkspace = useUnreadStore((state) => state.countUnreadWorkspace);
   const token = useUserStore((state) => state.accessToken);
@@ -51,9 +55,7 @@ export default function ListMenu() {
     if (pathname.startsWith("/workspaces/")) {
       const idFromPath = parseWorkspaceIdFromPath(pathname);
       if (idFromPath) {
-        const ws = mappingWorkspaceUnread.find(
-          (w: WorkspaceType) => String(w.id) === idFromPath,
-        );
+        const ws = mappingWorkspaceUnread.find((w: WorkspaceType) => String(w.id) === idFromPath);
         if (ws) return [String(ws.id)];
       }
       return [];
@@ -112,19 +114,19 @@ export default function ListMenu() {
     navigate(`/workspaces/${key}`);
   };
 
-  useUnreadCHannel(token);
+  useUnreadChannels(token);
 
   useEffect(() => {
-    if (!socket || !channelId) return;
+    if (!socket || !token) return;
 
-    socket.on("channel_unread", (data) => {
-      console.log(data);
+    socket.on("channel_unread", (data: ChannelUnreadPayload) => {
+      markUnreadChannel(data);
     });
 
     return () => {
       socket.off("channel_unread");
     };
-  }, [socket, channelId]);
+  }, [socket, token]);
 
   return (
     <Menu

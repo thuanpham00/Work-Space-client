@@ -4,7 +4,7 @@ import { channelApi } from "../apis/channel.api";
 import { useEffect } from "react";
 import { useUnreadStore } from "../store/unreadStore";
 
-export function useUnreadCHannel(token?: string | null) {
+export function useUnreadChannels(token?: string | null) {
   const loadDataUnreadChannel = useUnreadStore((state) => state.loadDataUnreadChannel);
 
   const { data: dataUnreadChannel } = useQuery({

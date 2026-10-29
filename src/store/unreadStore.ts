@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from "zustand";
-import { ChannelType, type ChannelUnread } from "../types/channel.type";
+import { ChannelType, type ChannelUnread, type ChannelUnreadPayload } from "../types/channel.type";
+import { useChannelStore } from "./channelStore";
+import { useUserStore } from "./userStore";
 
 type UnreadStoreType = {
   loadDataUnreadChannel: (data: ChannelUnread[]) => void;
-  markUnread: (payload: ChannelUnread) => void;
-  markRead: (channelId: string) => void;
+  markUnread: (payload: ChannelUnreadPayload) => void;
+  markReadOptimistic: (channelId: string) => void;
   byChannelId: Map<string, ChannelUnread>;
   countUnreadWorkspace: Map<string, number>;
   countUnreadChannelDM: number;
@@ -74,22 +77,35 @@ export const useUnreadStore = create<UnreadStoreType>((set) => ({
     }));
   },
 
-  markUnread: (payload: ChannelUnread) => {
+  markUnread: (payload: ChannelUnreadPayload) => {
+    const currentOpenId = useChannelStore.getState().channelId;
+    const currentUserId = useUserStore.getState().user?.id;
+    if (payload.channelId === currentOpenId) return; // đang xem -> bỏ
+    if (payload.senderId === currentUserId) return; // tự gửi -> bỏ
+
     set((state) => {
+      const prev = state.byChannelId.get(payload.channelId);
+      if (prev?.lastMessageId === payload.lastMessageId) return state; // dedup
+      const { senderId: _senderId, ...rest } = payload;
       const next = new Map(state.byChannelId);
-      next.set(payload.channelId, payload);
+      next.set(payload.channelId, { unread: true, ...prev, ...rest });
       return {
         byChannelId: next,
+        countUnreadChannelDM: getCountUnreadChannelDM(next),
+        countUnreadWorkspace: getCountUnreadWorkspace(next),
       };
     });
   },
 
-  markRead: (channelId: string) => {
+  markReadOptimistic: (channelId: string) => {
     set((state) => {
+      if (!state.byChannelId.has(channelId)) return state;
       const next = new Map(state.byChannelId);
       next.delete(channelId);
       return {
         byChannelId: next,
+        countUnreadChannelDM: getCountUnreadChannelDM(next),
+        countUnreadWorkspace: getCountUnreadWorkspace(next),
       };
     });
   },

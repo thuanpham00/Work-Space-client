@@ -72,8 +72,17 @@ export interface ChannelMemberNickname {
   updatedAt: string;
 }
 
+export type ChannelUnreadPayload = {
+  channelId: string;
+  workspaceId: string | null;
+  type: ChannelType; // "DM" | "TEXT" | "VOICE"
+  count: number; // server tính: total - last_read
+  lastMessageId: string;
+  senderId: string;
+};
+
 export type ChannelUnread = {
-  workspaceId: string;
+  workspaceId: string | null;
   channelId: string;
   type: ChannelType;
   lastMessageId: string;
