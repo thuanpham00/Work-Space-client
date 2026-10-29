@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: $font-body-size;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -79,11 +79,13 @@
       padding-inline: 12px !important;
       border-radius: $radius-sm;
       color: var(--color-text-secondary);
-      transition: all $transition-fast;
+      transition-property: background-color, color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
       &:hover {
-        background-color: var(--color-bg-hover) !important;
-        color: var(--color-text-primary) !important;
+        background-color: var(--color-bg-secondary) !important;
+        color: var(--color-text) !important;
       }
     }
 
@@ -110,11 +112,11 @@
       margin: 4px 0 !important;
       padding-inline: 12px !important;
       border-radius: $radius-sm;
-      color: var(--color-text-primary);
+      color: var(--color-text);
       font-weight: 500;
 
       &:hover {
-        background-color: var(--color-bg-hover) !important;
+        background-color: var(--color-bg-secondary) !important;
       }
     }
 
@@ -130,8 +132,8 @@
         line-height: 36px !important;
 
         &:hover {
-          background-color: var(--color-bg-hover) !important;
-          color: var(--color-text-primary) !important;
+          background-color: var(--color-bg-secondary) !important;
+          color: var(--color-text) !important;
         }
       }
 
@@ -166,8 +168,8 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--color-bg-hover);
-    border-radius: 3px;
+    background: var(--color-bg-secondary);
+    border-radius: $radius-sm;
   }
 
   &::-webkit-scrollbar-track {
@@ -223,14 +225,14 @@
 }
 
 .placeholderTitle {
-  font-size: 20px;
+  font-size: $font-h3-size;
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
 }
 
 .placeholderDesc {
-  font-size: 14px;
+  font-size: $font-label-size;
   color: var(--color-text-secondary);
   margin: 0;
 
@@ -238,8 +240,8 @@
     color: var(--color-primary);
     font-weight: 600;
     padding: 2px 8px;
-    background: var(--color-bg-hover);
-    border-radius: 4px;
+    background: var(--color-bg-secondary);
+    border-radius: $radius-sm;
   }
 }
 
@@ -249,7 +251,7 @@
   background: var(--color-primary);
   color: #fff;
   border-radius: $radius-full;
-  font-size: 12px;
+  font-size: $font-caption-size;
   font-weight: 500;
 }
 

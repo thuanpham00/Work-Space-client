@@ -10,7 +10,7 @@
   :global(.ant-modal-header) {
     padding: 20px 24px;
     margin: 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid $border-default;
   }
 
   :global(.ant-modal-body) {
@@ -55,7 +55,7 @@
 }
 
 .wmHeaderTitle {
-  font-size: 16px;
+  font-size: $font-body-size;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -69,7 +69,7 @@
   height: 32px;
   padding: 0 14px !important;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: $radius-sm;
 }
 
 .friendRequestBtn {
@@ -83,8 +83,8 @@
   background: var(--color-primary, #1677ff);
   color: #fff;
   border: none;
-  border-radius: 6px !important;
-  font-size: 13px;
+  border-radius: $radius-sm !important;
+  font-size: $font-caption-size;
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -116,8 +116,8 @@
   background: transparent !important;
   color: var(--color-error, #ff4d4f) !important;
   border: 1px solid var(--color-error, #ff4d4f) !important;
-  border-radius: 6px !important;
-  font-size: 13px;
+  border-radius: $radius-sm !important;
+  font-size: $font-caption-size;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s ease;
@@ -137,7 +137,7 @@
 
 .wmTabs {
   background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid $border-default;
 
   :global(.ant-tabs-nav) {
     margin: 0;
@@ -145,7 +145,7 @@
 
   :global(.ant-tabs-tab) {
     padding: 12px 0;
-    font-size: 14px;
+    font-size: $font-label-size;
   }
 }
 
@@ -158,9 +158,9 @@
   padding: 0 6px;
   background: var(--color-error);
   color: #fff;
-  font-size: 11px;
+  font-size: $font-caption-size;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: $radius-md;
   margin-left: 6px;
 }
 
@@ -207,7 +207,7 @@
 }
 
 .wmLoadMoreHint {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   text-align: center;
 }
@@ -233,7 +233,7 @@
   display: flex;
   gap: 16px;
   padding: 8px 12px;
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   background: var(--color-bg-secondary);
   border-radius: 8px;
@@ -251,7 +251,7 @@
   padding: 12px 16px;
   min-height: 72px;
   background: var(--color-bg-secondary);
-  border-radius: 10px;
+  border-radius: $radius-md;
   box-sizing: border-box;
   transition: background 0.15s ease;
 
@@ -287,7 +287,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 14px;
+  font-size: $font-label-size;
 }
 
 .wmMemberInfo {
@@ -296,7 +296,7 @@
 }
 
 .wmMemberName {
-  font-size: 14px;
+  font-size: $font-label-size;
   font-weight: 500;
   color: var(--color-text);
   white-space: nowrap;
@@ -305,7 +305,7 @@
 }
 
 .wmMemberEmail {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -351,14 +351,14 @@
     padding: 4px;
     border-radius: 8px;
     background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
+    border: 1px solid $border-default;
   }
 
   :global(.ant-dropdown-menu-item) {
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: $radius-sm;
     margin: 2px 0;
-    font-size: 14px;
+    font-size: $font-label-size;
     color: var(--color-text);
 
     &:hover {
@@ -367,15 +367,15 @@
   }
 
   :global(.ant-dropdown-menu-item-divider) {
-    background: var(--color-border);
+    background: $border-default;
     margin: 4px 0;
   }
 
   :global(.ant-dropdown-menu-submenu-title) {
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: $radius-sm;
     margin: 2px 0;
-    font-size: 14px;
+    font-size: $font-label-size;
     color: var(--color-text);
 
     &:hover {
@@ -399,7 +399,7 @@
 
   p {
     margin: 0;
-    font-size: 14px;
+    font-size: $font-label-size;
   }
 }
 
@@ -412,7 +412,7 @@
 }
 
 .wmPendingTitle {
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 600;
   color: var(--color-text-secondary);
   margin-bottom: 12px;
@@ -427,7 +427,7 @@
   padding: 12px 16px;
   min-height: 72px;
   background: var(--color-bg-secondary);
-  border-radius: 10px;
+  border-radius: $radius-md;
   box-sizing: border-box;
 }
 
@@ -437,7 +437,7 @@
 }
 
 .wmPendingName {
-  font-size: 14px;
+  font-size: $font-label-size;
   font-weight: 500;
   color: var(--color-text);
   white-space: nowrap;
@@ -446,7 +446,7 @@
 }
 
 .wmPendingTime {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -454,9 +454,9 @@
 }
 
 .wmPendingType {
-  font-size: 11px;
+  font-size: $font-caption-size;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: $radius-sm;
   font-weight: 500;
   text-transform: uppercase;
   flex-shrink: 0;
@@ -500,20 +500,20 @@
 }
 
 .wmInviteUserName {
-  font-size: 14px;
+  font-size: $font-label-size;
   font-weight: 500;
   color: var(--color-text);
 }
 
 .wmInviteUserEmail {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
 }
 
 .wmInviteStatus {
-  font-size: 12px;
+  font-size: $font-caption-size;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: $radius-sm;
 
   &.wmInvitePending {
     background: rgba(234, 179, 8, 0.15);
@@ -536,8 +536,8 @@
   background: var(--color-primary, #1677ff);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: $radius-sm;
+  font-size: $font-label-size;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -564,7 +564,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: 10px;
@@ -586,7 +586,7 @@
   :global(.ant-input) {
     background: var(--color-bg);
     color: var(--color-text-secondary);
-    font-size: 13px;
+    font-size: $font-caption-size;
     border-radius: 8px;
   }
 }
@@ -616,7 +616,7 @@
 
 .inviteLinkHint {
   margin-top: 10px;
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   line-height: 1.5;
 }

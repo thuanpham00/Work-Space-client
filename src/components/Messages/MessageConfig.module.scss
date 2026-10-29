@@ -3,6 +3,8 @@
 .messageConfig {
   display: flex;
   justify-content: center;
-  margin: 0 6px;
-  font-size: 13px;
+  margin: 0 $spacing-xs;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
 }

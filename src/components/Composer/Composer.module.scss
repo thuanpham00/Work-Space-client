@@ -4,20 +4,25 @@
 /* Input Form and Container */
 .inputForm {
   flex-shrink: 0;
-  padding: 0 6px 8px;
+  padding: 0 $spacing-xs $spacing-sm;
 }
 
 .inputContainer {
   position: relative;
   background-color: var(--color-bg-secondary);
   border-radius: $radius-sm;
-  padding: 10px 16px;
+  border: 1px solid transparent;
+  padding: $spacing-sm $spacing-md;
+
+  &:focus-within {
+    border-color: $border-default;
+  }
 }
 
 .inputWrapper {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $spacing-md;
 }
 
 .inputPlusButton {
@@ -25,14 +30,31 @@
   border: none;
   color: var(--color-text-secondary);
   cursor: pointer;
-  padding: 0;
+  padding: $spacing-xs;
+  min-width: 32px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color $transition-fast;
+  border-radius: $radius-sm;
+  transition-property: color, background-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    color: var(--color-text);
+  svg {
+    display: block;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-bg-secondary);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 }
 
@@ -42,18 +64,20 @@
   border: none;
   outline: none;
   color: var(--color-text);
-  font-size: 14px;
+  font-size: $font-body-size;
+  line-height: $lh-body;
 
   &::placeholder {
     color: var(--color-text-secondary);
-    opacity: 0.6;
+    font-size: $font-label-size;
+    opacity: 0.7;
   }
 }
 
 .inputActions {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: $spacing-xs;
 }
 
 .actionBtn {
@@ -61,37 +85,76 @@
   border: none;
   color: var(--color-text-secondary);
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
+  padding: $spacing-xs;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: $radius-sm;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all $transition-fast;
+  transition-property: color, background-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    color: var(--color-text);
-    background-color: rgba(128, 128, 128, 0.15);
+  svg {
+    display: block;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text);
+      background-color: var(--color-bg-secondary);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 
   &.active {
     color: var(--color-text);
-    background-color: rgba(128, 128, 128, 0.25);
+    background-color: var(--color-bg-secondary);
   }
 }
 
 .sendBtn {
   background: none;
   border: none;
-  color: var(--color-primary-500);
+  color: var(--color-primary);
   cursor: pointer;
-  padding: 0;
+  padding: $spacing-xs;
+  min-width: 32px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform $transition-fast;
+  border-radius: $radius-sm;
+  transition-property: color, background-color, transform;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    transform: scale(1.1);
-    color: var(--color-primary-600);
+  svg {
+    display: block;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-primary-hover);
+      background-color: var(--color-bg-secondary);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: color, background-color;
   }
 }

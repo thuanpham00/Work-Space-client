@@ -4,10 +4,11 @@
 .messagesList {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 16px 4px;
+  overscroll-behavior: contain;
+  padding: $spacing-md $spacing-md $spacing-xs;
   display: flex;
   flex-direction: column-reverse;
-  gap: 16px;
+  gap: $spacing-md;
   @include custom-scrollbar;
 }
 
@@ -15,11 +16,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 12px;
-  padding: 12px 0 0;
+  gap: $spacing-md;
+  padding: $spacing-md 0 0;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-bg-secondary);
+    }
   }
 
   &.messageItemMe {
@@ -28,13 +31,15 @@
 }
 
 .messageItemSameUser {
-  margin-top: 4px;
+  margin-top: $spacing-xs;
   display: flex;
   align-items: flex-start;
-  padding-left: 50px;
+  padding-left: 52px;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-bg-secondary);
+    }
   }
 }
 
@@ -42,47 +47,54 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: $spacing-xs;
   min-width: 0;
   flex: 1;
 }
 
 .messageAvatar {
-  margin-top: 5px;
+  margin-top: $spacing-xs;
 }
 
 .messageMeta {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: $spacing-sm;
+  min-width: 0;
 }
 
 .messageSender {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
+  font-weight: $weight-label;
   color: var(--color-text);
+  overflow-wrap: break-word;
 }
 
 .messageTime {
-  font-size: 11px;
-  color: var(--color-text);
+  font-size: $font-caption-size;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .messageText {
-  font-size: 13px;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
   color: var(--color-text);
   background-color: var(--color-bg-secondary);
-  padding: 4px 6px;
-  border-radius: 10px;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-md;
   display: inline-block;
-  line-height: 1.4;
-  word-break: break-word;
+  overflow-wrap: break-word;
   white-space: pre-wrap;
+  max-width: 65ch;
 }
 
 .messageItemMe .messageText {
-  background-color: var(--color-primary, #5865f2);
-  color: #fff;
+  background-color: var(--color-primary);
+  color: $surface-inverse-text;
 }
 
 .messagesListEmpty {
@@ -102,6 +114,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 0;
+  padding: $spacing-md 0;
   text-align: center;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
 }

@@ -8,7 +8,7 @@
   padding: 8px 0;
   cursor: pointer;
   color: var(--color-text, #fff);
-  font-size: 14px;
+  font-size: $font-label-size;
   transition: opacity $transition-fast;
 
   &:hover {
@@ -47,7 +47,7 @@
 }
 
 .menuValue {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary, #999);
   max-width: 120px;
   white-space: nowrap;

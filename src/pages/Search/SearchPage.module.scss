@@ -28,7 +28,7 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--color-text-secondary, #6b7280);
-  font-size: 14px;
+  font-size: $font-label-size;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -74,12 +74,12 @@
 .countTop {
   display: flex;
   justify-content: flex-end;
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
 }
 
 .count {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
 }
 
@@ -88,8 +88,8 @@
   background: var(--color-primary, #1677ff);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: $radius-sm;
+  font-size: $font-label-size;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -108,7 +108,7 @@
 
 .hint {
   color: var(--color-text-secondary);
-  font-size: 13px;
+  font-size: $font-caption-size;
   padding: 8px 4px 16px;
   border-bottom: 1px dashed var(--color-bg-secondary);
 }

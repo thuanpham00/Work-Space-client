@@ -11,10 +11,12 @@
 }
 
 .buttonListFriend {
-  font-size: 16px !important;
+  font-size: $font-body-size !important;
   font-weight: 500 !important;
   color: var(--color-text) !important;
-  transition: all $transition-fast;
+  transition-property: background-color, color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
   padding: 8px 12px !important;
   flex-shrink: 0;
   width: 100%;
@@ -68,7 +70,7 @@
 }
 
 .layoutInnerTitleChat {
-  font-size: 14px;
+  font-size: $font-label-size;
   font-weight: 400;
   color: var(--color-text);
   transition: color $transition-normal;
@@ -91,7 +93,7 @@
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border-radius: 4px;
+  border-radius: $radius-sm;
   transition:
     color $transition-fast,
     background-color $transition-fast;
@@ -103,7 +105,7 @@
 }
 
 .friendSubtext {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   opacity: 0.75;
   white-space: nowrap;
@@ -115,6 +117,6 @@
 
 .addFriendButton {
   > span {
-    font-size: 13px !important;
+    font-size: $font-caption-size !important;
   }
 }

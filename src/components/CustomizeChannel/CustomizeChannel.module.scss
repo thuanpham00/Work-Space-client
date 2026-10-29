@@ -2,7 +2,7 @@
 @use "../../styles/mixins" as *;
 
 .modalDesc {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary, #999);
   margin: 0 0 16px 0;
 }

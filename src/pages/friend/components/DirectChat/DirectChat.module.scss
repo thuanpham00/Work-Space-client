@@ -38,7 +38,7 @@
 }
 
 .headerName {
-  font-size: 15px;
+  font-size: $font-label-size;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: $radius-sm;
   transition:
     color $transition-fast,
     background-color $transition-fast;
@@ -94,9 +94,9 @@
   background-color: var(--color-bg-secondary);
   border: none;
   outline: none;
-  border-radius: 4px;
+  border-radius: $radius-sm;
   padding: 4px 28px 4px 8px;
-  font-size: 13px;
+  font-size: $font-caption-size;
   width: 144px;
   color: var(--color-text);
   transition: width $transition-normal;
@@ -132,7 +132,9 @@
 
 .infoUser {
   background-color: var(--color-bg);
-  transition: all 0.3s ease-in-out;
+  transition-property: opacity, visibility;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
 
   &.showInfoUser {
     width: 25%;

@@ -1,7 +1,7 @@
 @use "../../styles/variables" as *;
 
 .modalDesc {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary, #999);
   margin: 0 0 16px 0;
 }
@@ -55,7 +55,7 @@
 }
 
 .memberName {
-  font-size: 14px;
+  font-size: $font-label-size;
   font-weight: 600;
   color: var(--color-text);
   display: flex;
@@ -64,12 +64,12 @@
 }
 
 .memberUsername {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
 }
 
 .memberNickname {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
 }
 
@@ -79,13 +79,13 @@
 }
 
 .editModalDesc {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   margin: 0 0 12px 0;
 }
 
 .youBadge {
-  font-size: 11px;
+  font-size: $font-caption-size;
   font-weight: 500;
   color: var(--color-primary);
   background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);

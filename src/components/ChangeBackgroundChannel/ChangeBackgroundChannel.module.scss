@@ -2,7 +2,7 @@
 @use "../../styles/mixins" as *;
 
 .modalDesc {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary, #999);
   margin: 0 0 12px 0;
 }
@@ -38,7 +38,7 @@
 
   &::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 3px;
+    border-radius: $radius-sm;
   }
 }
 
@@ -50,7 +50,7 @@
 }
 
 .sectionLabel {
-  font-size: 11px;
+  font-size: $font-caption-size;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -151,7 +151,7 @@
   border-radius: 12px;
   background-color: var(--color-bg-secondary);
   color: #fff;
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 500;
 }
 

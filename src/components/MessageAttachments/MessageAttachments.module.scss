@@ -3,7 +3,7 @@
 .messageAttachments {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $spacing-sm;
   width: 100%;
   max-width: 320px;
 }
@@ -11,8 +11,9 @@
 .imageAttachment {
   border-radius: $radius-md;
   overflow: hidden;
-  border: 1px solid var(--color-bg-secondary);
+  border: 1px solid $border-default;
   max-width: 300px;
+  outline: 1px solid transparent;
 }
 
 .imageRoot {
@@ -29,19 +30,29 @@
 .fileAttachment {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: $spacing-sm;
   width: 100%;
   max-width: 320px;
-  padding: 10px 12px;
-  border: 1px solid var(--color-bg-secondary);
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-default;
   border-radius: $radius-md;
   background-color: var(--color-bg-secondary);
   cursor: pointer;
   text-align: left;
-  transition: background-color $transition-fast;
+  transition-property: background-color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    background-color: color-mix(in srgb, var(--color-bg-secondary) 85%, var(--color-text) 8%);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-bg-secondary);
+      border-color: $border-strong;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 }
 
@@ -55,6 +66,10 @@
   border-radius: $radius-sm;
   background-color: var(--color-bg);
   color: var(--color-primary);
+
+  svg {
+    display: block;
+  }
 }
 
 .fileInfo {
@@ -66,8 +81,9 @@
 }
 
 .fileName {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
+  font-weight: $weight-label;
   color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -75,8 +91,10 @@
 }
 
 .fileSize {
-  font-size: 11px;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
   color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .downloadIcon {
@@ -84,5 +102,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  min-width: 32px;
+  min-height: 32px;
   color: var(--color-text-secondary);
+
+  svg {
+    display: block;
+  }
 }

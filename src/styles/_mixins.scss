@@ -76,3 +76,30 @@
   align-items: center;
   justify-content: center;
 }
+
+// Shared visible focus — keyboard only, token-driven
+@mixin focus-ring {
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+// Shared hover guard — avoids stuck hover on touch
+@mixin hoverable {
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+// Feedback-only motion with reduced-motion fallback
+@mixin motion-feedback {
+  @content;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
+    animation: none;
+  }
+}

@@ -3,14 +3,18 @@
 
 .layout {
   height: 100vh;
+  height: 100dvh;
   display: flex;
 }
 
 .sider {
   height: 100vh;
+  height: 100dvh;
   background: var(--color-bg) !important;
-  transition: background-color $transition-normal;
-  border-right: 1px solid var(--color-bg-secondary);
+  transition-property: background-color, border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  border-right: 1px solid $border-default;
 
   :global(.ant-layout-sider-children) {
     background: var(--color-bg) !important;
@@ -28,13 +32,19 @@
   @include flex-center;
   width: 40px;
   height: 40px;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .content {
   background: var(--color-bg);
   overflow: auto;
   @include custom-scrollbar;
-  transition:
-    background-color $transition-normal,
-    border-color $transition-normal;
+  transition-property: background-color, border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
 }

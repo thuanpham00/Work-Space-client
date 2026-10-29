@@ -31,7 +31,7 @@
 }
 
 .friendItemName {
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 500;
   color: var(--color-text);
   transition: color $transition-fast;
@@ -44,7 +44,7 @@
 
 .friendItemUserName {
   margin-top: 4px;
-  font-size: 12px;
+  font-size: $font-caption-size;
   font-weight: 400;
   color: var(--color-text);
   transition: color $transition-fast;
@@ -56,5 +56,5 @@
 }
 
 .friendItemLastMessage {
-  font-size: 12px;
+  font-size: $font-caption-size;
 }

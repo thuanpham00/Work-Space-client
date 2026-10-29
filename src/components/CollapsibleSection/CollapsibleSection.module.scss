@@ -1,3 +1,5 @@
+@use "../../styles/variables" as *;
+
 .sectionBlock {
   padding: 12px;
   border-bottom: 1px solid var(--color-bg-secondary, #2a2a2a);
@@ -21,7 +23,7 @@
 }
 
 .sectionTitle {
-  font-size: 11px;
+  font-size: $font-caption-size;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-text-secondary);

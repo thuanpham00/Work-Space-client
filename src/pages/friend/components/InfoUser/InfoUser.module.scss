@@ -82,7 +82,7 @@
 }
 
 .profileUsername {
-  font-size: 14px;
+  font-size: $font-label-size;
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -94,7 +94,7 @@
 }
 
 .bioText {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text);
   line-height: 1.4;
   margin: 0;
@@ -113,7 +113,7 @@
 }
 
 .sectionHeader {
-  font-size: 11px;
+  font-size: $font-caption-size;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-text-secondary);
@@ -122,7 +122,7 @@
 }
 
 .sectionText {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text);
   margin: 0;
 }
@@ -134,7 +134,7 @@
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-secondary);
   border-radius: $radius-sm;
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 600;
   color: var(--color-text);
   cursor: pointer;

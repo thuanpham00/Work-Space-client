@@ -1,3 +1,5 @@
+@use "../../../styles/variables" as *;
+
 .wrapper {
   position: sticky;
   top: 0;
@@ -28,7 +30,7 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: 14px;
+  font-size: $font-label-size;
   color: var(--color-text);
 
   &::placeholder {

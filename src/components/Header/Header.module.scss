@@ -4,13 +4,13 @@
 .header {
   @include flex-between;
   display: flex;
-  height: 50px;
+  height: 56px;
   padding: 0 $spacing-md !important;
   background: var(--color-bg);
-  border-bottom: 1px solid var(--color-bg-secondary); // gọi biến theo kiểu css
-  transition:
-    background-color $transition-normal, // gọi biến theo kiểu scss
-    border-color $transition-normal;
+  border-bottom: 1px solid $border-default;
+  transition-property: background-color, border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
 }
 
 .logoSection {
@@ -20,10 +20,15 @@
 }
 
 .logoText {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: $font-h3-size;
+  line-height: $lh-heading;
+  letter-spacing: $tracking-body;
+  font-weight: $weight-label;
   color: var(--color-text);
-  transition: color $transition-normal;
+  transition-property: color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  text-wrap: nowrap;
 }
 
 .actions {
@@ -39,17 +44,26 @@
   background: transparent;
   border-radius: $radius-sm;
   cursor: pointer;
-  transition: all $transition-fast;
-  font-size: 18px;
+  transition-property: background-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+  font-size: $font-h3-size;
+  line-height: $lh-body;
   color: var(--color-text-secondary);
 
-  &:hover {
+  svg {
+    display: block;
+  }
+
+  @include hoverable {
     background: var(--color-bg-secondary);
     color: var(--color-text);
   }
 
-  &:active {
-    transform: scale(0.95);
+  @include focus-ring;
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
   }
 }
 
@@ -61,12 +75,17 @@
   background: transparent;
   border-radius: $radius-sm;
   cursor: pointer;
-  transition: background-color $transition-fast;
+  transition-property: background-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
   color: var(--color-text);
+  min-height: 40px;
 
-  &:hover {
+  @include hoverable {
     background: var(--color-bg-secondary);
   }
+
+  @include focus-ring;
 }
 
 .userName {
@@ -79,10 +98,11 @@
 }
 
 .userNameText {
-  font-weight: 500;
-  font-size: 0.875rem;
-  line-height: 1.2;
+  font-weight: $weight-label;
+  font-size: $font-label-size;
+  line-height: $lh-tight;
   color: var(--color-text);
+  text-wrap: nowrap;
 }
 
 .userMenu {
@@ -95,13 +115,17 @@
 }
 
 .userNameLabel {
-  font-weight: 600;
+  font-weight: $weight-label;
+  font-size: $font-label-size;
+  line-height: $lh-body;
   color: var(--color-text);
 }
 
 .userEmail {
-  font-size: 0.875rem;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
   color: var(--color-text-secondary);
+  overflow-wrap: break-word;
 }
 
 .menuItem {
@@ -112,19 +136,30 @@
   border: none;
   background: transparent;
   text-align: left;
+  font-size: $font-label-size;
+  line-height: $lh-body;
   cursor: pointer;
-  transition: background-color $transition-fast;
+  transition-property: background-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
   color: var(--color-text);
 
-  &:hover {
+  svg {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  @include hoverable {
     background: var(--color-bg-secondary);
   }
+
+  @include focus-ring;
 }
 
 .menuItemDanger {
-  color: var(--color-danger);
+  color: $danger-color;
 
-  &:hover {
-    background: rgba(239, 68, 68, 0.1);
+  @include hoverable {
+    background: color-mix(in srgb, $danger-color 10%, transparent);
   }
 }

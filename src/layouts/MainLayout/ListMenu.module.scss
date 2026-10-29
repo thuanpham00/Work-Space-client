@@ -11,15 +11,23 @@
   }
 
   :global(.ant-menu-item) {
-    height: 50px !important;
+    height: 48px !important;
+    margin-bottom: $spacing-sm !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
     display: flex !important;
     justify-content: center !important;
+    border-radius: $radius-sm;
 
     .anticon {
       margin-right: 0 !important;
-      font-size: 18px;
+      font-size: $font-h3-size;
+      line-height: $lh-body;
+    }
+
+    &:focus-visible {
+      outline: $focus-ring-width solid $focus-ring-color;
+      outline-offset: $focus-ring-offset;
     }
   }
 
@@ -33,17 +41,19 @@
       top: 50% !important;
       transform: translateY(-50%) !important;
       width: 4px !important;
-      height: 40px !important;
-      border-radius: 0 4px 4px 0 !important;
-      background-color: var(--color-primary) !important; /* Dùng màu trắng cứng để test xem có hiện không */
+      height: 32px !important;
+      border-radius: 0 $spacing-xs $spacing-xs 0 !important;
+      background-color: var(--color-primary) !important;
       display: block !important;
-      inset-inline-start: 0 !important; /* Dành cho Antd v5 RTL */
+      inset-inline-start: 0 !important;
       opacity: 1 !important;
     }
   }
 
   :global(.ant-avatar) {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
+    font-size: $font-label-size;
+    line-height: $lh-body;
   }
 }

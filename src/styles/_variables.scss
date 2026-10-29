@@ -13,6 +13,52 @@ $radius-full: 9999px;
 
 $font-family: "Poppins", sans-serif;
 
+// Single project type scale — Poppins kept, unitless line-heights, em tracking
+$font-display-size: 32px;
+$font-h1-size: 28px;
+$font-h2-size: 24px;
+$font-h3-size: 20px;
+$font-body-size: 16px;
+$font-label-size: 14px;
+$font-menu-size: 14px;
+$font-caption-size: 13px;
+$font-placeholder-size: 15px;
+
+// Backwards-compatible aliases (Auth already uses these)
+$font-hero-title-size: $font-display-size;
+$font-auth-heading-size: $font-h1-size;
+
+$lh-display: 1.1;
+$lh-tight: 1.2;
+$lh-heading: 1.25;
+$lh-body: 1.5;
+$lh-relaxed: 1.6;
+
+$tracking-tight: -0.01em;
+$tracking-display: -0.01em;
+$tracking-body: 0;
+
+$weight-display: 700;
+$weight-heading: 700;
+$weight-label: 500;
+$weight-body: 400;
+
+// Semantic color aliases — point at theme.css tokens, no new hues
+$border-default: var(--color-neutral-200);
+$border-strong: var(--color-neutral-300);
+$surface-inverse-text: #ffffff;
+$focus-ring-color: var(--color-primary);
+$focus-ring-width: 2px;
+$focus-ring-offset: 2px;
+$danger-color: var(--color-danger);
+
+// Backwards-compatible aliases (Auth already uses these)
+$auth-border: $border-default;
+$auth-border-strong: $border-strong;
+$auth-hero-text: $surface-inverse-text;
+$auth-focus-ring: $focus-ring-color;
+$auth-error: $danger-color;
+
 $transition-fast: 0.15s ease;
 $transition-normal: 0.3s ease;
 $transition-slow: 0.5s ease;

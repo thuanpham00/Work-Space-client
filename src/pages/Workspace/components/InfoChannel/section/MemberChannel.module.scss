@@ -32,7 +32,7 @@
 }
 
 .memberName {
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 500;
   color: var(--color-text);
   white-space: nowrap;
@@ -42,7 +42,7 @@
 }
 
 .memberDesc {
-  font-size: 12px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -86,7 +86,7 @@
   border-radius: $radius-sm;
   background: transparent;
   color: var(--color-text);
-  font-size: 13px;
+  font-size: $font-caption-size;
   font-weight: 500;
   cursor: pointer;
   transition: background-color $transition-fast;

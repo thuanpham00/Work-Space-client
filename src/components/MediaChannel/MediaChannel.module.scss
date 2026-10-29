@@ -7,7 +7,7 @@
 }
 
 .sectionTitle {
-  font-size: 11px;
+  font-size: $font-caption-size;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-text-secondary, #999);
@@ -21,7 +21,7 @@
   }
 
   :global(.ant-tabs-tab) {
-    font-size: 13px;
+    font-size: $font-caption-size;
     padding: 6px 12px;
   }
 }
@@ -105,7 +105,7 @@
 }
 
 .fileName {
-  font-size: 13px;
+  font-size: $font-caption-size;
   color: var(--color-text, #fff);
   white-space: normal;
   overflow-wrap: anywhere;
@@ -114,7 +114,7 @@
 }
 
 .fileSize {
-  font-size: 11px;
+  font-size: $font-caption-size;
   color: var(--color-text-secondary, #999);
 }
 
@@ -128,7 +128,9 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  transition: all $transition-fast;
+  transition-property: background-color, color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
   &:hover {
     color: #fff;
@@ -144,7 +146,7 @@
 
 .loadMoreBtn {
   color: var(--color-text-secondary, #999) !important;
-  font-size: 13px;
+  font-size: $font-caption-size;
   display: flex;
   align-items: center;
   gap: 6px;

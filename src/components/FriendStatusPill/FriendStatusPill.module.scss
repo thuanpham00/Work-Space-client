@@ -1,10 +1,12 @@
+@use "../../styles/variables" as *;
+
 .friendStatusPill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
+  border-radius: $radius-full;
+  font-size: $font-caption-size;
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;

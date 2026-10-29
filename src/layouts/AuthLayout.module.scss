@@ -31,23 +31,55 @@
   justify-content: center;
   border-radius: 50%;
   background: transparent;
-  border: 1px solid var(--color-neutral-200);
+  border: 1px solid $border-default;
   color: var(--color-text);
   cursor: pointer;
-  transition: all $transition-fast;
+  transition-property: background-color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    background: var(--color-bg-secondary);
+  svg {
+    display: block;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--color-bg-secondary);
+      border-color: $border-strong;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $focus-ring-color;
+    outline-offset: 2px;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
   }
 }
 
 .headerLink {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: $font-label-size;
+  line-height: $lh-body;
+  letter-spacing: $tracking-body;
+  font-weight: $weight-label;
   color: var(--color-text);
+  text-decoration: none;
+  transition-property: color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    color: var(--color-primary);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $focus-ring-color;
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
@@ -87,20 +119,27 @@
   position: relative;
   z-index: 1;
   text-align: center;
-  color: #fff;
+  color: $surface-inverse-text;
   padding: $spacing-2xl;
   max-width: 480px;
 }
 
 .heroTitle {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: $font-hero-title-size;
+  font-weight: $weight-heading;
+  line-height: $lh-tight;
+  letter-spacing: $tracking-display;
+  text-wrap: balance;
   margin-bottom: $spacing-md;
-  line-height: 1.2;
 }
 
 .heroSubtitle {
-  font-size: 16px;
+  font-size: $font-body-size;
+  line-height: $lh-relaxed;
+  letter-spacing: $tracking-body;
+  font-weight: $weight-body;
+  text-wrap: pretty;
   opacity: 0.9;
-  line-height: 1.5;
+  max-width: 60ch;
+  margin: 0 auto;
 }

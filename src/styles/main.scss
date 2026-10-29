@@ -16,5 +16,17 @@ a,
 button {
   transition:
     color $transition-fast,
-    background-color $transition-fast;
+    background-color $transition-fast,
+    border-color $transition-fast;
+}
+
+:focus-visible {
+  outline: $focus-ring-width solid $focus-ring-color;
+  outline-offset: $focus-ring-offset;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

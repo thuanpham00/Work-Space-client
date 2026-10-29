@@ -7,30 +7,35 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 100%);
+  background: var(--color-bg);
   color: var(--color-text);
-  padding: 12px 8px;
+  padding: $spacing-md $spacing-sm;
   box-sizing: border-box;
-  font-size: 13px;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
 }
 
 .swTop {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
 }
 
 .swTitle {
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: $weight-label;
+  font-size: $font-body-size;
+  line-height: $lh-heading;
+  letter-spacing: $tracking-body;
   color: var(--color-text);
+  overflow-wrap: break-word;
 }
 
 .swTitleRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: $spacing-sm;
 }
 
 .swMemberBtn {
@@ -40,23 +45,34 @@
   display: flex !important;
   align-items: center;
   justify-content: center;
-  border-radius: 8px !important;
+  border-radius: $radius-sm !important;
   color: var(--color-text-secondary) !important;
-  transition: all 0.15s ease !important;
+  transition-property: background-color, color !important;
+  transition-duration: 0.15s !important;
+  transition-timing-function: ease !important;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
+  svg {
+    display: block;
+  }
+
+  @include hoverable {
+    background: var(--color-bg-secondary) !important;
     color: var(--color-text) !important;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color !important;
+    outline-offset: $focus-ring-offset;
   }
 }
 
 .swAction {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--color-bg-secondary);
   color: var(--color-text);
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
   cursor: pointer;
 }
 
@@ -64,7 +80,7 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding-right: 6px;
+  padding-right: $spacing-xs;
 
   @include custom-scrollbar;
 }
@@ -72,12 +88,21 @@
 .swGroupHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
   color: var(--color-text-secondary);
   cursor: pointer;
   user-select: none;
-  font-size: 13px;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
+  border-radius: $radius-sm;
+
+  @include hoverable {
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  @include focus-ring;
 }
 
 /* modifier applied as separate class to work with CSS Modules */
@@ -86,97 +111,132 @@
 }
 
 .swGroupTitle {
-  font-weight: 600;
+  font-weight: $weight-label;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
 }
 
 .swChannels {
   list-style: none;
-  margin: 4px 0 0 0;
-  padding: 0 0 0 6px;
+  margin: $spacing-xs 0 0 0;
+  padding: 0 0 0 $spacing-xs;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
 }
 
 .swChannel {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
   color: var(--color-text);
-  border-radius: 6px;
-  transition:
-    background 0.12s ease,
-    color 0.12s ease;
+  border-radius: $radius-sm;
+  transition-property: background-color, color;
+  transition-duration: 0.12s;
+  transition-timing-function: ease;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: 32px;
+
+  @include hoverable {
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+  }
+
+  @include focus-ring;
 }
 
 .sw-channel:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--color-bg-secondary);
   color: var(--color-text);
 }
 
 /* modifier as separate class for CSS Modules */
 .swSelected {
   background: var(--color-primary);
-  color: var(--color-text);
+  color: $surface-inverse-text;
+
+  .swHash {
+    color: $surface-inverse-text;
+  }
 }
 
 .swHash {
   display: inline-block;
+  flex-shrink: 0;
   width: 20px;
   text-align: center;
-  font-size: 16px;
+  font-size: $font-body-size;
+  line-height: $lh-body;
   color: var(--color-text-secondary);
 }
 
 .swName {
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 13px;
+  font-size: $font-caption-size;
+  line-height: $lh-body;
 }
 
 .swGroupActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: $spacing-xs;
 }
 
 .swPrimaryAction {
-  min-width: 28px;
-  height: 28px;
-  padding: 0 10px !important;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 $spacing-sm !important;
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: $spacing-xs;
   border: none !important;
-  color: #fff !important;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 6px;
+  color: $surface-inverse-text !important;
+  font-size: $font-menu-size;
+  line-height: $lh-body;
+  font-weight: $weight-label;
+  border-radius: $radius-sm;
   box-shadow: none !important;
   background-image: none !important;
-  transition: background-color 0.2s ease !important;
+  transition-property: opacity, background-color !important;
+  transition-duration: 0.2s !important;
+  transition-timing-function: ease !important;
 
   &:hover,
   &:focus {
-    color: #fff !important;
+    color: $surface-inverse-text !important;
     box-shadow: none !important;
     background-image: none !important;
-    outline: none !important;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color !important;
+    outline-offset: $focus-ring-offset;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity !important;
   }
 }
 
 .swActionLabel {
   white-space: nowrap;
-  line-height: 1;
+  line-height: $lh-tight;
 }
 
 .swTopicAction {
   background: var(--color-primary);
 
-  &:hover {
+  @include hoverable {
     background: var(--color-primary) !important;
     opacity: 0.75;
   }
@@ -185,7 +245,7 @@
 .swChannelAction {
   background: var(--color-success);
 
-  &:hover {
+  @include hoverable {
     background: var(--color-success) !important;
     opacity: 0.75;
   }
