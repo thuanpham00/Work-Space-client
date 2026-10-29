@@ -52,8 +52,15 @@
     background 0.15s ease,
     color 0.15s ease;
 
-  &:hover {
-    background: var(--color-neutral-300, #d4d4d8);
-    color: var(--color-text);
+  @media (hover: hover) {
+    &:hover {
+      background: $hover-bg-strong;
+      color: var(--color-text);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 }

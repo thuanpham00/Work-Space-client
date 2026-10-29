@@ -14,21 +14,21 @@
 }
 
 .friendStatusTone_success {
-  background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
+  @include pill-surface($pill-success-bg);
+  color: $pill-success-text-light;
 }
 
 .friendStatusTone_warning {
-  background: rgba(234, 179, 8, 0.15);
-  color: #ca8a04;
+  @include pill-surface($pill-warning-bg);
+  color: $pill-warning-text-light;
 }
 
 .friendStatusTone_info {
-  background: rgba(59, 130, 246, 0.15);
-  color: #2563eb;
+  @include pill-surface($pill-info-bg);
+  color: $pill-info-text-light;
 }
 
 .friendStatusTone_default {
-  background: rgba(107, 114, 128, 0.15);
-  color: #6b7280;
+  @include pill-surface($pill-neutral-bg);
+  color: $pill-neutral-text-light;
 }

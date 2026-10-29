@@ -84,24 +84,25 @@
   transition-timing-function: ease;
 
       &:hover {
-        background-color: var(--color-bg-secondary) !important;
+        background-color: $row-hover-bg !important;
         color: var(--color-text) !important;
       }
     }
 
     .ant-menu-item-selected {
-      background-color: var(--color-primary) !important;
-      color: #fff !important;
+      background-color: $selected-bg-light !important;
+      color: $surface-inverse-text !important;
 
       span,
       a {
-        color: #fff !important;
+        color: $surface-inverse-text !important;
       }
 
-      &:hover {
-        background-color: var(--color-primary) !important;
-        color: #fff !important;
-        opacity: 0.9;
+      @media (hover: hover) {
+        &:hover {
+          background-color: $selected-hover-bg-light !important;
+          color: $surface-inverse-text !important;
+        }
       }
     }
 
@@ -116,7 +117,7 @@
       font-weight: 500;
 
       &:hover {
-        background-color: var(--color-bg-secondary) !important;
+        background-color: $row-hover-bg !important;
       }
     }
 
@@ -132,19 +133,21 @@
         line-height: 36px !important;
 
         &:hover {
-          background-color: var(--color-bg-secondary) !important;
+          background-color: $row-hover-bg !important;
           color: var(--color-text) !important;
         }
       }
 
       // Selected child item in submenu
       .ant-menu-item-selected {
-        background-color: var(--color-primary) !important;
-        color: #fff !important;
+        background-color: $selected-bg-light !important;
+        color: $surface-inverse-text !important;
 
-        &:hover {
-          background-color: var(--color-primary) !important;
-          color: #fff !important;
+        @media (hover: hover) {
+          &:hover {
+            background-color: $selected-hover-bg-light !important;
+            color: $surface-inverse-text !important;
+          }
         }
       }
     }
@@ -248,8 +251,8 @@
 .placeholderBadge {
   margin-top: 16px;
   padding: 6px 16px;
-  background: var(--color-primary);
-  color: #fff;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
   border-radius: $radius-full;
   font-size: $font-caption-size;
   font-weight: 500;

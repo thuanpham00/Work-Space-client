@@ -29,8 +29,10 @@
     border-radius: $radius-full;
     transition: background-color $transition-fast;
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.55);
+    @media (hover: hover) {
+      &:hover {
+        background-color: $hover-bg-strong;
+      }
     }
   }
 }
@@ -61,8 +63,8 @@
 }
 
 .wmInviteBtn {
-  background: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
+  background: $selected-bg-light !important;
+  border-color: $selected-bg-light !important;
   display: inline-flex !important;
   align-items: center;
   gap: 6px;
@@ -70,6 +72,13 @@
   padding: 0 14px !important;
   font-weight: 500;
   border-radius: $radius-sm;
+
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $selected-hover-bg-light !important;
+      border-color: $selected-hover-bg-light !important;
+    }
+  }
 }
 
 .friendRequestBtn {
@@ -80,23 +89,25 @@
   gap: 6px;
   height: 32px;
   padding: 0 12px !important;
-  background: var(--color-primary, #1677ff);
-  color: #fff;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
   border: none;
   border-radius: $radius-sm !important;
   font-size: $font-caption-size;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    opacity 0.15s ease,
-    background 0.15s ease;
+  transition-property: background-color, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
   svg {
     flex-shrink: 0;
   }
 
-  &:hover:not(:disabled) {
-    opacity: 0.9;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $selected-hover-bg-light;
+    }
   }
 
   &:disabled {
@@ -114,21 +125,27 @@
   height: 32px;
   padding: 0 12px !important;
   background: transparent !important;
-  color: var(--color-error, #ff4d4f) !important;
-  border: 1px solid var(--color-error, #ff4d4f) !important;
+  color: $danger-text-light !important;
+  border: 1px solid $danger-text-light !important;
   border-radius: $radius-sm !important;
   font-size: $font-caption-size;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition-property: opacity, background-color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
   svg {
     flex-shrink: 0;
   }
 
-  &:hover:not(:disabled) {
-    opacity: 0.85;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $danger-hover-bg-light !important;
+      border-color: $danger-text-light !important;
+    }
   }
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -156,8 +173,9 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: var(--color-error);
-  color: #fff;
+  background: $badge-danger-bg-light;
+  border: 1px solid $badge-danger-bg-light;
+  color: $surface-inverse-text;
   font-size: $font-caption-size;
   font-weight: 600;
   border-radius: $radius-md;
@@ -253,10 +271,21 @@
   background: var(--color-bg-secondary);
   border-radius: $radius-md;
   box-sizing: border-box;
-  transition: background 0.15s ease;
+  transition-property: background-color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: $hover-bg-light;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: background-color, border-color;
   }
 }
 
@@ -281,8 +310,8 @@
   height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: var(--color-primary);
-  color: #fff;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,9 +362,14 @@
 
   &:hover,
   &:focus-visible {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: $hover-bg-light !important;
     color: var(--color-text) !important;
     outline: none !important;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color !important;
+    outline-offset: 1px;
   }
 }
 
@@ -361,8 +395,10 @@
     font-size: $font-label-size;
     color: var(--color-text);
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.06);
+    @media (hover: hover) {
+      &:hover {
+        background: $hover-bg-light;
+      }
     }
   }
 
@@ -378,8 +414,10 @@
     font-size: $font-label-size;
     color: var(--color-text);
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.06);
+    @media (hover: hover) {
+      &:hover {
+        background: $hover-bg-light;
+      }
     }
   }
 }
@@ -463,13 +501,13 @@
   white-space: nowrap;
 
   &.wmTypeRequest {
-    background: rgba(234, 179, 8, 0.15);
-    color: #eab308;
+    @include pill-surface($pill-warning-bg);
+    color: $pill-warning-text-light;
   }
 
   &.wmTypeInvite {
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
+    @include pill-surface($pill-invite-bg);
+    color: $pill-invite-text-light;
   }
 }
 
@@ -516,41 +554,47 @@
   border-radius: $radius-sm;
 
   &.wmInvitePending {
-    background: rgba(234, 179, 8, 0.15);
-    color: #eab308;
+    @include pill-surface($pill-warning-bg);
+    color: $pill-warning-text-light;
   }
 
   &.wmInviteMember {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
+    @include pill-surface($pill-success-bg);
+    color: $pill-success-text-light;
   }
 
   &.wmInviteSent {
-    background: rgba(99, 102, 241, 0.15);
-    color: #818cf8;
+    @include pill-surface($pill-invite-bg);
+    color: $pill-invite-text-light;
   }
 }
 
 .loadMore {
   padding: 8px 20px;
-  background: var(--color-primary, #1677ff);
-  color: #fff;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
   border: none;
   border-radius: $radius-sm;
   font-size: $font-label-size;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    opacity 0.15s ease,
-    background 0.15s ease;
+  transition-property: background-color, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover:not(:disabled) {
-    opacity: 0.9;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $selected-hover-bg-light;
+    }
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
   }
 }
 
@@ -598,15 +642,19 @@
   width: 36px;
   height: 36px;
   flex-shrink: 0;
-  background: var(--color-primary, #1677ff);
-  color: #fff;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition-property: background-color, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover {
-    opacity: 0.9;
+  @media (hover: hover) {
+    &:hover {
+      background: $selected-hover-bg-light;
+    }
   }
 
   &:active {

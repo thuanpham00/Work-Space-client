@@ -19,12 +19,6 @@
   gap: $spacing-md;
   padding: $spacing-md 0 0;
 
-  @media (hover: hover) {
-    &:hover {
-      background-color: var(--color-bg-secondary);
-    }
-  }
-
   &.messageItemMe {
     justify-content: flex-end;
   }
@@ -34,13 +28,7 @@
   margin-top: $spacing-xs;
   display: flex;
   align-items: flex-start;
-  padding-left: 52px;
-
-  @media (hover: hover) {
-    &:hover {
-      background-color: var(--color-bg-secondary);
-    }
-  }
+  padding-left: calc(40px + #{$spacing-md});
 }
 
 .messageContentWrapper {
@@ -93,7 +81,7 @@
 }
 
 .messageItemMe .messageText {
-  background-color: var(--color-primary);
+  background-color: $selected-bg-light;
   color: $surface-inverse-text;
 }
 

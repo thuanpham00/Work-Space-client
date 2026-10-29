@@ -234,15 +234,7 @@
 
   @media (hover: hover) {
     &:hover {
-      background: var(--color-bg-secondary);
-    }
-  }
-
-  .dark & {
-    @media (hover: hover) {
-      &:hover {
-        background: var(--color-bg);
-      }
+      background: $row-hover-bg;
     }
   }
 }
@@ -297,7 +289,7 @@
   font-size: $font-label-size;
   line-height: $lh-body;
   font-weight: $weight-label;
-  color: var(--color-primary-500);
+  color: $primary-text-light;
   text-decoration: none;
   transition-property: color;
   transition-duration: 0.15s;
@@ -305,7 +297,7 @@
 
   @media (hover: hover) {
     &:hover {
-      color: var(--color-primary-600);
+      color: $primary-text-hover-light;
       text-decoration: underline;
       text-underline-offset: 2px;
     }
@@ -340,7 +332,7 @@
   font-size: $font-label-size;
   line-height: $lh-body;
   font-weight: $weight-label;
-  color: var(--color-primary-500);
+  color: $primary-text-light;
   text-decoration: none;
   transition-property: color;
   transition-duration: 0.15s;
@@ -348,7 +340,7 @@
 
   @media (hover: hover) {
     &:hover {
-      color: var(--color-primary-600);
+      color: $primary-text-hover-light;
       text-decoration: underline;
       text-underline-offset: 2px;
     }
@@ -429,7 +421,7 @@
 
   @media (hover: hover) {
     &:hover {
-      background: var(--color-bg-secondary);
+      background: $row-hover-bg;
       border-color: $border-strong;
     }
   }

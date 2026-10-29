@@ -37,7 +37,10 @@
   --color-bg: #fafafa;
   --color-bg-secondary: #e9e9f3;
   --color-text: #18181b;
-  --color-text-secondary: #71717a;
+  /* Slightly darker than neutral-500 so secondary labels keep >= 4.5:1 on
+     --color-bg-secondary (4.01:1 failed) and on the brand-tinted row
+     hover surfaces. Same neutral family, no new hue. */
+  --color-text-secondary: #5d5d65;
 
   /* Status */
   --color-danger: #ef4444;
@@ -46,6 +49,8 @@
 
   --color-primary: #ef4815;
   --color-primary-hover: #f76235;
+
+  --color-border: #e4e4e7;
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -64,6 +69,8 @@
 
   --color-primary: #ef4815;
   --color-primary-hover: #f76235;
+
+  --color-border: rgb(255 255 255 / 0.08);
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);

@@ -77,8 +77,10 @@
   background-color: var(--color-bg-secondary, #2a2a2a);
   transition: background-color $transition-fast;
 
-  &:hover {
-    background-color: var(--color-bg-secondary, #353535);
+  @media (hover: hover) {
+    &:hover {
+      background-color: $hover-bg-light;
+    }
   }
 }
 
@@ -132,9 +134,11 @@
   transition-duration: 0.15s;
   transition-timing-function: ease;
 
-  &:hover {
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.08);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text);
+      background-color: $hover-bg-light;
+    }
   }
 }
 
@@ -151,8 +155,15 @@
   align-items: center;
   gap: 6px;
 
-  &:hover {
-    color: var(--color-text, #fff) !important;
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text) !important;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 
   &:disabled {

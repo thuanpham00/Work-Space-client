@@ -38,9 +38,16 @@
   background: transparent !important;
   border: none !important;
 
-  &:hover {
-    color: var(--color-text) !important;
-    background-color: var(--color-bg-secondary) !important;
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text) !important;
+      background-color: $hover-bg-light !important;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color !important;
+    outline-offset: $focus-ring-offset;
   }
 }
 
@@ -86,12 +93,22 @@
   cursor: pointer;
   transition: background-color $transition-fast;
 
-  &:hover {
-    background-color: var(--color-bg-secondary);
+  @media (hover: hover) {
+    &:hover {
+      background-color: $hover-bg-light;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 
   &.offline {
-    opacity: 0.6;
+    .displayName,
+    .memberDesc {
+      color: $secondary-text-on-hover-light;
+    }
   }
 }
 
@@ -135,7 +152,7 @@
 }
 
 .ownerIcon {
-  color: #f59e0b;
+  color: $pill-dot-warning;
   flex-shrink: 0;
 }
 

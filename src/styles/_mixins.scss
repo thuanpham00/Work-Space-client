@@ -94,6 +94,62 @@
   }
 }
 
+// Unified list-row hover surface.
+// Every row in the project uses this so light and dark mode feel identical.
+//
+// $row-hover-bg is a translucent brand tint, so it composites over whatever
+// surface the row sits on (page, card, sidebar) and reads as the same hue
+// in light and dark mode.
+//
+// Secondary labels inside a row are recoloured on hover via
+// $row-hover-text-secondary, because --color-text-secondary alone drops
+// below 4.5:1 once the surface is tinted (measured 3.64:1 on
+// --color-bg-secondary in light mode).
+@mixin row-hover {
+  transition: $row-hover-transition;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: $row-hover-bg;
+
+      .rowSecondary,
+      .secondaryText,
+      .metaLabel,
+      .subLabel {
+        color: $row-hover-text-secondary;
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
+// Same surface, slightly stronger — for rows that sit on a card.
+@mixin row-hover-strong {
+  transition: $row-hover-transition;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: $row-hover-bg-strong;
+
+      .rowSecondary,
+      .secondaryText,
+      .metaLabel,
+      .subLabel {
+        color: $row-hover-text-secondary;
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
+}
+
 // Feedback-only motion with reduced-motion fallback
 @mixin motion-feedback {
   @content;

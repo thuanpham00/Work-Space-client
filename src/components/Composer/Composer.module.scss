@@ -9,13 +9,13 @@
 
 .inputContainer {
   position: relative;
-  background-color: var(--color-bg-secondary);
+  background-color: var(--color-bg);
   border-radius: $radius-sm;
-  border: 1px solid transparent;
+  border: 1px solid $border-line;
   padding: $spacing-sm $spacing-md;
 
   &:focus-within {
-    border-color: $border-default;
+    border-color: $border-strong;
   }
 }
 
@@ -48,7 +48,7 @@
   @media (hover: hover) {
     &:hover {
       color: var(--color-text);
-      background: var(--color-bg-secondary);
+      background: $row-hover-bg;
     }
   }
 
@@ -68,9 +68,8 @@
   line-height: $lh-body;
 
   &::placeholder {
-    color: var(--color-text-secondary);
+    color: $secondary-text-on-hover-light;
     font-size: $font-label-size;
-    opacity: 0.7;
   }
 }
 
@@ -103,7 +102,7 @@
   @media (hover: hover) {
     &:hover {
       color: var(--color-text);
-      background-color: var(--color-bg-secondary);
+      background-color: $row-hover-bg;
     }
   }
 
@@ -140,8 +139,8 @@
 
   @media (hover: hover) {
     &:hover {
-      color: var(--color-primary-hover);
-      background-color: var(--color-bg-secondary);
+      color: $primary-text-hover-light;
+      background-color: $row-hover-bg;
     }
   }
 

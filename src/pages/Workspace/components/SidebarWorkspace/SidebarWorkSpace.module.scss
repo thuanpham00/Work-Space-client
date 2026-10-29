@@ -149,18 +149,24 @@
   @include focus-ring;
 }
 
-.sw-channel:hover {
-  background: var(--color-bg-secondary);
-  color: var(--color-text);
-}
-
 /* modifier as separate class for CSS Modules */
 .swSelected {
-  background: var(--color-primary);
+  background: $selected-bg-light;
   color: $surface-inverse-text;
 
   .swHash {
     color: $surface-inverse-text;
+  }
+
+  .swName {
+    font-weight: 600;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: $selected-hover-bg-light;
+      color: $surface-inverse-text;
+    }
   }
 }
 
@@ -171,7 +177,7 @@
   text-align: center;
   font-size: $font-body-size;
   line-height: $lh-body;
-  color: var(--color-text-secondary);
+  color: $secondary-text-on-hover-light;
 }
 
 .swName {
@@ -203,11 +209,18 @@
   border-radius: $radius-sm;
   box-shadow: none !important;
   background-image: none !important;
-  transition-property: opacity, background-color !important;
-  transition-duration: 0.2s !important;
+  transition-property: background-color, opacity !important;
+  transition-duration: 0.15s !important;
   transition-timing-function: ease !important;
 
-  &:hover,
+  @media (hover: hover) {
+    &:hover {
+      color: $surface-inverse-text !important;
+      box-shadow: none !important;
+      background-image: none !important;
+    }
+  }
+
   &:focus {
     color: $surface-inverse-text !important;
     box-shadow: none !important;
@@ -234,19 +247,17 @@
 }
 
 .swTopicAction {
-  background: var(--color-primary);
+  background: $selected-bg-light;
 
   @include hoverable {
-    background: var(--color-primary) !important;
-    opacity: 0.75;
+    background: $selected-hover-bg-light !important;
   }
 }
 
 .swChannelAction {
-  background: var(--color-success);
+  background: $success-solid-light;
 
   @include hoverable {
-    background: var(--color-success) !important;
-    opacity: 0.75;
+    background: $success-solid-hover-light !important;
   }
 }

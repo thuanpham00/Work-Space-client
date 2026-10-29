@@ -59,17 +59,20 @@
     color $transition-fast,
     background-color $transition-fast;
 
-  &:hover {
-    color: var(--color-text);
-    background-color: var(--color-bg-secondary);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text);
+      background-color: $row-hover-bg;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 
   &.active {
     color: var(--color-primary);
-
-    &:hover {
-      color: var(--color-primary);
-    }
   }
 }
 
@@ -92,6 +95,11 @@
 
   &:focus {
     width: 240px;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 }
 

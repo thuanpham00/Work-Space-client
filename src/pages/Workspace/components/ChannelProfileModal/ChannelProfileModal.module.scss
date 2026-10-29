@@ -17,14 +17,16 @@
     border-radius: $radius-full;
     transition: background-color $transition-fast;
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.55);
+    @media (hover: hover) {
+      &:hover {
+        background-color: $hover-bg-strong;
+      }
     }
   }
 }
 
 .closeIcon {
-  color: #fff;
+  color: $secondary-text-on-hover-light;
   display: block;
 }
 
@@ -128,29 +130,29 @@
 }
 
 .statusActive {
-  background-color: rgba(35, 165, 89, 0.15);
-  color: #23a559;
+  @include pill-surface($pill-success-bg);
+  color: $pill-success-text-light;
 
   .statusDot {
-    background-color: #23a559;
+    background-color: $pill-dot-success;
   }
 }
 
 .statusPending {
-  background-color: rgba(240, 165, 71, 0.15);
-  color: #f0a547;
+  @include pill-surface($pill-warning-bg);
+  color: $pill-warning-text-light;
 
   .statusDot {
-    background-color: #f0a547;
+    background-color: $pill-dot-warning;
   }
 }
 
 .statusRejected {
-  background-color: rgba(240, 71, 71, 0.15);
-  color: #f04747;
+  @include pill-surface($pill-rejected-bg);
+  color: $pill-rejected-text-light;
 
   .statusDot {
-    background-color: #f04747;
+    background-color: $pill-dot-rejected;
   }
 }
 
@@ -174,8 +176,8 @@
 .messageBtn {
   flex: 1;
   max-width: 280px;
-  color: #fff !important;
-  background-color: var(--color-primary) !important;
+  color: $surface-inverse-text !important;
+  background-color: $selected-bg-light !important;
   border: none !important;
   border-radius: $radius-full !important;
   font-weight: 600;
@@ -186,8 +188,15 @@
   gap: $spacing-sm;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 
-  &:hover {
-    background-color: var(--color-primary-hover) !important;
+  @media (hover: hover) {
+    &:hover {
+      background-color: $selected-hover-bg-light !important;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 }
 
@@ -207,10 +216,11 @@
     background-color $transition-fast,
     color $transition-fast;
 
-  &:hover {
-    background-color: var(--color-bg-secondary) !important;
-    color: var(--color-text) !important;
-    filter: brightness(1.15);
+  @media (hover: hover) {
+    &:hover {
+      background-color: $hover-bg-strong !important;
+      color: var(--color-text) !important;
+    }
   }
 }
 
@@ -229,7 +239,7 @@
   padding: $spacing-sm 0;
 
   &:not(:last-child) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid $border-default;
   }
 }
 

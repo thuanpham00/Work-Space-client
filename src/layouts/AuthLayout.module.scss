@@ -44,7 +44,7 @@
 
   @media (hover: hover) {
     &:hover {
-      background: var(--color-bg-secondary);
+      background: $row-hover-bg;
       border-color: $border-strong;
     }
   }
@@ -72,7 +72,7 @@
 
   @media (hover: hover) {
     &:hover {
-      color: var(--color-primary);
+      color: $primary-text-light;
     }
   }
 

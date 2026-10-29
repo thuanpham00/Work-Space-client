@@ -15,11 +15,41 @@
   text-align: left;
   margin-bottom: 5px;
   padding: 3px 3px 3px 6px;
+
+  @media (hover: hover) {
+    &:hover {
+      background: $hover-bg-light;
+
+      .friendItemUserName {
+        color: $row-hover-text-secondary;
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
 }
 
 .friendItemActive {
-  background: var(--color-primary);
-  color: var(--color-text);
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
+
+  .friendItemName,
+  .friendItemUserName {
+    color: $surface-inverse-text;
+  }
+
+  .friendItemName {
+    font-weight: 600;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: $selected-hover-bg-light;
+    }
+  }
 }
 
 .friendInfo {
@@ -46,8 +76,10 @@
   margin-top: 4px;
   font-size: $font-caption-size;
   font-weight: 400;
-  color: var(--color-text);
-  transition: color $transition-fast;
+  color: var(--color-text-secondary);
+  transition-property: color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

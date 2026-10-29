@@ -41,31 +41,31 @@
   }
 
   &.buttonListFriendActive {
-    background-color: var(--color-primary-500) !important;
-    color: white !important;
+    background-color: $selected-bg-light !important;
+    color: $surface-inverse-text !important;
 
     &:hover {
-      background-color: var(--color-primary-600) !important;
-      color: white !important;
+      background-color: $selected-hover-bg-light !important;
+      color: $surface-inverse-text !important;
     }
   }
 }
 
 .buttonListFriendActive {
-  background-color: var(--color-primary) !important;
-  color: white !important;
+  background-color: $selected-bg-light !important;
+  color: $surface-inverse-text !important;
 
   :global(.ant-btn-icon) {
-    color: white !important;
+    color: $surface-inverse-text !important;
   }
 
   span {
-    color: white !important;
+    color: $surface-inverse-text !important;
   }
 
   &:hover {
-    background-color: var(--color-primary-600) !important;
-    color: white !important;
+    background-color: $selected-hover-bg-light !important;
+    color: $surface-inverse-text !important;
   }
 }
 
@@ -98,16 +98,22 @@
     color $transition-fast,
     background-color $transition-fast;
 
-  &:hover {
-    color: var(--color-text);
-    background-color: var(--color-bg-secondary);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text);
+      background-color: $row-hover-bg;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
   }
 }
 
 .friendSubtext {
   font-size: $font-caption-size;
-  color: var(--color-text-secondary);
-  opacity: 0.75;
+  color: $secondary-text-on-hover-light;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -27,23 +27,35 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text-secondary);
   font-size: $font-label-size;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease;
+  transition-property: color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
   margin-bottom: -1px;
 
-  &:hover {
-    color: var(--color-text, #111827);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: color;
   }
 }
 
 .tabActive {
-  color: var(--color-primary, #1677ff);
-  border-bottom-color: var(--color-primary, #1677ff);
+  color: $primary-text-light;
+  border-bottom-color: $primary-text-light;
+  font-weight: 600;
 }
 
 .body {
@@ -85,24 +97,30 @@
 
 .loadMore {
   padding: 8px 20px;
-  background: var(--color-primary, #1677ff);
-  color: #fff;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
   border: none;
   border-radius: $radius-sm;
   font-size: $font-label-size;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    opacity 0.15s ease,
-    background 0.15s ease;
+  transition-property: background-color, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 
-  &:hover:not(:disabled) {
-    opacity: 0.9;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $selected-hover-bg-light;
+    }
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
   }
 }
 

@@ -15,21 +15,21 @@
 
 /* Tones — chỉ đổi background + color */
 .workspaceStatusTone_active {
-  background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
+  @include pill-surface($pill-success-bg);
+  color: $pill-success-text-light;
 }
 
 .workspaceStatusTone_pending {
-  background: rgba(234, 179, 8, 0.15);
-  color: #ca8a04;
+  @include pill-surface($pill-warning-bg);
+  color: $pill-warning-text-light;
 }
 
 .workspaceStatusTone_rejected {
-  background: rgba(220, 38, 38, 0.15);
-  color: #dc2626;
+  @include pill-surface($pill-rejected-bg);
+  color: $pill-rejected-text-light;
 }
 
 .workspaceStatusTone_offline {
-  background: rgba(113, 113, 122, 0.15);
-  color: #71717a;
+  @include pill-surface($pill-neutral-bg);
+  color: $pill-neutral-text-light;
 }

@@ -123,7 +123,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-primary-500);
+  color: $primary-text-light;
   text-decoration: none;
   font-size: $font-caption-size;
   font-weight: 500;
@@ -135,10 +135,20 @@
   transition-timing-function: ease;
   margin-bottom: $spacing-sm;
 
-  &:hover {
-    color: var(--color-primary-600);
-    background: var(--color-bg-secondary);
-    transform: translateY(-1px);
+    @media (hover: hover) {
+      &:hover {
+        color: $primary-text-hover-light;
+        background: $row-hover-bg;
+      }
+    }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color;
+    outline-offset: $focus-ring-offset;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: color;
   }
 }
 

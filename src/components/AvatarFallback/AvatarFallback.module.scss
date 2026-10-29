@@ -20,15 +20,15 @@
 }
 
 .statusOnline {
-  background-color: #22c55e;
+  background-color: $pill-dot-success;
 }
 
 .statusBusy {
-  background-color: #f59e0b;
+  background-color: $pill-dot-warning;
 }
 
 .statusOffline {
-  background-color: #71717a;
+  background-color: $pill-dot-neutral;
 }
 
 .avatar {
