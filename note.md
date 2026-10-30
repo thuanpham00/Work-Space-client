@@ -3,3 +3,5 @@
 
 2/ tính năng
 
+- unread (DM - group)
+- read channel (DM - group)
