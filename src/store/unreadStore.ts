@@ -21,19 +21,25 @@ type UnreadStoreType = {
  *    workspaceId: 1,
  *    latestMessageId: 1,
  *    count: 2
- *    type: "workspace"
+ *    type: "workspace",
+ *    unread: true,
+ *    channelId: 1,
  *  },
  *  [2]: {
  *    workspaceId: 1,
  *    latestMessageId: 2,
  *    count: 3
  *    type: "workspace"
+ *    unread: true,
+ *    channelId: 2,
  *  },
  *  [3]: {
  *    workspaceId: null,
  *    latestMessageId: 3,
  *    count: 5
  *    type: "dm"
+ *    unread: true,
+ *    channelId: 3,
  *  }
  * }
  */
