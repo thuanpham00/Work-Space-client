@@ -162,6 +162,11 @@
     font-weight: 600;
   }
 
+  .swBadge {
+    background: $surface-inverse-text;
+    color: $badge-danger-bg-light;
+  }
+
   @media (hover: hover) {
     &:hover {
       background: $selected-hover-bg-light;
@@ -181,10 +186,44 @@
 }
 
 .swName {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: $font-caption-size;
   line-height: $lh-body;
+}
+
+.swBadge {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  max-width: 42px;
+  height: 18px;
+  padding: 0 6px;
+  overflow: hidden;
+  border-radius: $radius-full;
+  background: $badge-danger-bg-light;
+  color: $surface-inverse-text;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.swHasUnread {
+  .swName {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .swHash {
+    color: var(--color-text);
+  }
 }
 
 .swGroupActions {

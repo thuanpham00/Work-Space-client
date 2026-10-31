@@ -81,6 +81,11 @@ export type ChannelUnreadPayload = {
   senderId: string;
 };
 
+export type ChannelReadPayload = {
+  channelId: string;
+  messageId: string | null;
+};
+
 export type ChannelUnread = {
   workspaceId: string | null; // null = channel DM (không thuộc workspace nào)
   channelId: string;
@@ -88,6 +93,7 @@ export type ChannelUnread = {
   lastMessageId: string;
   count: number;
   unread: boolean;
+  lastReadMessageId?: string | null;
 };
 
 export type ChannelMember = {

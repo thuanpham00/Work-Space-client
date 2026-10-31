@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Smile, Send, FileChartColumn, Plus, UploadIcon, ChartNoAxesCombined } from "lucide-react";
 import styles from "./Composer.module.scss";
@@ -11,13 +10,11 @@ import { useBaseStore } from "../../store/baseStore";
 import { Button, Dropdown, type UploadFile } from "antd";
 import type { UploadMultipleFileRef } from "../UploadMultipleFile/UploadMultipleFile";
 import UploadMultipleFile from "../UploadMultipleFile/UploadMultipleFile";
-import { useUnreadStore } from "../../store/unreadStore";
 
 export default function Composer({ channelId }: { channelId: string }) {
-  const markReadChannel = useUnreadStore((app) => app.markRead);
   const [inputValue, setInputValue] = useState("");
   const socket = useBaseStore((app) => app.socket);
-  const [typeMessage, setTypeMessage] = useState<MessageType>(messageType.TEXT);
+  const [typeMessage] = useState<MessageType>(messageType.TEXT);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const uploadRef = useRef<UploadMultipleFileRef>(null);
@@ -53,7 +50,6 @@ export default function Composer({ channelId }: { channelId: string }) {
       message_type: typeMessage,
       files: fileList,
     });
-    markReadChannel(channelId);
     setInputValue("");
     setFileList([]);
   };
@@ -66,7 +62,6 @@ export default function Composer({ channelId }: { channelId: string }) {
       mime_type: "image/gif",
       file_size: gif.images.fixed_width.size,
     });
-    markReadChannel(channelId);
   };
 
   const items = [

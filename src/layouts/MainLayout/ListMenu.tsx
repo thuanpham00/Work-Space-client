@@ -8,18 +8,16 @@ import { useUnreadStore } from "../../store/unreadStore";
 import { Avatar, Badge, Menu, Tooltip } from "antd";
 import { SearchIcon, Users } from "lucide-react";
 import { workspaceAPI } from "../../apis/workspace.api";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { useUserStore } from "../../store/userStore";
 import styles from "./ListMenu.module.scss";
 import { useUnreadChannels } from "../../Hooks/useUnreadChannel";
-import { useChannelStore } from "../../store/channelStore";
 import { useBaseStore } from "../../store/baseStore";
-import type { ChannelUnreadPayload } from "../../types/channel.type";
+import type { ChannelReadPayload, ChannelUnreadPayload } from "../../types/channel.type";
 
 export default function ListMenu() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const markReadChannel = useUnreadStore((state) => state.markReadOptimistic);
   const markUnreadChannel = useUnreadStore((state) => state.markUnread);
@@ -27,7 +25,6 @@ export default function ListMenu() {
   const countUnreadWorkspace = useUnreadStore((state) => state.countUnreadWorkspace);
   const token = useUserStore((state) => state.accessToken);
   const socket = useBaseStore((state) => state.socket);
-  const channelId = useChannelStore((state) => state.channelId);
 
   const { data: dataWorkspace } = useQuery({
     queryKey: ["workspaces", token],
@@ -119,14 +116,22 @@ export default function ListMenu() {
   useEffect(() => {
     if (!socket || !token) return;
 
-    socket.on("channel_unread", (data: ChannelUnreadPayload) => {
+    const handleChannelUnread = (data: ChannelUnreadPayload) => {
       markUnreadChannel(data);
-    });
+    };
+
+    const handleChannelRead = (data: ChannelReadPayload) => {
+      markReadChannel(data.channelId, data.messageId);
+    };
+
+    socket.on("channel_unread", handleChannelUnread);
+    socket.on("channel_read", handleChannelRead);
 
     return () => {
-      socket.off("channel_unread");
+      socket.off("channel_unread", handleChannelUnread);
+      socket.off("channel_read", handleChannelRead);
     };
-  }, [socket, token]);
+  }, [socket, token, markUnreadChannel, markReadChannel]);
 
   return (
     <Menu

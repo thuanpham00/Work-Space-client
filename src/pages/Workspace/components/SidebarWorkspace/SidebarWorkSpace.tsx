@@ -9,6 +9,7 @@ import { useChannelStore } from "../../../../store/channelStore";
 import type { WorkspaceMemberModalRef } from "../ChannelMemberModal/ChannelMemberModal";
 import WorkspaceMemberModal from "../ChannelMemberModal/ChannelMemberModal";
 import { ChannelModal } from "../ChannelModal/ChannelModal";
+import { useUnreadStore } from "../../../../store/unreadStore";
 
 interface SidebarWorkSpaceProps {
   data: WorkspaceType;
@@ -20,6 +21,7 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
   const modalChannelRef = useRef<ChannelModal>(null);
   const modalMemberRef = useRef<WorkspaceMemberModalRef>(null);
   const chooseChannelWorkspace = useChannelStore((app) => app.chooseChannelWorkspace);
+  const byChannelId = useUnreadStore((app) => app.byChannelId);
 
   const groups = useMemo(
     () => data?.categories.sort((a, b) => a.position - b.position) ?? [],
@@ -98,30 +100,37 @@ export default function SidebarWorkSpace({ data, workspaceId }: SidebarWorkSpace
             </div>
 
             <ul className={styles.swChannels}>
-              {group.channels.map((ch) => (
-                <li
-                  key={ch.id}
-                  className={`${styles.swChannel} ${activeChannelId === ch.id ? styles.swSelected : ""}`}
-                  onClick={() => {
-                    setSelected(ch.id);
-                    chooseChannelWorkspace(
-                      data.id,
-                      ch.id,
-                      ch.name || "",
-                      data.role as WorkspaceMemberRole,
-                      ch.role,
-                    );
-                  }}
-                  title={ch.name}
-                >
-                  {ch.isPrivate ? (
-                    <Lock className={styles.swHash} size={16} />
-                  ) : (
-                    <Hash className={styles.swHash} size={16} />
-                  )}
-                  <span className={styles.swName}>{ch.name}</span>
-                </li>
-              ))}
+              {group.channels.map((ch) => {
+                const unreadCount = byChannelId.get(ch.id)?.count ?? 0;
+                const hasUnread = unreadCount > 0;
+                return (
+                  <li
+                    key={ch.id}
+                    className={`${styles.swChannel} ${activeChannelId === ch.id ? styles.swSelected : ""} ${hasUnread ? styles.swHasUnread : ""}`}
+                    onClick={() => {
+                      setSelected(ch.id);
+                      chooseChannelWorkspace(
+                        data.id,
+                        ch.id,
+                        ch.name || "",
+                        data.role as WorkspaceMemberRole,
+                        ch.role,
+                      );
+                    }}
+                    title={ch.name}
+                  >
+                    {ch.isPrivate ? (
+                      <Lock className={styles.swHash} size={16} />
+                    ) : (
+                      <Hash className={styles.swHash} size={16} />
+                    )}
+                    <span className={styles.swName}>{ch.name}</span>
+                    {hasUnread && (
+                      <span className={styles.swBadge}>{unreadCount > 99 ? "99+" : unreadCount}</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
