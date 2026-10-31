@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Video, Pin, Search, PanelRight } from "lucide-react";
+import { Pin, Search, PanelRight } from "lucide-react";
 import styles from "./DirectChat.module.scss";
 import InfoUser from "../InfoUser/InfoUser";
 import { useQuery } from "react-query";
@@ -54,20 +54,6 @@ export default function DirectChat() {
           <span className={styles.statusIndicator}></span>
         </div>
         <div className={styles.headerRight}>
-          <button
-            className={styles.iconButton}
-            title="Bắt đầu cuộc gọi thoại"
-            // onClick={() => handleStartCall(false)}
-          >
-            <Phone size={20} />
-          </button>
-          <button
-            className={styles.iconButton}
-            title="Bắt đầu cuộc gọi video"
-            // onClick={() => handleStartCall(true)}
-          >
-            <Video size={20} />
-          </button>
           <button className={styles.iconButton} title="Tin nhắn đã ghim">
             <Pin size={20} />
           </button>

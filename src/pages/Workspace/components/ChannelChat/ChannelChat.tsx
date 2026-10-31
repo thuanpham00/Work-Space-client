@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Video, Pin, Search, Hash, Lock, PanelRight } from "lucide-react";
+import { Pin, Search, Hash, Lock, PanelRight } from "lucide-react";
 import styles from "./ChannelChat.module.scss";
 import Messages from "../../../../components/Messages/Messages";
 import Composer from "../../../../components/Composer/Composer";
@@ -57,20 +57,6 @@ export default function ChannelChat() {
           {dataChannelDetail.isDefault && <span>(Kênh mặc định)</span>}
         </div>
         <div className={styles.headerRight}>
-          <button
-            className={styles.iconButton}
-            title="Bắt đầu cuộc gọi thoại"
-            // onClick={() => handleStartCall(false)}
-          >
-            <Phone size={20} />
-          </button>
-          <button
-            className={styles.iconButton}
-            title="Bắt đầu cuộc gọi video"
-            // onClick={() => handleStartCall(true)}
-          >
-            <Video size={20} />
-          </button>
           <button className={styles.iconButton} title="Tin nhắn đã ghim">
             <Pin size={20} />
           </button>
