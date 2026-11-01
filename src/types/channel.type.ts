@@ -156,3 +156,51 @@ export interface ChannelRequestItem {
   invitedAt: string;
   joinedAt: string;
 }
+
+// ============ SOCKET EVENT PAYLOADS (nhóm 1 — người bị tác động) ============
+
+/** Base payload chung cho các event về membership của channel */
+export type ChannelEventBase = {
+  channelId: string;
+  channelName: string | null;
+  workspaceId: string | null;
+};
+
+/** User được mời vào channel */
+export type ChannelInvitedPayload = ChannelEventBase & {
+  type: "invite";
+  invitedById: string;
+  invitedByName: string;
+};
+
+/** Lời mời bị admin thu hồi */
+export type ChannelInviteRevokedPayload = ChannelEventBase & {
+  type: "invite";
+  revokedById: string;
+  revokedByName: string;
+};
+
+/** Yêu cầu tham gia được duyệt / từ chối */
+export type ChannelRequestResolvedPayload = ChannelEventBase & {
+  type: "join";
+  status: "ACTIVE" | "LEFT";
+  action: "approved" | "rejected";
+  resolvedById: string;
+  resolvedByName: string;
+};
+
+/** Lời mời được chính user đó accept / reject */
+export type ChannelInviteResolvedPayload = ChannelEventBase & {
+  type: "invite";
+  status: "ACTIVE" | "LEFT";
+  action: "accepted" | "rejected";
+  /** User thực hiện thao tác — dùng để bỏ qua toast ở tab đã bấm nút */
+  actorId: string;
+};
+
+/** Membership trong workspace thay đổi → sidebar cần refresh */
+export type WorkspaceUpdatedPayload = {
+  workspaceId: string;
+  channelId: string;
+  reason: "joined" | "left";
+};

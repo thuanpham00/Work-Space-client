@@ -6,11 +6,14 @@ import Header from "../../components/Header/Header";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
 import ListMenu from "./ListMenu";
+import { useChannelMembershipSocket } from "../../Hooks/useChannelMembershipSocket";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
   const navigate = useNavigate();
+
+  useChannelMembershipSocket(); // listen socket for channel membership
 
   return (
     <Layout className={styles.layout}>

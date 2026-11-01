@@ -1,0 +1,266 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+// Cỡ chữ riêng cho panel thông báo - nhỏ hơn hệ thống để panel gọn gàng
+$notification-font-title: 14px;
+$notification-font-body: 13px;
+$notification-font-caption: 12px;
+$notification-font-micro: 11px;
+
+// ===== Trigger (nút chuông) =====
+.trigger {
+  display: inline-flex;
+  align-items: center;
+
+  // Badge của antd mặc định dùng màu đỏ cứng -> gắn vào token của project
+  :global(.ant-badge-count) {
+    background-color: var(--color-danger);
+    color: $surface-inverse-text;
+    font-size: 11px;
+    font-weight: $weight-heading;
+    box-shadow: 0 0 0 2px var(--color-bg);
+  }
+}
+
+.triggerButton {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: $font-h3-size;
+  line-height: $lh-body;
+  transition-property: background-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+
+  svg {
+    display: block;
+  }
+
+  @include hoverable {
+    background: $row-hover-bg;
+    color: var(--color-text);
+  }
+
+  @include focus-ring;
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+}
+
+// ===== Panel =====
+.panel {
+  width: 360px;
+  max-width: 92vw;
+  background: var(--color-bg);
+  border: 1px solid $border-line;
+  border-radius: $radius-md;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  color: var(--color-text);
+  transition-property: background-color, border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+.panelHeader {
+  @include flex-between;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-line;
+}
+
+.panelTitle {
+  font-size: $notification-font-title;
+  line-height: $lh-heading;
+  font-weight: $weight-heading;
+  color: var(--color-text);
+}
+
+.markAllButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: $notification-font-caption;
+  line-height: $lh-body;
+  font-weight: $weight-label;
+  color: var(--color-primary);
+  transition-property: background-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+
+  @include hoverable {
+    background: $row-hover-bg;
+    color: var(--color-primary-hover);
+  }
+
+  @include focus-ring;
+
+  &:disabled {
+    cursor: default;
+    color: var(--color-text-secondary);
+    opacity: 0.6;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+}
+
+// ===== List =====
+.list {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: $spacing-xs 0;
+
+  @include custom-scrollbar;
+}
+
+.item {
+  @include flex-start;
+  gap: $spacing-sm;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition-property: background-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+
+  @include hoverable {
+    background: $row-hover-bg;
+  }
+
+  @include focus-ring;
+}
+
+.itemUnread {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+
+  &:hover {
+    background: $row-hover-bg-strong;
+  }
+}
+
+.itemIcon {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary);
+  font-size: $notification-font-title;
+  line-height: $lh-body;
+
+  svg {
+    display: block;
+  }
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.itemTitle {
+  font-size: $notification-font-body;
+  line-height: $lh-tight;
+  font-weight: $weight-label;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemTitleUnread {
+  font-weight: $weight-heading;
+}
+
+.itemDescription {
+  font-size: $notification-font-caption;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.itemTime {
+  font-size: $notification-font-micro;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: $radius-full;
+  background: var(--color-primary);
+}
+
+// ===== Footer =====
+.panelFooter {
+  padding: $spacing-sm $spacing-md;
+  border-top: 1px solid $border-line;
+  text-align: center;
+}
+
+.footerButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: $notification-font-caption;
+  line-height: $lh-body;
+  font-weight: $weight-label;
+  color: var(--color-primary);
+  transition-property: background-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+
+  @include hoverable {
+    background: $row-hover-bg;
+    color: var(--color-primary-hover);
+  }
+
+  @include focus-ring;
+}
+
+.emptyState {
+  padding: $spacing-xl $spacing-md;
+  text-align: center;
+  font-size: $notification-font-body;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
+}
+
+.footerHint {
+  font-size: $notification-font-micro;
+  line-height: $lh-body;
+  color: var(--color-text-secondary);
+}

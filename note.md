@@ -3,4 +3,4 @@
 
 2/ tính năng
 
-- read channel (DM - group)
+- làm hệ thống thông báo

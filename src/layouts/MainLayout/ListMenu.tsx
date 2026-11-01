@@ -27,7 +27,7 @@ export default function ListMenu() {
   const socket = useBaseStore((state) => state.socket);
 
   const { data: dataWorkspace } = useQuery({
-    queryKey: ["workspaces", token],
+    queryKey: ["workspaceList", token],
     queryFn: () => workspaceAPI.getWorkspaces(),
     enabled: !!token,
     staleTime: 1000 * 60 * 15, // 15 minutes

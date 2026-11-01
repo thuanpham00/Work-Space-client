@@ -1,4 +1,4 @@
-import { Button, Layout, Popover, Avatar, Divider } from "antd";
+import { Layout, Popover, Avatar, Divider } from "antd";
 import { UserOutlined, SettingOutlined, LogoutOutlined, SunOutlined, MoonOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { path } from "../../utils/path";
 import { useBaseStore } from "../../store/baseStore";
 import { useUserStore } from "../../store/userStore";
 import { useChannelStore } from "../../store/channelStore";
+import NotificationBell from "../Notification/NotificationBell";
 
 const { Header: HeaderAntd } = Layout;
 
@@ -73,12 +74,16 @@ export default function Header() {
       </div>
 
       <div className={styles.actions}>
-        <Button
-          type="text"
-          icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
+        <button
+          type="button"
           onClick={toggleDarkMode}
           className={styles.themeToggle}
-        />
+          aria-label={isDarkMode ? "Chuyển sang light mode" : "Chuyển sang dark mode"}
+        >
+          {isDarkMode ? <SunOutlined /> : <MoonOutlined />}
+        </button>
+
+        <NotificationBell />
 
         <Popover content={userMenuContent} trigger="click" placement="bottomRight" arrow={false}>
           <button className={styles.userButton}>
