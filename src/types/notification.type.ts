@@ -8,21 +8,20 @@ export type NotificationType =
   | "MENTION"
   | "SYSTEM";
 
-/** Payload notification từ server — khớp 100% với `NotificationResponse` */
 export interface NotificationItem {
   id: string;
   type: NotificationType;
   title: string;
-  body: string | null;
-  actorId: string | null;
-  actorName: string | null;
-  actorAvatar: string | null;
-  channelId: string | null;
-  channelName: string | null;
-  workspaceId: string | null;
-  metadata: Record<string, unknown> | null;
+  body: string;
+  actorId: string;
+  actorName: string;
+  actorAvatar: string;
+  channelId: string;
+  channelName: string;
+  workspaceId: string;
+  metadata: Record<string, unknown>;
   isRead: boolean;
-  readAt: string | null;
+  readAt: string;
   createdAt: string;
 }
 

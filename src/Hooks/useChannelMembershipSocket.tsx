@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { App } from "antd";
 import { useQueryClient } from "react-query";

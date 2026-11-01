@@ -3,4 +3,4 @@
 
 2/ tính năng
 
-- làm hệ thống thông báo
+- làm hệ thống thông báo (50%)

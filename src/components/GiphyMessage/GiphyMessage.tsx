@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { gf } from "../../utils/giphy";
 import { useCallback, useEffect, useRef, useState } from "react";
-import styles from "./GyphyMessage.module.scss";
+import styles from "./GiphyMessage.module.scss";
 import type { TypeDisplayMessage } from "../../types/message.type";
 
 interface GiphyProps {

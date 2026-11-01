@@ -4,7 +4,7 @@ import styles from "./Composer.module.scss";
 import EmojiMessage from "../EmojiMessage/EmojiMessage";
 import { useState, useRef, useEffect } from "react";
 import { messageType, type MessageType, type TypeDisplayMessage } from "../../types/message.type";
-import GifPicker from "../GiphyMesage/GiphyMessage";
+import GifPicker from "../GiphyMessage/GiphyMessage";
 import { AiOutlineGif } from "react-icons/ai";
 import { useBaseStore } from "../../store/baseStore";
 import { Button, Dropdown, type UploadFile } from "antd";

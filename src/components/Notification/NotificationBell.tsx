@@ -1,10 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
 import { Badge, Popover } from "antd";
 import { BellOutlined, CheckOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/vi";
@@ -22,13 +20,13 @@ dayjs.locale("vi");
 export default function NotificationBell() {
   const token = useUserStore((state) => state.accessToken);
   const socket = useBaseStore((state) => state.socket);
-  const queryClient = useQueryClient();
 
   const [query, setQuery] = useState<{ limit: number; page: number }>({
-    limit: 1,
+    limit: LIMIT,
     page: PAGE,
   });
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [unreadCountBadge, setUnreadCountBadge] = useState(0);
 
   const { data, isFetching } = useQuery({
     queryKey: ["notificationList", token, query],
@@ -38,47 +36,24 @@ export default function NotificationBell() {
   });
 
   const listData = data?.data?.data;
-  const totalPages = listData?.totalPages ?? 1;
+  const incoming = listData?.notifications;
   const unreadCount = listData?.unreadCount ?? 0;
+  const totalPages = listData?.totalPages ?? 1;
   const hasMore = query.page < totalPages;
 
   useEffect(() => {
-    const incoming = listData?.notifications;
     if (!incoming) return;
 
     setNotifications((prev) => (query.page === PAGE ? incoming : [...prev, ...incoming]));
-  }, [listData, query.page]);
+    setUnreadCountBadge(unreadCount);
+  }, [incoming, unreadCount, query.page]);
 
   const markAsReadMutation = useMutation({
     mutationFn: (id: string) => notificationApi.markAsRead(id),
-    onSuccess: (res) => {
-      const { notification, unreadCount } = res.data.data;
-      queryClient.setQueryData(["notificationList", token, query], (old: any) => {
-        if (!old?.data?.data) return old;
-        const list = old.data.data;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...list,
-              notifications: list.notifications.map((n: NotificationItem) =>
-                n.id === notification.id ? { ...n, isRead: true, readAt: notification.readAt } : n,
-              ),
-              unreadCount,
-            },
-          },
-        };
-      });
-    },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: () => notificationApi.markAllAsRead(),
-    onSuccess: (res) => {
-      console.log("res", res);
-      queryClient.invalidateQueries({ queryKey: ["notificationList", token] });
-    },
   });
 
   const handleLoadMore = () => {
@@ -92,7 +67,7 @@ export default function NotificationBell() {
   };
 
   const handleMarkAllAsRead = () => {
-    if (unreadCount === 0) return;
+    if (unreadCountBadge === 0) return;
     markAllAsReadMutation.mutate();
   };
 
@@ -104,7 +79,7 @@ export default function NotificationBell() {
           type="button"
           className={styles.markAllButton}
           onClick={handleMarkAllAsRead}
-          disabled={unreadCount === 0 || markAllAsReadMutation.isLoading}
+          disabled={unreadCountBadge === 0 || markAllAsReadMutation.isLoading}
         >
           <CheckOutlined /> Đánh dấu đã đọc tất cả
         </button>
@@ -174,29 +149,18 @@ export default function NotificationBell() {
       unreadCount: number;
       readAt: string;
     }) => {
-      queryClient.setQueriesData(["notificationList", token, query], (old: any) => {
-        if (!old?.data?.data) return old;
-        const list = old.data.data;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...list,
-              notifications: list.notifications.map((n: NotificationItem) =>
-                n.id === notificationId ? { ...n, isRead: true, readAt: readAt } : n,
-              ),
-              unreadCount,
-            },
-          },
-        };
-      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true, readAt: readAt } : n)),
+      );
+      setUnreadCountBadge(unreadCount);
+    };
+
+    const handleReadAll = () => {
       setNotifications((prev) =>
         prev.map((n) => ({ ...n, isRead: true, readAt: n.readAt ?? new Date().toISOString() })),
       );
+      setUnreadCountBadge(0);
     };
-
-    const handleReadAll = () => {};
 
     // đồng bộ noti giữa nhiều socket (cùng user)
     socket.on("notification_read", handleRead);
@@ -219,7 +183,13 @@ export default function NotificationBell() {
         content: { padding: 0 },
       }}
     >
-      <Badge className={styles.trigger} count={unreadCount} overflowCount={99} size="small" offset={[2, 10]}>
+      <Badge
+        className={styles.trigger}
+        count={unreadCountBadge}
+        overflowCount={99}
+        size="small"
+        offset={[2, 10]}
+      >
         <button type="button" className={styles.triggerButton} aria-label="Thông báo">
           <BellOutlined />
         </button>
