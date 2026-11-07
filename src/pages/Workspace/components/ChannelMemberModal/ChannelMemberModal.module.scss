@@ -2,19 +2,20 @@
 @use "../../../../styles/mixins" as *;
 
 .wmModal {
-  :global(.ant-modal-content) {
-    padding: 0;
+  &:global(.ant-modal) :global(.ant-modal-container) {
+    padding: 0 !important;
     overflow: hidden;
+    border-radius: $radius-lg;
+    background-color: var(--color-bg);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
   }
 
   :global(.ant-modal-header) {
-    padding: 20px 24px;
-    margin: 0;
-    border-bottom: 1px solid $border-default;
+    display: none;
   }
 
   :global(.ant-modal-body) {
-    padding: 0;
+    padding: 0 !important;
   }
 
   :global(.ant-modal-footer) {
@@ -22,8 +23,8 @@
   }
 
   :global(.ant-modal-close) {
-    top: 3px;
-    right: 1px;
+    top: 12px;
+    right: 12px;
     width: 32px;
     height: 32px;
     border-radius: $radius-full;
@@ -34,33 +35,292 @@
         background-color: $hover-bg-strong;
       }
     }
+
+    &:focus-visible {
+      outline: $focus-ring-width solid $focus-ring-color;
+      outline-offset: $focus-ring-offset;
+    }
   }
 }
+
+/* ---------- Header ---------- */
 
 .wmHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: $spacing-md;
+  // padding-right lớn hơn để nút đóng không đè lên tiêu đề
+  padding: $spacing-md 48px $spacing-md $spacing-lg;
 }
 
 .wmHeaderLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  min-width: 0;
+}
+
+.wmHeaderIcon {
+  @include flex-center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+  background-color: $selected-bg-light;
+  color: $surface-inverse-text;
 }
 
 .wmHeaderInfo {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .wmHeaderTitle {
-  font-size: $font-body-size;
+  font-size: $font-label-size;
   font-weight: 600;
   color: var(--color-text);
+  line-height: $lh-tight;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.wmHeaderSubtitle {
+  font-size: $font-caption-size;
+  color: var(--color-text-secondary);
+  line-height: $lh-body;
+}
+
+/* ---------- Segmented tabs ---------- */
+
+.wmTabs {
+  padding: 0 $spacing-lg $spacing-md;
+
+  :global(.ant-tabs-nav) {
+    display: inline-flex;
+    gap: 4px;
+    margin: 0;
+    padding: 3px;
+    border-radius: $radius-sm;
+    background-color: var(--color-bg-secondary);
+
+    &::before {
+      display: none;
+    }
+  }
+
+  :global(.ant-tabs-content-holder) {
+    display: none;
+  }
+
+  :global(.ant-tabs-tab) {
+    padding: 0;
+    border-radius: $radius-sm;
+    overflow: hidden;
+
+    &:hover .ant-tabs-tab-btn {
+      color: var(--color-text);
+    }
+  }
+
+  :global(.ant-tabs-tab-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: $radius-sm;
+    font-size: $font-label-size;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    transition:
+      background-color $transition-fast,
+      color $transition-fast;
+  }
+
+  :global(.ant-tabs-tab-active) {
+    background-color: var(--color-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  :global(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+    color: var(--color-text) !important;
+  }
+
+  :global(.ant-tabs-ink-bar) {
+    display: none;
+  }
+}
+
+.wmTabLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wmTabBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: $badge-danger-bg-light;
+  border-radius: $radius-full;
+  color: $surface-inverse-text;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ---------- Body ---------- */
+
+.wmBody {
+  padding: 0 $spacing-lg $spacing-lg;
+}
+
+.wmFilters {
+  margin-bottom: $spacing-md;
+}
+
+.wmSearch {
+  width: 100%;
+
+  :global(.ant-input-affix-wrapper) {
+    border-radius: $radius-sm;
+    background-color: var(--color-bg-secondary);
+    border-color: transparent;
+    padding-inline: 10px;
+  }
+
+  :global(.ant-input-affix-wrapper:hover),
+  :global(.ant-input-affix-wrapper-focused) {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg);
+  }
+}
+
+/* ---------- Member list ---------- */
+
+.wmMemberList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  // padding-right chừa chỗ cho scrollbar, không tràn ra ngoài mép modal
+  padding-right: 4px;
+
+  @include custom-scrollbar;
+}
+
+.wmMemberItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: 6px $spacing-sm;
+  border-radius: $radius-sm;
+  transition: background-color $transition-fast;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: $hover-bg-light;
+    }
+  }
+}
+
+.wmMemberAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  flex-shrink: 0;
+  object-fit: cover;
+  background-color: var(--color-bg);
+}
+
+.wmMemberAvatarPlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  flex-shrink: 0;
+  background: $selected-bg-light;
+  color: $surface-inverse-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: $font-label-size;
+}
+
+.wmMemberInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.wmMemberName {
+  font-size: $font-label-size;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wmMemberEmail {
+  font-size: $font-caption-size;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wmMemberMoreBtn {
+  flex-shrink: 0;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm !important;
+  color: var(--color-text-secondary) !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity $transition-fast,
+    background-color $transition-fast,
+    color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    background: $hover-bg-strong !important;
+    color: var(--color-text) !important;
+    outline: none !important;
+  }
+
+  &:focus-visible {
+    outline: $focus-ring-width solid $focus-ring-color !important;
+    outline-offset: 1px;
+  }
+}
+
+.wmMemberItem:hover .wmMemberMoreBtn,
+.wmMemberMoreBtn:focus-visible,
+.wmMemberMoreBtn {
+  opacity: 1;
+}
+
+/* ---------- Buttons ---------- */
 
 .wmInviteBtn {
   background: $selected-bg-light !important;
@@ -70,7 +330,7 @@
   gap: 6px;
   height: 32px;
   padding: 0 14px !important;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: $radius-sm;
 
   @media (hover: hover) {
@@ -79,6 +339,12 @@
       border-color: $selected-hover-bg-light !important;
     }
   }
+}
+
+.wmPendingActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .friendRequestBtn {
@@ -142,7 +408,6 @@
   @media (hover: hover) {
     &:hover:not(:disabled) {
       background: $danger-hover-bg-light !important;
-      border-color: $danger-text-light !important;
     }
   }
 
@@ -152,238 +417,157 @@
   }
 }
 
-.wmTabs {
-  background: var(--color-bg);
-  border-bottom: 1px solid $border-default;
-
-  :global(.ant-tabs-nav) {
-    margin: 0;
-  }
-
-  :global(.ant-tabs-tab) {
-    padding: 12px 0;
-    font-size: $font-label-size;
-  }
-}
-
-.wmTabBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  background: $badge-danger-bg-light;
-  border: 1px solid $badge-danger-bg-light;
-  color: $surface-inverse-text;
-  font-size: $font-caption-size;
-  font-weight: 600;
-  border-radius: $radius-md;
-  margin-left: 6px;
-}
-
-.wmBody {
-  padding: 16px 0 0;
-}
-
-.wmFilters {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.wmSearch {
-  flex: 1;
-  width: 100%;
-
-  :global(.ant-input-affix-wrapper) {
-    border-radius: 8px;
-    background: var(--color-bg-secondary);
-    border-color: transparent;
-  }
-}
-
-.wmMemberList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 300px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-right: 10px;
-
-  @include custom-scrollbar;
-}
+/* ---------- Load more ---------- */
 
 .wmLoadMore {
-  margin-top: 12px;
+  margin-top: $spacing-md;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 }
 
-.wmLoadMoreHint {
-  font-size: $font-caption-size;
+.loadMore {
+  padding: 6px 20px;
+  background: transparent;
   color: var(--color-text-secondary);
-  text-align: center;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm;
+  font-size: $font-caption-size;
+  font-weight: 600;
+  cursor: pointer;
+  transition-property: background-color, opacity, color, border-color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: $hover-bg-light;
+      color: var(--color-text);
+      border-color: $border-strong;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
+  }
 }
 
-.wmPendingPlaceholder {
-  padding: 32px 0;
-}
+/* ---------- Empty / loading ---------- */
 
-.wmPendingList {
+.wmEmpty {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 4px 0;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl $spacing-md;
+  color: var(--color-text-secondary);
+
+  svg {
+    margin-bottom: $spacing-sm;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-label-size;
+  }
 }
 
 .wmPendingLoading {
   display: flex;
   justify-content: center;
-  padding: 32px 0;
+  padding: $spacing-xl 0;
 }
 
-.wmPendingSummary {
+/* ---------- Invite link ---------- */
+
+.inviteLinkWrap {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-default;
+}
+
+.inviteLinkLabel {
   display: flex;
-  gap: 16px;
-  padding: 8px 12px;
+  align-items: center;
+  gap: 6px;
   font-size: $font-caption-size;
-  color: var(--color-text-secondary);
-  background: var(--color-bg-secondary);
-  border-radius: 8px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: $spacing-sm;
 
-  strong {
-    color: var(--color-text);
-    font-weight: 600;
+  svg {
+    color: var(--color-text-secondary);
   }
 }
 
-.wmPendingItem {
+.inviteLinkRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  min-height: 72px;
-  background: var(--color-bg-secondary);
-  border-radius: $radius-md;
-  box-sizing: border-box;
-  transition-property: background-color, border-color;
-  transition-duration: 0.15s;
-  transition-timing-function: ease;
+  gap: $spacing-sm;
+}
 
-  &:hover {
-    background: $hover-bg-light;
-  }
+.inviteLinkInput {
+  flex: 1;
+  min-width: 0;
 
-  &:focus-visible {
-    outline: $focus-ring-width solid $focus-ring-color;
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-property: background-color, border-color;
+  :global(.ant-input) {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+    font-size: $font-caption-size;
+    border-radius: $radius-sm;
+    border-color: transparent;
+    padding-inline: 12px;
   }
 }
 
-.wmMemberItem {
-  padding: 6px 0;
-  display: flex;
+.inviteLinkCopy {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-}
-
-.wmMemberAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  object-fit: cover;
-  background: var(--color-bg);
-}
-
-.wmMemberAvatarPlaceholder {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   background: $selected-bg-light;
   color: $surface-inverse-text;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: $font-label-size;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition-property: background-color, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+
+  @media (hover: hover) {
+    &:hover {
+      background: $selected-hover-bg-light;
+    }
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
 }
 
-.wmMemberInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.wmMemberName {
-  font-size: $font-label-size;
-  font-weight: 500;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.wmMemberEmail {
+.inviteLinkHint {
+  margin-top: $spacing-sm;
   font-size: $font-caption-size;
   color: var(--color-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.5;
 }
 
-.wmMemberMoreBtn {
-  flex-shrink: 0;
-  width: 32px !important;
-  height: 32px !important;
-  padding: 0 !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px !important;
-  color: var(--color-text-secondary) !important;
-  background: transparent !important;
-  border: none !important;
-  cursor: pointer;
-  opacity: 0;
-  transition:
-    opacity 0.15s ease,
-    background 0.15s ease,
-    color 0.15s ease;
-
-  &:hover,
-  &:focus-visible {
-    background: $hover-bg-light !important;
-    color: var(--color-text) !important;
-    outline: none !important;
-  }
-
-  &:focus-visible {
-    outline: $focus-ring-width solid $focus-ring-color !important;
-    outline-offset: 1px;
-  }
-}
-
-.wmMemberItem:hover .wmMemberMoreBtn,
-.wmMemberMoreBtn:focus-visible,
-.wmMemberMoreBtn {
-  opacity: 1;
-}
+/* ---------- Dropdown ---------- */
 
 .wmDropdownOverlay {
   :global(.ant-dropdown-menu) {
     min-width: 200px;
     padding: 4px;
-    border-radius: 8px;
+    border-radius: $radius-sm;
     background: var(--color-bg-secondary);
     border: 1px solid $border-default;
   }
@@ -420,251 +604,4 @@
       }
     }
   }
-}
-
-.wmEmpty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  color: var(--color-text-secondary);
-
-  svg {
-    margin-bottom: 12px;
-    opacity: 0.5;
-  }
-
-  p {
-    margin: 0;
-    font-size: $font-label-size;
-  }
-}
-
-.wmPendingSection {
-  margin-bottom: 24px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.wmPendingTitle {
-  font-size: $font-caption-size;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.wmPendingItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  min-height: 72px;
-  background: var(--color-bg-secondary);
-  border-radius: $radius-md;
-  box-sizing: border-box;
-}
-
-.wmPendingInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.wmPendingName {
-  font-size: $font-label-size;
-  font-weight: 500;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.wmPendingTime {
-  font-size: $font-caption-size;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.wmPendingType {
-  font-size: $font-caption-size;
-  padding: 2px 8px;
-  border-radius: $radius-sm;
-  font-weight: 500;
-  text-transform: uppercase;
-  flex-shrink: 0;
-  white-space: nowrap;
-
-  &.wmTypeRequest {
-    @include pill-surface($pill-warning-bg);
-    color: $pill-warning-text-light;
-  }
-
-  &.wmTypeInvite {
-    @include pill-surface($pill-invite-bg);
-    color: $pill-invite-text-light;
-  }
-}
-
-.wmPendingActions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.wmInviteUserItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: var(--color-bg-secondary);
-  border-radius: 8px;
-  margin-bottom: 8px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.wmInviteUserInfo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.wmInviteUserName {
-  font-size: $font-label-size;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.wmInviteUserEmail {
-  font-size: $font-caption-size;
-  color: var(--color-text-secondary);
-}
-
-.wmInviteStatus {
-  font-size: $font-caption-size;
-  padding: 4px 10px;
-  border-radius: $radius-sm;
-
-  &.wmInvitePending {
-    @include pill-surface($pill-warning-bg);
-    color: $pill-warning-text-light;
-  }
-
-  &.wmInviteMember {
-    @include pill-surface($pill-success-bg);
-    color: $pill-success-text-light;
-  }
-
-  &.wmInviteSent {
-    @include pill-surface($pill-invite-bg);
-    color: $pill-invite-text-light;
-  }
-}
-
-.loadMore {
-  padding: 8px 20px;
-  background: $selected-bg-light;
-  color: $surface-inverse-text;
-  border: none;
-  border-radius: $radius-sm;
-  font-size: $font-label-size;
-  font-weight: 500;
-  cursor: pointer;
-  transition-property: background-color, opacity;
-  transition-duration: 0.15s;
-  transition-timing-function: ease;
-
-  @media (hover: hover) {
-    &:hover:not(:disabled) {
-      background: $selected-hover-bg-light;
-    }
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-property: opacity;
-  }
-}
-
-.inviteLinkWrap {
-  margin-top: 10px;
-  border-top: 1px solid var(--color-bg-secondary);
-  padding-top: 16px;
-}
-
-.inviteLinkLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: $font-caption-size;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 10px;
-
-  svg {
-    color: var(--color-text-secondary);
-  }
-}
-
-.inviteLinkRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.inviteLinkInput {
-  flex: 1;
-
-  :global(.ant-input) {
-    background: var(--color-bg);
-    color: var(--color-text-secondary);
-    font-size: $font-caption-size;
-    border-radius: 8px;
-  }
-}
-
-.inviteLinkCopy {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  background: $selected-bg-light;
-  color: $surface-inverse-text;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition-property: background-color, opacity;
-  transition-duration: 0.15s;
-  transition-timing-function: ease;
-
-  @media (hover: hover) {
-    &:hover {
-      background: $selected-hover-bg-light;
-    }
-  }
-
-  &:active {
-    opacity: 0.8;
-  }
-}
-
-.inviteLinkHint {
-  margin-top: 10px;
-  font-size: $font-caption-size;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
 }

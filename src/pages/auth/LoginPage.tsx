@@ -1,4 +1,4 @@
-import { Form, Input, Button, App } from "antd";
+import { Form, Input, Button } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import settings from "../../settings.json";
 import type { LoginBodyType } from "../../types/auth.type";
@@ -10,7 +10,6 @@ import { useUserStore } from "../../store/userStore";
 
 export default function LoginPage() {
   const [form] = Form.useForm();
-  const { message } = App.useApp();
   const setUser = useUserStore((state) => state.setUser);
   const setAccessToken = useUserStore((state) => state.setAccessToken);
 
@@ -40,10 +39,9 @@ export default function LoginPage() {
     try {
       setLoading(true);
       const res = await loginMutation.mutateAsync(values);
-      message.success(res.data.message);
       setAccessToken(res.data.data.access_token);
       setUser(res.data.data.user);
-      
+
       navigate("/");
     } catch (error) {
       console.log(error);

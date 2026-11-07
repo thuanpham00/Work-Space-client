@@ -15,7 +15,7 @@ const REPORT_REASONS = [
 ];
 
 const PrivacySection = () => {
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
 
   const [isMuted, setIsMuted] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
@@ -26,32 +26,56 @@ const PrivacySection = () => {
 
   const handleToggleMute = (checked: boolean) => {
     setIsMuted(checked);
-    message.success(checked ? "Đã tắt thông báo đoạn chat" : "Đã bật thông báo đoạn chat");
+    notification.success({
+      message: checked ? "Đã tắt thông báo đoạn chat" : "Đã bật thông báo đoạn chat",
+      placement: "topRight",
+      duration: 6,
+    });
   };
 
   const handleConfirmBlock = () => {
     setIsBlocked(true);
-    message.success("Đã chặn người dùng này");
+    notification.success({
+      message: "Đã chặn người dùng này",
+      placement: "topRight",
+      duration: 6,
+    });
   };
 
   const handleUnblock = () => {
     setIsBlocked(false);
-    message.success("Đã bỏ chặn người dùng");
+    notification.success({
+      message: "Đã bỏ chặn người dùng",
+      placement: "topRight",
+      duration: 6,
+    });
   };
 
   const handleSubmitReport = () => {
     if (!reportReason) {
-      message.warning("Vui lòng chọn lý do báo cáo");
+      notification.warning({
+        message: "Vui lòng chọn lý do báo cáo",
+        placement: "topRight",
+        duration: 6,
+      });
       return;
     }
     setReportModalOpen(false);
     setReportReason("");
     setReportDescription("");
-    message.success("Đã gửi báo cáo. Cảm ơn bạn đã phản hồi");
+    notification.success({
+      message: "Đã gửi báo cáo. Cảm ơn bạn đã phản hồi",
+      placement: "topRight",
+      duration: 6,
+    });
   };
 
   const handleConfirmDelete = () => {
-    message.success("Đã xoá đoạn chat");
+    notification.success({
+      message: "Đã xoá đoạn chat",
+      placement: "topRight",
+      duration: 6,
+    });
   };
 
   return (

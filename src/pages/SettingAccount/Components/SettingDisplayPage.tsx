@@ -15,7 +15,7 @@ const { Option } = Select;
 export default function SettingDisplayPage({ settings }: { settings: Setting }) {
   const [form] = Form.useForm();
   const token = useUserStore((state) => state.accessToken);
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
 
   const handleReset = () => {
     if (!settings) return;
@@ -61,7 +61,11 @@ export default function SettingDisplayPage({ settings }: { settings: Setting }) 
 
     updateSettings.mutate(data, {
       onSuccess: (response) => {
-        message.success("Cập nhật cài đặt thành công");
+        notification.success({
+          message: "Cập nhật cài đặt thành công",
+          placement: "topRight",
+          duration: 6,
+        });
         const updatedSettings = response.data.data.settings;
         queryClient.setQueryData(["settings", token], (old: any) => {
           if (!old) return old;
@@ -72,7 +76,11 @@ export default function SettingDisplayPage({ settings }: { settings: Setting }) 
         });
       },
       onError: () => {
-        message.error("Cập nhật cài đặt thất bại");
+        notification.error({
+          message: "Cập nhật cài đặt thất bại",
+          placement: "topRight",
+          duration: 6,
+        });
       },
     });
   };

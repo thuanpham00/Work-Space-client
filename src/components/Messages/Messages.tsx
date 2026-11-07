@@ -61,6 +61,7 @@ const Messages = forwardRef<HTMLDivElement, Props>(
               const isMe = msg.sender?.id === user?.id;
               const isSameTime = compareMessageTime(msg.createdAt, nextMessage?.createdAt);
               const nickname = msg.sender?.nickname || msg.sender?.displayName;
+              const isNotMessageConfig = msg.messageType === nextMessage?.messageType;
 
               const isMessageConfig = msg.messageType === messageType.CONFIG;
 
@@ -74,7 +75,7 @@ const Messages = forwardRef<HTMLDivElement, Props>(
                 );
               }
 
-              if (isSameUser && isSameTime) {
+              if (isSameUser && isSameTime && isNotMessageConfig) {
                 return (
                   <div key={msg.id} className={styles.messageItemSameUser}>
                     <div className={styles.messageContentWrapper}>

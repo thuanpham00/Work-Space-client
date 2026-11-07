@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Form, Input, App, Modal } from "antd";
+import { Form, Input, Modal } from "antd";
 import React, { useImperativeHandle, useState } from "react";
 import type { Rule } from "antd/es/form";
 import type { ModalStatus } from "../../../../types/utils.type";
@@ -25,7 +25,6 @@ type FormCategory = {
 export const CategoryChannelModal = React.forwardRef(
   ({ onClose, onSubmitOk }: CategoryChannelModalProps, ref) => {
     const [form] = Form.useForm<FormCategory>();
-    const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [visible, setVisible] = useState(false);
     const [status, setStatus] = useState<ModalStatus>("create");
@@ -39,7 +38,6 @@ export const CategoryChannelModal = React.forwardRef(
           setVisible(true);
           setStatus("create");
           setSelectedCategoryChannel(undefined);
-          console.log("handleCreate", workspaceId);
         },
         handleUpdate(CategoryChannel: CategoryChannel) {
           form.setFieldsValue({ ...CategoryChannel });
@@ -70,11 +68,9 @@ export const CategoryChannelModal = React.forwardRef(
         switch (status) {
           case "create":
             await workspaceAPI.createCategory(body);
-            message.success("Thêm chủ đề thành công!");
             break;
           case "update":
             await workspaceAPI.updateCategory(selectedCategoryChannel?.id || "", body);
-            message.success("Cập nhật chủ đề thành công!");
             break;
         }
         onSubmitOk();

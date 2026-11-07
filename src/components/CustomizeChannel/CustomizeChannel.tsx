@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { App } from "antd";
 import type {
   Channel,
   ChannelMemberNickname,
@@ -33,8 +32,6 @@ const CustomizeChannel = ({
   accentDM,
   nickNames,
 }: CustomizationSectionProps) => {
-  const { message } = App.useApp();
-
   const configChannel = useMemo(
     () => ({ backgroundUrl: backgroundUrlDM, accent: accentDM }),
     [backgroundUrlDM, accentDM],
@@ -51,16 +48,10 @@ const CustomizeChannel = ({
 
   const updateSettingsMutation = useMutation({
     mutationFn: (data: ChannelSettingsBody) => channelApi.updateSettings(channelDMDetail.id, data),
-    onSuccess: () => {
-      message.success("Đã cập nhật tuỳ chỉnh đoạn chat");
-    },
   });
 
   const updateNicknamesMutation = useMutation({
     mutationFn: (data: ChannelNicknamesBody) => channelApi.updateNicknames(channelDMDetail.id, data),
-    onSuccess: () => {
-      message.success("Đã cập nhật tuỳ chỉnh đoạn chat");
-    },
   });
 
   const handleThemeChange = (backgroundUrl: string, accent: string) => {

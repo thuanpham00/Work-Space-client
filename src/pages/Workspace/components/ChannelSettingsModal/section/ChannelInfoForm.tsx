@@ -18,7 +18,7 @@ const defaultJoinHelpText =
 
 const ChannelInfoForm = ({ channel, isLoading, onCancel }: ChannelInfoFormProps) => {
   const [form] = Form.useForm<Partial<ChannelBody>>();
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
 
@@ -47,7 +47,11 @@ const ChannelInfoForm = ({ channel, isLoading, onCancel }: ChannelInfoFormProps)
       setLoading(true);
       const values = await form.validateFields();
       await channelApi.update(channel.id, values);
-      message.success("Cập nhật thông tin kênh thành công!");
+      notification.success({
+        message: "Đã cập nhật thông tin kênh",
+        placement: "topRight",
+        duration: 6,
+      });
       queryClient.invalidateQueries({ queryKey: ["channel-detail", channel.id] });
     } catch (error) {
       console.error(error);

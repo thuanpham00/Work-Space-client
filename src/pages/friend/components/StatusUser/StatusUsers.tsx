@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Empty, Input, Tabs, App } from "antd";
+import { Button, Empty, Input, Tabs } from "antd";
 import styles from "./StatusUsers.module.scss";
 import { Check, Loader, Plus, Search, Send, UsersRound, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
@@ -62,8 +62,8 @@ export function FriendStatusRow({
 }: {
   friend: FriendResponse;
   status?: StatusRequest;
-  onAccept?: (friendId: string, name: string) => void;
-  onReject?: (friendId: string, name: string) => void;
+  onAccept?: (friendId: string) => void;
+  onReject?: (friendId: string) => void;
   onUserClick?: (userId: string) => void;
 }) {
   const avatar = friend.avatar || "";
@@ -92,7 +92,7 @@ export function FriendStatusRow({
               icon={<Check size={14} />}
               onClick={(e) => {
                 e.stopPropagation();
-                onAccept?.(friend.id, displayName);
+                onAccept?.(friend.id);
               }}
             >
               Chấp nhận
@@ -102,7 +102,7 @@ export function FriendStatusRow({
               icon={<X size={14} />}
               onClick={(e) => {
                 e.stopPropagation();
-                onReject?.(friend.id, displayName);
+                onReject?.(friend.id);
               }}
             >
               Từ chối
@@ -134,8 +134,8 @@ function FriendStatusPanel({
   isLoading: boolean;
   search: string;
   onSearchChange: (value: string) => void;
-  onAccept?: (friendId: string, name: string) => void;
-  onReject?: (friendId: string, name: string) => void;
+  onAccept?: (friendId: string) => void;
+  onReject?: (friendId: string) => void;
   type: "statusFriends" | "channelFriends";
   onUserClick?: (userId: string) => void;
 }) {
@@ -189,7 +189,6 @@ function FriendStatusPanel({
 }
 
 export default function StatusUsers() {
-  const { message } = App.useApp();
   const [type, setType] = useState<StatusRequest>(StatusRequest.ACCEPTED);
   const [search, setSearch] = useState("");
   const accessToken = useUserStore((state) => state.accessToken);
@@ -254,25 +253,21 @@ export default function StatusUsers() {
     queryClient.invalidateQueries({ queryKey: ["countStatusFriends"] });
   };
 
-  const handleConfirmAccept = async (friendId: string, name: string) => {
+  const handleConfirmAccept = async (friendId: string) => {
     try {
       await acceptedFriend.mutateAsync(friendId);
-      message.success(`Đã đồng ý kết bạn với ${name}`);
       refreshQuery();
     } catch (error) {
       console.error(error);
-      message.error("Có lỗi xảy ra khi đồng ý kết bạn");
     }
   };
 
-  const handleConfirmReject = async (friendId: string, name: string) => {
+  const handleConfirmReject = async (friendId: string) => {
     try {
       await rejectedFriend.mutateAsync(friendId);
-      message.success(`Đã từ chối kết bạn với ${name}`);
       refreshQuery();
     } catch (error) {
       console.error(error);
-      message.error("Có lỗi xảy ra khi từ chối kết bạn");
     }
   };
 

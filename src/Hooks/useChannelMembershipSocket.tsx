@@ -3,7 +3,12 @@ import { App } from "antd";
 import { useQueryClient } from "react-query";
 import { useBaseStore } from "../store/baseStore";
 import { useUserStore } from "../store/userStore";
-import type { ChannelInviteRevokedPayload, ChannelInvitedPayload } from "../types/channel.type";
+import type {
+  ChannelInviteResolvedPayload,
+  ChannelInviteRevokedPayload,
+  ChannelInvitedPayload,
+  ChannelRequestResolvedPayload,
+} from "../types/channel.type";
 
 /**
  * ============================================================================
@@ -40,13 +45,18 @@ export function useChannelMembershipSocket() {
 
     /** Invalidate toàn bộ cache liên quan tới workspace + danh sách workspace */
     const invalidateWorkspace = (workspaceId: string) => {
-      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
       queryClient.invalidateQueries({ queryKey: ["workspaceList", accessToken] });
+      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
       queryClient.invalidateQueries({ queryKey: ["unreadChannel", accessToken] });
     };
 
     const invalidateNotification = () => {
       queryClient.invalidateQueries({ queryKey: ["notificationList", accessToken] }); // nhận thông báo thì gọi server lấy data mới còn khi thao tác trên client thì cập nhật cache lại
+    };
+
+    // ko truyền param vào query key để nó match mọi query có prefix invite
+    const invalidateInvite = () => {
+      queryClient.invalidateQueries({ queryKey: ["invite"] }); // nhận thông báo thì gọi server lấy data mới còn khi thao tác trên client thì cập nhật cache lại
     };
 
     // ========== 1. Được mời vào channel ==========
@@ -60,6 +70,7 @@ export function useChannelMembershipSocket() {
       });
 
       invalidateNotification();
+      invalidateInvite();
     };
 
     // ========== 2. Lời mời bị thu hồi ==========
@@ -67,77 +78,53 @@ export function useChannelMembershipSocket() {
     const handleChannelInviteRevoked = (data: ChannelInviteRevokedPayload) => {
       console.log("handleChannelInviteRevoked", data);
       invalidateNotification();
+      invalidateInvite();
+    };
+
+    // // ========== 4. Lời mời được accept / reject (đồng bộ tab khác) ==========
+    const handleChannelInviteResolved = (data: ChannelInviteResolvedPayload) => {
+      const isAccepted = data.action === "accepted";
+
+      if (data.actorId === currentUserId && isAccepted) {
+        invalidateWorkspace(data.workspaceId as string);
+        invalidateNotification();
+
+        notification.success({
+          message: "Đã tham gia kênh",
+          description: `Bạn đã tham gia kênh ${data.channelName ?? "kênh"}`,
+          placement: "topRight",
+          duration: 6,
+        });
+      }
+      invalidateInvite();
     };
 
     // // ========== 3. Yêu cầu tham gia được duyệt / từ chối ==========
-    // const handleChannelRequestResolved = (data: ChannelRequestResolvedPayload) => {
-    //   const isApproved = data.action === "approved";
+    const handleChannelRequestResolved = (data: ChannelRequestResolvedPayload) => {
+      const isAccepted = data.action === "approved";
 
-    //   notification[isApproved ? "success" : "warning"]({
-    //     message: isApproved ? "Yêu cầu tham gia đã được duyệt" : "Yêu cầu tham gia bị từ chối",
-    //     description: isApproved
-    //       ? `${data.resolvedByName} đã duyệt yêu cầu vào ${data.channelName ?? "kênh"}`
-    //       : `${data.resolvedByName} đã từ chối yêu cầu vào ${data.channelName ?? "kênh"}`,
-    //     placement: "topRight",
-    //     duration: 6,
-    //   });
-
-    //   invalidateChannel(data.channelId);
-    //   if (data.workspaceId) invalidateWorkspace(data.workspaceId);
-
-    //   // Vừa được duyệt → user đã là member → vào thẳng channel để đọc tin.
-    //   // Server có guard isMemberChannel nên an toàn.
-    //   if (isApproved) {
-    //     const currentChannelId = useChannelStore.getState().channelId;
-    //     if (currentChannelId === data.channelId) {
-    //       socket.emit("join_channel", data.channelId);
-    //     }
-    //   }
-    // };
-
-    // // ========== 4. Lời mời được accept / reject (đồng bộ tab khác) ==========
-    // const handleChannelInviteResolved = (data: ChannelInviteResolvedPayload) => {
-    //   // Tab đã bấm nút accept/reject → HTTP response đã hiện toast rồi.
-    //   // Chỉ invalidate cache, KHÔNG hiện toast lần nữa.
-    //   if (data.actorId === currentUserId) {
-    //     invalidateChannel(data.channelId);
-    //     if (data.workspaceId) invalidateWorkspace(data.workspaceId);
-    //     return;
-    //   }
-
-    //   const isAccepted = data.action === "accepted";
-
-    //   notification[isAccepted ? "success" : "info"]({
-    //     message: isAccepted ? "Đã tham gia kênh" : "Đã từ chối lời mời",
-    //     description: isAccepted
-    //       ? `Bạn đã tham gia ${data.channelName ?? "kênh"}`
-    //       : `Bạn đã từ chối lời mời vào ${data.channelName ?? "kênh"}`,
-    //     placement: "topRight",
-    //     duration: 6,
-    //   });
-
-    //   invalidateChannel(data.channelId);
-    //   if (data.workspaceId) invalidateWorkspace(data.workspaceId);
-    // };
-
-    // // ========== 5. Membership workspace đổi → sidebar refresh ==========
-    // const handleWorkspaceUpdated = (data: WorkspaceUpdatedPayload) => {
-    //   invalidateWorkspace(data.workspaceId);
-    //   invalidateChannel(data.channelId);
-    // };
+      if (isAccepted) {
+        invalidateWorkspace(data.workspaceId as string);
+        notification.success({
+          message: isAccepted ? "Yêu cầu tham gia đã được duyệt" : "Yêu cầu tham gia bị từ chối",
+          description: `${data.resolvedByName} đã ${isAccepted ? "duyệt" : "từ chối"} yêu cầu vào ${data.channelName ?? "kênh"}`,
+          placement: "topRight",
+          duration: 6,
+        });
+      }
+      invalidateInvite();
+    };
 
     socket.on("channel_invited", handleChannelInvited);
     socket.on("channel_invite_revoked", handleChannelInviteRevoked);
-    // socket.on("channel_request_resolved", handleChannelRequestResolved);
-    // socket.on("channel_invite_resolved", handleChannelInviteResolved);
-    // socket.on("workspace_updated", handleWorkspaceUpdated);
+    socket.on("channel_invite_resolved", handleChannelInviteResolved);
+    socket.on("channel_request_resolved", handleChannelRequestResolved);
 
     return () => {
       socket.off("channel_invited", handleChannelInvited);
       socket.off("channel_invite_revoked", handleChannelInviteRevoked);
-      // socket.off("channel_request_resolved", handleChannelRequestResolved);
-      // socket.off("channel_invite_resolved", handleChannelInviteResolved);
-      // socket.off("workspace_updated", handleWorkspaceUpdated);
+      socket.off("channel_invite_resolved", handleChannelInviteResolved);
+      socket.off("channel_request_resolved", handleChannelRequestResolved);
     };
   }, [socket, accessToken, currentUserId, notification, queryClient]);
 }

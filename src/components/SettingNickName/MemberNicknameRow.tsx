@@ -12,7 +12,7 @@ interface MemberNicknameRowProps {
 }
 
 export default function MemberNicknameRow({ member, onNicknameChange }: MemberNicknameRowProps) {
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
   const [editOpen, setEditOpen] = useState(false);
   const [draftValue, setDraftValue] = useState("");
 
@@ -28,11 +28,19 @@ export default function MemberNicknameRow({ member, onNicknameChange }: MemberNi
   const handleSaveEdit = () => {
     const trimmed = draftValue.trim();
     if (!trimmed) {
-      message.warning("Biệt danh không được để trống");
+      notification.warning({
+        message: "Biệt danh không được để trống",
+        placement: "topRight",
+        duration: 6,
+      });
       return;
     }
     if (trimmed.length > NICKNAME_MAX_LENGTH) {
-      message.warning(`Biệt danh tối đa ${NICKNAME_MAX_LENGTH} ký tự`);
+      notification.warning({
+        message: `Biệt danh tối đa ${NICKNAME_MAX_LENGTH} ký tự`,
+        placement: "topRight",
+        duration: 6,
+      });
       return;
     }
 

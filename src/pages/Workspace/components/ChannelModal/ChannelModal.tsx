@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Form, Input, App, Modal, Row, Switch } from "antd";
+import { Col, Form, Input, Modal, Row, Switch } from "antd";
 import type { Rule } from "antd/es/form";
 import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useQuery } from "react-query";
@@ -22,7 +22,6 @@ interface ChannelModalProps {
 
 export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelModalProps, ref) => {
   const [form] = Form.useForm<ChannelBody>();
-  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [workspaceId, setWorkspaceId] = useState("");
@@ -77,7 +76,6 @@ export const ChannelModal = React.forwardRef(({ onClose, onSubmitOk }: ChannelMo
       const data = await form.validateFields();
 
       await channelApi.create(data);
-      message.success("Thêm kênh chat thành công!");
       onSubmitOk();
       handleClose();
     } finally {

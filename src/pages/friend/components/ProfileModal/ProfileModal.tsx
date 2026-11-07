@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useMemo, useState } from "react";
-import { Modal, Tabs, Button, App } from "antd";
+import { Modal, Tabs, Button } from "antd";
 import {
   MessageSquare,
   UserPlus,
@@ -78,7 +78,6 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
     const [userId, setUserId] = useState<string>("");
     const navigate = useNavigate();
 
-    const { message } = App.useApp();
     const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
 
     const {
@@ -136,11 +135,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
       try {
         await addFriendMutation.mutateAsync(userId);
-        message.success(`Đã gửi lời mời kết bạn tới ${userData.fullName}`);
         refreshFriendQueries();
       } catch (error) {
         console.log(error);
-        message.error("Có lỗi xảy ra khi gửi lời mời kết bạn");
       }
     };
 
@@ -149,11 +146,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
       try {
         await addFriendMutation.mutateAsync(userId);
-        message.success(`Đã hủy lời mời tới ${userData.fullName}`);
         refreshFriendQueries();
       } catch (error) {
         console.log(error);
-        message.error("Có lỗi xảy ra khi hủy lời mời");
       }
     };
 
@@ -162,11 +157,9 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
       try {
         await acceptFriendMutation.mutateAsync(userId);
-        message.success(`Đã đồng ý kết bạn với ${userData.fullName}`);
         refreshFriendQueries();
       } catch (error) {
         console.log(error);
-        message.error("Có lỗi xảy ra khi đồng ý kết bạn");
       }
     };
 
@@ -175,26 +168,18 @@ export const ProfileModal = React.forwardRef<ProfileModalRef, ProfileModalProps>
 
       try {
         await rejectFriendMutation.mutateAsync(userId);
-        message.success(`Đã từ chối kết bạn với ${userData.fullName}`);
         refreshFriendQueries();
       } catch (error) {
         console.log(error);
-        message.error("Có lỗi xảy ra khi từ chối kết bạn");
       }
     };
 
     const handleOpenMessage = async () => {
       if (!userId) return;
 
-      try {
-        chooseChannelFriend(channelId, channelName, modeListFriend.chat);
-        handleClose();
-        navigate(`/friends`);
-        console.log("navigate", navigate);
-      } catch (error) {
-        console.log(error);
-        message.error("Không thể mở cuộc trò chuyện");
-      }
+      chooseChannelFriend(channelId, channelName, modeListFriend.chat);
+      handleClose();
+      navigate(`/friends`);
     };
 
     const bannerStyle = useMemo(() => {

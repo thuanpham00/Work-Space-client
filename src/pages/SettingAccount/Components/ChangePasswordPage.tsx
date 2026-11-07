@@ -13,7 +13,7 @@ interface ChangePasswordValues {
 
 export default function ChangePasswordPage() {
   const [form] = Form.useForm();
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
 
   const changePassword = useMutation({
     mutationFn: (data: ChangePasswordBodyType) => userAPI.changePassword(data),
@@ -27,7 +27,11 @@ export default function ChangePasswordPage() {
     };
     changePassword.mutate(data, {
       onSuccess: () => {
-        message.success("Đổi mật khẩu thành công");
+        notification.success({
+          message: "Đã đổi mật khẩu",
+          placement: "topRight",
+          duration: 6,
+        });
         form.resetFields();
       },
     });

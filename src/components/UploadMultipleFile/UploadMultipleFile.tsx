@@ -29,7 +29,7 @@ const getBase64 = (file: FileType): Promise<string> =>
 const UploadMultipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Props, ref) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
 
   const [channelId, setChannelId] = useState<string>("");
 
@@ -70,8 +70,10 @@ const UploadMultipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Prop
     const selectedFiles = Array.from(files);
 
     if (fileList.length + selectedFiles.length > 4) {
-      message.error({
-        content: "Vượt quá giới hạn 4 files",
+      notification.error({
+        message: "Vượt quá giới hạn 4 files",
+        placement: "topRight",
+        duration: 6,
       });
       return;
     }

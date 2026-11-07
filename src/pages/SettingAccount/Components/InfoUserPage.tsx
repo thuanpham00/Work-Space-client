@@ -27,7 +27,7 @@ import { useUserStore } from "../../../store/userStore";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
   const token = useUserStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
@@ -75,7 +75,11 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
 
     updateUser.mutate(data, {
       onSuccess: (response) => {
-        message.success("Cập nhật thông tin thành công");
+        notification.success({
+          message: "Đã cập nhật thông tin",
+          placement: "topRight",
+          duration: 6,
+        });
 
         const updatedUser = response.data.data.user;
         queryClient.setQueryData<SuccessResponse<{ user: UserType }>>(["me", token], (old: any) => {
@@ -90,7 +94,11 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
         });
       },
       onError: () => {
-        message.error("Cập nhật thông tin thất bại");
+        notification.error({
+          message: "Cập nhật thông tin thất bại",
+          placement: "topRight",
+          duration: 6,
+        });
       },
     });
   };
@@ -114,11 +122,19 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
   const beforeUpload = (file: FileType) => {
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
-      message.error("Chỉ chấp nhận file JPG/PNG!");
+      notification.error({
+        message: "Chỉ chấp nhận file JPG/PNG!",
+        placement: "topRight",
+        duration: 6,
+      });
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      message.error("Ảnh phải nhỏ hơn 2MB!");
+      notification.error({
+        message: "Ảnh phải nhỏ hơn 2MB!",
+        placement: "topRight",
+        duration: 6,
+      });
     }
     return isJpgOrPng && isLt2M;
   };
@@ -137,7 +153,11 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
       }
     } else if (info.file.status === "error") {
       setLoading(false);
-      message.error("Upload ảnh thất bại");
+      notification.error({
+        message: "Upload ảnh thất bại",
+        placement: "topRight",
+        duration: 6,
+      });
     }
   };
 

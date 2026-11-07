@@ -1,4 +1,4 @@
-import { Form, Input, Button, App, Select } from "antd";
+import { Form, Input, Button, Select } from "antd";
 import { useNavigate } from "react-router-dom";
 import { path } from "../../utils/path";
 import styles from "./auth.module.scss";
@@ -13,7 +13,6 @@ const PHONE_VN_REGEX = /^(0\d{9}|84\d{9})$/;
 
 export default function RegisterPage() {
   const [form] = Form.useForm();
-  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -26,8 +25,8 @@ export default function RegisterPage() {
   const handleSubmit = async (values: RegisterBodyType) => {
     try {
       setLoading(true);
-      const res = await registerMutation.mutateAsync(values);
-      message.success(res.data.message);
+      await registerMutation.mutateAsync(values);
+
       form.resetFields();
       navigate(path.login, {
         state: {
@@ -94,11 +93,7 @@ export default function RegisterPage() {
           >
             <Input.Password placeholder="Mật khẩu của bạn" />
           </Form.Item>
-          <Form.Item
-            name="fullName"
-            label="Tên đầy đủ"
-            rules={[{ max: 50, message: "Tên tối đa 50 ký tự" }]}
-          >
+          <Form.Item name="fullName" label="Tên đầy đủ" rules={[{ max: 50, message: "Tên tối đa 50 ký tự" }]}>
             <Input type="text" placeholder="Tên đầy đủ của bạn" />
           </Form.Item>
           <Form.Item

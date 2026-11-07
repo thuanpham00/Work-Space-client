@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { App, Button } from "antd";
+import { Button } from "antd";
 import { Check, Hash, UserPlus, X } from "lucide-react";
 import { channelInviteApi } from "../../apis/channelInvite.api";
 import AvatarFallback from "../../components/AvatarFallback/AvatarFallback";
@@ -11,7 +11,6 @@ import { WorkspaceMemberStatus } from "../../types/workspace.type";
 
 export default function InvitePage() {
   const { token } = useParams<{ token: string }>();
-  const { message } = App.useApp();
 
   const {
     data: dataInvite,
@@ -48,7 +47,6 @@ export default function InvitePage() {
     if (!dataChannel) return;
     try {
       await requestWorkspaceMutation.mutateAsync(dataChannel.id);
-      message.success("Yêu cầu tham gia channel đã được gửi");
       refetch();
     } catch (error) {
       console.error(error);
@@ -59,7 +57,6 @@ export default function InvitePage() {
     if (!dataChannel) return;
     try {
       await cancelRequestMutation.mutateAsync(dataChannel.id);
-      message.success("Đã hủy yêu cầu tham gia channel");
       refetch();
     } catch (error) {
       console.error(error);
@@ -70,7 +67,6 @@ export default function InvitePage() {
     if (!dataChannel) return;
     try {
       await acceptInviteMutation.mutateAsync(dataChannel.id);
-      message.success("Chấp nhận lời mời thành công");
       refetch();
     } catch (error) {
       console.error(error);
@@ -81,7 +77,6 @@ export default function InvitePage() {
     if (!dataChannel) return;
     try {
       await rejectInviteMutation.mutateAsync(dataChannel.id);
-      message.success("Đã từ chối lời mời");
       refetch();
     } catch (error) {
       console.error(error);
@@ -139,7 +134,7 @@ export default function InvitePage() {
 
       case WorkspaceMemberStatus.LEFT:
       case WorkspaceMemberStatus.CANCELED:
-      case null: 
+      case null:
         return (
           <Button
             type="primary"

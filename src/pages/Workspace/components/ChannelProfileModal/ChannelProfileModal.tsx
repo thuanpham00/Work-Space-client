@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useMemo, useState } from "react";
-import { Modal, Button, App } from "antd";
+import { Modal, Button } from "antd";
 import { X, Calendar, User, Users, UserPlus, MessageSquare, Check } from "lucide-react";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
 import { formatDateString } from "../../../../utils/utils";
@@ -23,8 +23,6 @@ interface ChannelProfileModalProps {
 
 export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, ChannelProfileModalProps>(
   ({ backgroundUrlDM, accentDM, onChannelChange }, ref) => {
-    const { message } = App.useApp();
-
     const navigate = useNavigate();
 
     const [visible, setVisible] = useState(false);
@@ -121,7 +119,6 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       if (!channelId) return;
       try {
         await requestWorkspaceMutation.mutateAsync(channelId);
-        message.success("Yêu cầu tham gia channel đã được gửi");
         refreshChannelQueries();
       } catch (error) {
         console.error(error);
@@ -132,7 +129,6 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       if (!channelId) return;
       try {
         await cancelRequestMutation.mutateAsync(channelId);
-        message.success("Đã hủy yêu cầu tham gia channel");
         refreshChannelQueries();
       } catch (error) {
         console.error(error);
@@ -143,7 +139,6 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       if (!channelId) return;
       try {
         await acceptInviteMutation.mutateAsync(channelId);
-        message.success("Chấp nhận lời mời thành công");
         refetch();
       } catch (error) {
         console.error(error);
@@ -154,7 +149,6 @@ export const ChannelProfileModal = React.forwardRef<ChannelProfileModalRef, Chan
       if (!channelId) return;
       try {
         await rejectInviteMutation.mutateAsync(channelId);
-        message.success("Đã từ chối lời mời");
         refetch();
       } catch (error) {
         console.error(error);

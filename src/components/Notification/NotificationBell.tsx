@@ -8,11 +8,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/vi";
 import styles from "./NotificationBell.module.scss";
 import AvatarFallback from "../AvatarFallback/AvatarFallback";
-import type { NotificationItem } from "../../types/notification.type";
+import { NotificationType, type NotificationItem } from "../../types/notification.type";
 import { notificationApi } from "../../apis/notification.api";
 import { useUserStore } from "../../store/userStore";
 import { LIMIT, PAGE } from "../../constants/config";
 import { useBaseStore } from "../../store/baseStore";
+import { useNavigate } from "react-router-dom";
 
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
@@ -20,6 +21,7 @@ dayjs.locale("vi");
 export default function NotificationBell() {
   const token = useUserStore((state) => state.accessToken);
   const socket = useBaseStore((state) => state.socket);
+  const navigate = useNavigate();
 
   const [query, setQuery] = useState<{ limit: number; page: number }>({
     limit: LIMIT,
@@ -62,8 +64,16 @@ export default function NotificationBell() {
   };
 
   const handleMarkAsRead = (item: NotificationItem) => {
-    if (item.isRead) return;
-    markAsReadMutation.mutate(item.id);
+    if (!item.isRead) {
+      markAsReadMutation.mutate(item.id);
+    }
+
+    if (item.type === NotificationType.CHANNEL_INVITED) {
+      const inviteToken = item.metadata?.inviteToken as string | undefined;
+      if (inviteToken) {
+        navigate(`/invite/${inviteToken}`);
+      }
+    }
   };
 
   const handleMarkAllAsRead = () => {

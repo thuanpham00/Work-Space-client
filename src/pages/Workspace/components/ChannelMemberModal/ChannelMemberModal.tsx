@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { App, Button, Empty, Input, Modal, Spin, Tabs } from "antd";
-import { Check, Clock, Copy, Link as LinkIcon, Search, UserPlus, X } from "lucide-react";
+import { Check, Clock, Copy, Link as LinkIcon, Search, UserPlus, UserRoundPlus, X } from "lucide-react";
 import styles from "./ChannelMemberModal.module.scss";
 import type { QueryBase } from "../../../../types/query.type";
 import AvatarFallback from "../../../../components/AvatarFallback/AvatarFallback";
@@ -31,22 +31,22 @@ const MemberItem = ({
   channelId: string;
   onInvited: () => void;
 }) => {
+  const queryClient = useQueryClient();
   const displayName = member.fullName || member.username || "Người dùng";
-  const { message } = App.useApp();
 
   const inviteMutation = useMutation({
     mutationFn: () => channelApi.inviteUserToChannel(channelId, { userId: member.id }),
     onSuccess: () => {
-      message.success(`Đã gửi lời mời tới ${displayName}`);
       onInvited();
+      queryClient.invalidateQueries({ queryKey: ["ChannelRequestList", channelId] });
     },
   });
 
   const revokeInviteMutation = useMutation({
     mutationFn: () => channelApi.revokeInvite(channelId, member.id),
     onSuccess: () => {
-      message.success(`Đã hủy lời mời tới ${displayName}`);
       onInvited();
+      queryClient.invalidateQueries({ queryKey: ["ChannelRequestList", channelId] });
     },
   });
 
@@ -96,7 +96,7 @@ const MemberItem = ({
 
   return (
     <div className={styles.wmMemberItem}>
-      <AvatarFallback src={member.avatar} alt={displayName} size={40} showStatus={false} />
+      <AvatarFallback src={member.avatar} alt={displayName} size={36} showStatus={false} />
       <div className={styles.wmMemberInfo}>
         <div className={styles.wmMemberName}>{displayName}</div>
         <div className={styles.wmMemberEmail}>@{member.username}</div>
@@ -108,14 +108,17 @@ const MemberItem = ({
 };
 
 const InviteLinkSection = ({ link, expiresAt }: { link: string; expiresAt: string | null }) => {
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
   const handleCopyInviteLink = async () => {
     try {
       await navigator.clipboard.writeText(link);
-      message.success("Đã sao chép link mời");
+      notification.success({
+        message: "Đã sao chép link mời",
+        placement: "topRight",
+        duration: 6,
+      });
     } catch (error) {
       console.error("Copy failed", error);
-      message.error("Lỗi khi sao chép link mời");
     }
   };
 
@@ -150,7 +153,7 @@ const InviteRequestItem = ({ request }: { request: ChannelRequestItem }) => {
 
   return (
     <div className={styles.wmMemberItem}>
-      <AvatarFallback src={request.avatar} alt={displayName} size={40} showStatus={false} />
+      <AvatarFallback src={request.avatar} alt={displayName} size={36} showStatus={false} />
       <div className={styles.wmMemberInfo}>
         <div className={styles.wmMemberName}>{displayName}</div>
         <div className={styles.wmMemberEmail}>
@@ -176,12 +179,10 @@ const JoinRequestItem = ({
   onResolved: () => void;
 }) => {
   const displayName = request.fullName || request.username;
-  const { message } = App.useApp();
 
   const approveMutation = useMutation({
     mutationFn: () => channelApi.approveJoinRequest(channelId, request.userId),
     onSuccess: () => {
-      message.success(`Đã duyệt yêu cầu của ${displayName}`);
       onResolved();
     },
   });
@@ -189,7 +190,6 @@ const JoinRequestItem = ({
   const rejectMutation = useMutation({
     mutationFn: () => channelApi.rejectJoinRequest(channelId, request.userId),
     onSuccess: () => {
-      message.success(`Đã từ chối yêu cầu của ${displayName}`);
       onResolved();
     },
   });
@@ -198,7 +198,7 @@ const JoinRequestItem = ({
 
   return (
     <div className={styles.wmMemberItem}>
-      <AvatarFallback src={request.avatar} alt={displayName} size={40} showStatus={false} />
+      <AvatarFallback src={request.avatar} alt={displayName} size={36} showStatus={false} />
       <div className={styles.wmMemberInfo}>
         <div className={styles.wmMemberName}>{displayName}</div>
         <div className={styles.wmMemberEmail}>
@@ -341,11 +341,18 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
       ? [
           {
             key: "invite",
-            label: `Mời bạn bè`,
+            label: "Mời bạn bè",
           },
           {
             key: "pending",
-            label: `Lời duyệt`,
+            label: (
+              <span className={styles.wmTabLabel}>
+                Lời duyệt
+                {sortedChannelRequests.length > 0 && (
+                  <span className={styles.wmTabBadge}>{sortedChannelRequests.length}</span>
+                )}
+              </span>
+            ),
           },
         ]
       : []),
@@ -356,7 +363,7 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
       <Modal
         open={open}
         onCancel={() => setOpen(false)}
-        width={450}
+        width={480}
         className={styles.wmModal}
         centered
         mask={{ closable: false }}
@@ -364,8 +371,12 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
       >
         <div className={styles.wmHeader}>
           <div className={styles.wmHeaderLeft}>
+            <div className={styles.wmHeaderIcon}>
+              <UserRoundPlus size={20} />
+            </div>
             <div className={styles.wmHeaderInfo}>
               <div className={styles.wmHeaderTitle}>Mời bạn bè vào kênh {channelName}</div>
+              <div className={styles.wmHeaderSubtitle}>Chia sẻ kênh với bạn bè của bạn</div>
             </div>
           </div>
         </div>
@@ -422,7 +433,11 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
                 </>
               ) : (
                 <>
-                  <Empty description="Không tìm thấy bạn bè nào" style={{ marginTop: 48 }} />
+                  <Empty
+                    description="Không tìm thấy bạn bè nào"
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    className={styles.wmEmpty}
+                  />
                   <InviteLinkSection link={linkInvite} expiresAt={expiresAt} />
                 </>
               )}
@@ -436,7 +451,11 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
                   <Spin />
                 </div>
               ) : sortedChannelRequests.length === 0 ? (
-                <Empty description="Không có yêu cầu nào đang chờ" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                <Empty
+                  description="Không có yêu cầu nào đang chờ"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  className={styles.wmEmpty}
+                />
               ) : (
                 sortedChannelRequests.map((request) => {
                   if (request.type === "invite") {
