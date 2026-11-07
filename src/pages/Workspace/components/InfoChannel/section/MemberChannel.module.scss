@@ -1,14 +1,27 @@
 @use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
 
 .memberList {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   gap: 2px;
+}
+
+// Vùng cuộn danh sách thành viên, chiếm chiều cao còn lại
+.memberScrollArea {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  @include custom-scrollbar;
 }
 
 .memberItem {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 12px;
   padding: 6px 4px;
   border-radius: $radius-sm;
@@ -92,6 +105,7 @@
 .addMemberBtn {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 12px;
   width: 100%;
   margin-top: 4px;

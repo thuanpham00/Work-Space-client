@@ -52,37 +52,39 @@ export default function MemberChannel({ members }: MemberChannelProps) {
   }, []);
 
   return (
-    <CollapsibleSection title="Thành viên trong kênh" defaultOpen>
+    <CollapsibleSection title="Thành viên trong kênh" defaultOpen fill>
       <div className={styles.memberList}>
-        {members.map((member) => (
-          <div key={member.userId} className={styles.memberItem}>
-            <AvatarFallback
-              src={member.avatar}
-              alt={member.fullName}
-              size={32}
-              // status={member.status as StatusUser}
-              showStatus={false}
-            />
+        <div className={styles.memberScrollArea}>
+          {members.map((member) => (
+            <div key={member.userId} className={styles.memberItem}>
+              <AvatarFallback
+                src={member.avatar}
+                alt={member.fullName}
+                size={32}
+                // status={member.status as StatusUser}
+                showStatus={false}
+              />
 
-            <div className={styles.memberInfo}>
-              <span className={styles.memberName}>{member.fullName}</span>
-              <span className={styles.memberDesc}>
-                {member.role === ChannelMemberRole.ADMIN ? "Người tạo kênh" : "Thành viên"}
-              </span>
+              <div className={styles.memberInfo}>
+                <span className={styles.memberName}>{member.fullName}</span>
+                <span className={styles.memberDesc}>
+                  {member.role === ChannelMemberRole.ADMIN ? "Người tạo kênh" : "Thành viên"}
+                </span>
+              </div>
+
+              <Dropdown menu={{ items: getMemberMenuItems(member) }} trigger={["click"]} placement="leftTop">
+                <button
+                  type="button"
+                  className={styles.menuBtn}
+                  title="Tuỳ chọn"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal size={18} />
+                </button>
+              </Dropdown>
             </div>
-
-            <Dropdown menu={{ items: getMemberMenuItems(member) }} trigger={["click"]} placement="leftTop">
-              <button
-                type="button"
-                className={styles.menuBtn}
-                title="Tuỳ chọn"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal size={18} />
-              </button>
-            </Dropdown>
-          </div>
-        ))}
+          ))}
+        </div>
 
         <button type="button" className={styles.addMemberBtn} onClick={handleAddMember}>
           <UserPlus size={18} />

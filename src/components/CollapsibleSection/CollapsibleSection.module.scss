@@ -3,10 +3,20 @@
 .sectionBlock {
   padding: 12px;
   border-bottom: 1px solid var(--color-bg-secondary, #2a2a2a);
+  flex-shrink: 0;
 }
 
 .sectionBlock:last-child {
   border-bottom: none;
+}
+
+// Section chiếm phần chiều cao còn lại của container cha
+.sectionBlockFill {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sectionHeaderRow {
@@ -53,4 +63,18 @@
 
 .collapsibleOpen {
   grid-template-rows: 1fr;
+}
+
+// Khi section chiếm hết chiều cao còn lại: phần collapsible co giãn theo,
+// và vùng bên trong trở thành flex column để con có thể scroll
+.collapsibleFill {
+  flex: 1;
+  min-height: 0;
+
+  > .collapsibleInner {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
 }

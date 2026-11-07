@@ -81,7 +81,7 @@ export function useChannelMembershipSocket() {
       invalidateInvite();
     };
 
-    // // ========== 4. Lời mời được accept / reject (đồng bộ tab khác) ==========
+    // // ========== 3. Lời mời được accept / reject (đồng bộ tab khác) ==========
     const handleChannelInviteResolved = (data: ChannelInviteResolvedPayload) => {
       const isAccepted = data.action === "accepted";
 
@@ -99,12 +99,14 @@ export function useChannelMembershipSocket() {
       invalidateInvite();
     };
 
-    // // ========== 3. Yêu cầu tham gia được duyệt / từ chối ==========
+    // // ========== 4. Yêu cầu tham gia được duyệt / từ chối ==========
     const handleChannelRequestResolved = (data: ChannelRequestResolvedPayload) => {
       const isAccepted = data.action === "approved";
 
       if (isAccepted) {
         invalidateWorkspace(data.workspaceId as string);
+        invalidateNotification();
+
         notification.success({
           message: isAccepted ? "Yêu cầu tham gia đã được duyệt" : "Yêu cầu tham gia bị từ chối",
           description: `${data.resolvedByName} đã ${isAccepted ? "duyệt" : "từ chối"} yêu cầu vào ${data.channelName ?? "kênh"}`,
