@@ -204,3 +204,18 @@ export type WorkspaceUpdatedPayload = {
   channelId: string;
   reason: "joined" | "left";
 };
+
+export interface ChannelRequestSentPayload extends ChannelEventBase {
+  type: "join";
+  status: "PENDING_REQUEST";
+  action: "requested";
+  actorId: string;
+}
+
+/** User vừa hủy yêu cầu tham gia channel (đồng bộ các tab/thiết bị khác) */
+export interface ChannelRequestCancelledPayload extends ChannelEventBase {
+  type: "join";
+  status: "CANCELED";
+  action: "cancelled";
+  actorId: string;
+}

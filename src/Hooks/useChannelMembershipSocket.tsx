@@ -7,7 +7,9 @@ import type {
   ChannelInviteResolvedPayload,
   ChannelInviteRevokedPayload,
   ChannelInvitedPayload,
+  ChannelRequestCancelledPayload,
   ChannelRequestResolvedPayload,
+  ChannelRequestSentPayload,
 } from "../types/channel.type";
 
 /**
@@ -64,7 +66,7 @@ export function useChannelMembershipSocket() {
     const handleChannelInvited = (data: ChannelInvitedPayload) => {
       notification.info({
         message: "Bạn được mời vào kênh",
-        description: `${data.invitedByName} đã mời bạn vào ${data.channelName ?? "kênh"}`,
+        description: `${data.invitedByName} đã mời bạn vào ${data.channelName ?? "kênh chat"}`,
         placement: "topRight",
         duration: 6,
       });
@@ -81,7 +83,26 @@ export function useChannelMembershipSocket() {
       invalidateInvite();
     };
 
-    // // ========== 3. Lời mời được accept / reject (đồng bộ tab khác) ==========
+    // ========== 3. Yêu cầu tham gia được gửi ==========
+    const handleChannelRequestSent = (data: ChannelRequestSentPayload) => {
+      notification.info({
+        message: "Yêu cầu tham gia được gửi",
+        description: `Bạn đã gửi yêu cầu tham gia ${data.channelName ?? "kênh chat"}`,
+        placement: "topRight",
+        duration: 6,
+      });
+      invalidateNotification();
+      invalidateInvite();
+    };
+
+    // ========== 4. Yêu cầu tham gia bị hủy ==========
+    const handleChannelRequestCancelled = (data: ChannelRequestCancelledPayload) => {
+      console.log("handleChannelRequestCancelled", data);
+      invalidateNotification();
+      invalidateInvite();
+    };
+
+    // // ========== 5. Lời mời được accept / reject (đồng bộ tab khác) ==========
     const handleChannelInviteResolved = (data: ChannelInviteResolvedPayload) => {
       const isAccepted = data.action === "accepted";
 
@@ -91,7 +112,7 @@ export function useChannelMembershipSocket() {
 
         notification.success({
           message: "Đã tham gia kênh",
-          description: `Bạn đã tham gia kênh ${data.channelName ?? "kênh"}`,
+          description: `Bạn đã tham gia kênh ${data.channelName ?? "kênh chat"}`,
           placement: "topRight",
           duration: 6,
         });
@@ -99,32 +120,36 @@ export function useChannelMembershipSocket() {
       invalidateInvite();
     };
 
-    // // ========== 4. Yêu cầu tham gia được duyệt / từ chối ==========
+    // // ========== 6. Yêu cầu tham gia được duyệt / từ chối ==========
     const handleChannelRequestResolved = (data: ChannelRequestResolvedPayload) => {
       const isAccepted = data.action === "approved";
 
       if (isAccepted) {
         invalidateWorkspace(data.workspaceId as string);
-        invalidateNotification();
-
-        notification.success({
-          message: isAccepted ? "Yêu cầu tham gia đã được duyệt" : "Yêu cầu tham gia bị từ chối",
-          description: `${data.resolvedByName} đã ${isAccepted ? "duyệt" : "từ chối"} yêu cầu vào ${data.channelName ?? "kênh"}`,
-          placement: "topRight",
-          duration: 6,
-        });
       }
+      invalidateNotification();
+      notification[isAccepted ? "success" : "error"]({
+        message: isAccepted ? "Yêu cầu tham gia đã được duyệt" : "Yêu cầu tham gia bị từ chối",
+        description: `${data.resolvedByName} đã ${isAccepted ? "duyệt" : "từ chối"} yêu cầu vào ${data.channelName ?? "kênh chat"}`,
+        placement: "topRight",
+        duration: 6,
+      });
       invalidateInvite();
     };
 
-    socket.on("channel_invited", handleChannelInvited);
-    socket.on("channel_invite_revoked", handleChannelInviteRevoked);
-    socket.on("channel_invite_resolved", handleChannelInviteResolved);
-    socket.on("channel_request_resolved", handleChannelRequestResolved);
+    socket.on("channel_invited", handleChannelInvited); // lời mời vào kênh
+    socket.on("channel_invite_revoked", handleChannelInviteRevoked); // lời mời bị thu hồi
+    socket.on("channel_request_sent", handleChannelRequestSent); // yêu cầu tham gia được gửi
+    socket.on("channel_request_cancelled", handleChannelRequestCancelled); // yêu cầu tham gia bị hủy
+
+    socket.on("channel_invite_resolved", handleChannelInviteResolved); // lời mời được accept / reject (đồng bộ tab khác)
+    socket.on("channel_request_resolved", handleChannelRequestResolved); // yêu cầu tham gia được duyệt / từ chối
 
     return () => {
       socket.off("channel_invited", handleChannelInvited);
       socket.off("channel_invite_revoked", handleChannelInviteRevoked);
+      socket.off("channel_request_sent", handleChannelRequestSent);
+      socket.off("channel_request_cancelled", handleChannelRequestCancelled);
       socket.off("channel_invite_resolved", handleChannelInviteResolved);
       socket.off("channel_request_resolved", handleChannelRequestResolved);
     };

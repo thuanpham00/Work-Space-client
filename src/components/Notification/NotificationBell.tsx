@@ -68,7 +68,13 @@ export default function NotificationBell() {
       markAsReadMutation.mutate(item.id);
     }
 
-    if (item.type === NotificationType.CHANNEL_INVITED) {
+    if (
+      item.type === NotificationType.CHANNEL_INVITED ||
+      item.type === NotificationType.CHANNEL_INVITE_ACCEPTED ||
+      item.type === NotificationType.CHANNEL_REQUEST_SENT ||
+      item.type === NotificationType.CHANNEL_REQUEST_APPROVED ||
+      item.type === NotificationType.CHANNEL_REQUEST_REJECTED
+    ) {
       const inviteToken = item.metadata?.inviteToken as string | undefined;
       if (inviteToken) {
         navigate(`/invite/${inviteToken}`);
