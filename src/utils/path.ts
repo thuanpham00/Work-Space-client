@@ -1,6 +1,6 @@
 export const path = {
   search: "/search",
-  orgin: "/",
+  origin: "/",
   login: "/login",
   register: "/register",
 

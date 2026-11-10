@@ -26,7 +26,8 @@ export default function useScrollMessage() {
     queryKey: ["messageChannel", channelId, query, token],
     queryFn: () => channelApi.getMessagesChannel(channelId as string, query),
     enabled: Boolean(channelId) && Boolean(token),
-    staleTime: 60 * 1000 * 1,
+    staleTime: 5 * 1000, // 5 seconds
+    keepPreviousData: true,
   });
 
   const conversationListData = dataMessage?.data?.data?.messages as Message[];

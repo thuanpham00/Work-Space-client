@@ -1,107 +1,23 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/immutability */
 import { useEffect } from "react";
 import AppProvider from "./providers/AppProvider";
 import useRouter from "./routes/useRouter";
 import { generateSocket } from "./utils/utils";
 import { useUserStore } from "./store/userStore";
 import { useBaseStore } from "./store/baseStore";
-import { socketApi } from "./apis/socket.api";
-import { useChannelStore } from "./store/channelStore";
-import { useNavigate } from "react-router-dom";
-import { httpRaw } from "./utils/http";
-import { message } from "antd";
 
 const App = () => {
   const router = useRouter();
   const accessToken = useUserStore((app) => app.accessToken);
-  const setAccessToken = useUserStore((app) => app.setAccessToken);
-
-  const resetBaseStore = useBaseStore((state) => state.reset);
-  const resetUserStore = useUserStore((state) => state.reset);
-  const resetChannelStore = useChannelStore((state) => state.reset);
 
   const socket = useBaseStore((app) => app.socket);
   const setSocket = useBaseStore((app) => app.setSocket);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!accessToken || socket) return;
 
     const newSocket = generateSocket(accessToken);
     setSocket(newSocket);
-  }, [accessToken, socket]);
-
-  useEffect(() => {
-    if (!socket || !accessToken) return;
-
-    socket.auth = {
-      ...socket.auth,
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    if (!socket.connected) {
-      socket.connect(); // chủ động kết nối
-    }
-
-    // Cứ 30s client emit('heartbeat') → server nhận được → gọi ZADD với timestamp mới + EXPIRE reset về 120s → giữ user được coi là online trong Redis.
-    const heartbeatInterval = setInterval(() => {
-      socket.emit("heartbeat");
-    }, 30_000);
-
-    return () => {
-      clearInterval(heartbeatInterval);
-      socket.disconnect();
-    };
-  }, [socket, accessToken]);
-
-  // xử lý 2 sự kiện refreshToken và error (do refreshToken hết hạn)
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleTokenRefresh = async (payload: { accessToken: string; refreshToken: string }) => {
-      setAccessToken(payload.accessToken);
-
-      socket.auth = {
-        ...socket.auth,
-        Authorization: `Bearer ${payload.accessToken}`,
-      };
-      httpRaw.setToken(payload.accessToken);
-      // đồng bộ RT cookie thông qua http vì socketIo ko set cookie được
-      await socketApi.syncRefreshToken(payload.refreshToken);
-
-      socket.disconnect();
-      socket.connect();
-    };
-
-    const handleAuthError = async (payload: {
-      message: string;
-      code?: number;
-      type?: string;
-      refreshToken?: string;
-    }) => {
-      // RT hết hạn/không hợp lệ → logout
-      if (payload.type === "refresh_token_expired") {
-        resetBaseStore();
-        resetUserStore();
-        resetChannelStore();
-
-        // đồng bộ RT khỏi DB
-        await socketApi.syncRemoveRefreshToken(payload.refreshToken as string);
-        message.error("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-        navigate("/login");
-      }
-    };
-
-    socket.on("token_refresh", handleTokenRefresh);
-    socket.on("auth_error", handleAuthError);
-
-    return () => {
-      socket.off("token_refresh", handleTokenRefresh);
-      socket.off("auth_error", handleAuthError);
-    };
-  }, [socket, setAccessToken, resetBaseStore, resetUserStore, resetChannelStore, navigate]);
+  }, [accessToken, socket, setSocket]);
 
   return <AppProvider>{router}</AppProvider>;
 };

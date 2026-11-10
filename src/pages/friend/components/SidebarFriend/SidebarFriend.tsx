@@ -10,8 +10,9 @@ import FriendCard from "../../../../components/FriendCard/FriendCard";
 import { StatusRequest } from "../../../../types/user.type";
 import type { LastMessageType } from "../../../../types/message.type";
 import Loading from "../../../../components/Loading/Loading";
+import { useUnreadStore } from "../../../../store/unreadStore";
 
-const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse }) => {
+const FriendItem = ({ channelFriend, unreadCount }: { channelFriend: FriendDMChannelResponse, unreadCount: number }) => {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
   const channelId = useChannelStore((app) => app.channelId);
 
@@ -19,6 +20,7 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
   const avatar = channelFriend.friend.avatar || "";
   const status = channelFriend.friend.status as StatusUser;
   const lastMessage = channelFriend.lastMessage as LastMessageType;
+  const hasCount = unreadCount > 0;
 
   return (
     <button
@@ -35,6 +37,8 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
         selectedChannel={channelId}
         channelId={channelFriend.channelId}
         lastMessage={lastMessage}
+        hasCount={hasCount}
+        unreadCount={unreadCount}
       />
     </button>
   );
@@ -42,6 +46,7 @@ const FriendItem = ({ channelFriend }: { channelFriend: FriendDMChannelResponse 
 
 export default function SidebarFriend() {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
+  const byChannelId = useUnreadStore((app) => app.byChannelId);
   const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
 
@@ -82,9 +87,16 @@ export default function SidebarFriend() {
         ) : channelsFriends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
         ) : (
-          channelsFriends.map((channelFriend) => (
-            <FriendItem key={channelFriend.channelId} channelFriend={channelFriend} />
-          ))
+          channelsFriends.map((channelFriend) => {
+            const unreadCount = byChannelId.get(channelFriend.channelId)?.count ?? 0;
+            return (
+              <FriendItem
+                key={channelFriend.channelId}
+                channelFriend={channelFriend}
+                unreadCount={unreadCount}
+              />
+            );
+          })
         )}
       </div>
     </div>

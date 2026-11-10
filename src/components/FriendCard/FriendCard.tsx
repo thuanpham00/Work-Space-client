@@ -13,6 +13,8 @@ interface FriendCardProps {
   showStatus: boolean;
   username?: string;
   lastMessage: LastMessageType | null;
+  hasCount: boolean;
+  unreadCount: number;
 }
 
 export default function FriendCard({
@@ -24,11 +26,16 @@ export default function FriendCard({
   username,
   showStatus = false,
   lastMessage,
+  hasCount,
+  unreadCount,
 }: FriendCardProps) {
   const userId = useUserStore((app) => app.user?.id);
   const isMe = userId === lastMessage?.senderId;
+  const showUnread = hasCount && unreadCount > 0;
   return (
-    <div className={`${styles.friendItem} ${selectedChannel === channelId ? styles.friendItemActive : ""}`}>
+    <div
+      className={`${styles.friendItem} ${selectedChannel === channelId ? styles.friendItemActive : ""} ${showUnread ? styles.friendItemHasUnread : ""}`}
+    >
       <AvatarFallback src={avatar} alt={displayName} status={status as StatusUser} showStatus={showStatus} />
 
       <div className={styles.friendInfo}>
@@ -43,6 +50,11 @@ export default function FriendCard({
           <span className={styles.friendItemLastMessage}>Chưa có tin nhắn nào</span>
         )}
       </div>
+      {showUnread && (
+        <span className={styles.friendItemBadge} aria-label={`${unreadCount} tin nhắn chưa đọc`}>
+          {unreadCount > 99 ? "99+" : unreadCount}
+        </span>
+      )}
     </div>
   );
 }

@@ -12,15 +12,15 @@ import { NotificationType, type NotificationItem } from "../../types/notificatio
 import { notificationApi } from "../../apis/notification.api";
 import { useUserStore } from "../../store/userStore";
 import { LIMIT, PAGE } from "../../constants/config";
-import { useBaseStore } from "../../store/baseStore";
 import { useNavigate } from "react-router-dom";
+import { useNotificationSyncSocket } from "../../Hooks/useNotificationSyncSocket";
+import type { NotificationReadPayload } from "../../Hooks/events";
 
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 
 export default function NotificationBell() {
   const token = useUserStore((state) => state.accessToken);
-  const socket = useBaseStore((state) => state.socket);
   const navigate = useNavigate();
 
   const [query, setQuery] = useState<{ limit: number; page: number }>({
@@ -153,40 +153,27 @@ export default function NotificationBell() {
     </div>
   );
 
-  useEffect(() => {
-    if (!socket || !token) return;
+  // đồng bộ noti giữa nhiều socket (cùng user) — đăng ký tập trung qua useSocketEvent
+  const handleNotificationRead = (payload: NotificationReadPayload) => {
+    const { notificationId, unreadCount, readAt } = payload;
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, isRead: true, readAt: readAt } : n)),
+    );
+    setUnreadCountBadge(unreadCount);
+  };
 
-    const handleRead = ({
-      notificationId,
-      unreadCount,
-      readAt,
-    }: {
-      notificationId: string;
-      unreadCount: number;
-      readAt: string;
-    }) => {
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true, readAt: readAt } : n)),
-      );
-      setUnreadCountBadge(unreadCount);
-    };
+  const handleNotificationReadAll = () => {
+    setNotifications((prev) =>
+      prev.map((n) => ({ ...n, isRead: true, readAt: n.readAt ?? new Date().toISOString() })),
+    );
+    setUnreadCountBadge(0);
+  };
 
-    const handleReadAll = () => {
-      setNotifications((prev) =>
-        prev.map((n) => ({ ...n, isRead: true, readAt: n.readAt ?? new Date().toISOString() })),
-      );
-      setUnreadCountBadge(0);
-    };
-
-    // đồng bộ noti giữa nhiều socket (cùng user)
-    socket.on("notification_read", handleRead);
-    socket.on("notification_read_all", handleReadAll);
-
-    return () => {
-      socket.off("notification_read", handleRead);
-      socket.off("notification_read_all", handleReadAll);
-    };
-  }, [socket, token]);
+  useNotificationSyncSocket({
+    enabled: !!token,
+    onRead: handleNotificationRead,
+    onReadAll: handleNotificationReadAll,
+  });
 
   return (
     <Popover

@@ -6,14 +6,14 @@ import Header from "../../components/Header/Header";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
 import ListMenu from "./ListMenu";
-import { useChannelMembershipSocket } from "../../Hooks/useChannelMembershipSocket";
+import { useGlobalSocket } from "../../Hooks/useGlobalSocket";
 
 const { Sider, Content } = Layout;
 
 export default function MainLayout() {
   const navigate = useNavigate();
 
-  useChannelMembershipSocket(); // listen socket for channel membership
+  useGlobalSocket(); // 1 đầu mối duy nhất cho socket global (auth + membership + unread)
 
   return (
     <Layout className={styles.layout}>

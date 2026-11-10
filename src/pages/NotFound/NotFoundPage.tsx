@@ -22,7 +22,7 @@ export default function NotFoundPage() {
         </p>
 
         <div className={styles.actions}>
-          <Link to={path.orgin} className={styles.homeLink}>
+          <Link to={path.origin} className={styles.homeLink}>
             <Button type="primary" icon={<Home size={16} />} className={styles.primaryBtn}>
               Về trang chủ
             </Button>

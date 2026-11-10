@@ -22,7 +22,8 @@ export default function ChannelChat() {
     queryKey: ["channelDetail", channelId, accessToken],
     queryFn: () => channelApi.getChannelDetail(channelId as string),
     enabled: Boolean(channelId),
-    staleTime: 60 * 1000 * 5,
+    staleTime: 5 * 1000, // 5 seconds
+    keepPreviousData: true,
   });
 
   const dataChannelDetail = dataChannel?.data?.data?.channel;

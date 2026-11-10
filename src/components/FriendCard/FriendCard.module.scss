@@ -90,3 +90,44 @@
 .friendItemLastMessage {
   font-size: $font-caption-size;
 }
+
+.friendItemHasUnread {
+  .friendItemName {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+}
+
+.friendItemBadge {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  max-width: 42px;
+  height: 18px;
+  padding: 0 6px;
+  overflow: hidden;
+  border-radius: $radius-full;
+  background: $badge-danger-bg-light;
+  color: $surface-inverse-text;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.friendItemActive {
+  &.friendItemHasUnread {
+    .friendItemName {
+      color: $surface-inverse-text;
+    }
+  }
+
+  .friendItemBadge {
+    background: $surface-inverse-text;
+    color: $badge-danger-bg-light;
+  }
+}
