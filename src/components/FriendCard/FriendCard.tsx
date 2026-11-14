@@ -32,6 +32,15 @@ export default function FriendCard({
   const userId = useUserStore((app) => app.user?.id);
   const isMe = userId === lastMessage?.senderId;
   const showUnread = hasCount && unreadCount > 0;
+  
+  const previewText =
+    lastMessage && lastMessage.content
+      ? lastMessage.content
+      : lastMessage?.messageType === "GIF"
+        ? "[GIF]"
+        : lastMessage
+          ? "[Hình ảnh]"
+          : null;
   return (
     <div
       className={`${styles.friendItem} ${selectedChannel === channelId ? styles.friendItemActive : ""} ${showUnread ? styles.friendItemHasUnread : ""}`}
@@ -41,10 +50,10 @@ export default function FriendCard({
       <div className={styles.friendInfo}>
         <span className={styles.friendItemName}>{displayName}</span>
         {username && <span className={styles.friendItemUserName}>@{username}</span>}
-        {lastMessage !== null ? (
+        {previewText !== null ? (
           <span className={styles.friendItemLastMessage}>
             {isMe ? "Bạn: " : ""}
-            {lastMessage.content}
+            {previewText}
           </span>
         ) : (
           <span className={styles.friendItemLastMessage}>Chưa có tin nhắn nào</span>

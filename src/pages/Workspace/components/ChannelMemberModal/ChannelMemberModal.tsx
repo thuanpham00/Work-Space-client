@@ -16,7 +16,6 @@ import { LIMIT, PAGE } from "../../../../constants/config";
 import Loading from "../../../../components/Loading/Loading";
 import { WorkspaceMemberStatus } from "../../../../types/workspace.type";
 import { WorkspaceStatusPill } from "../../../../components/WorkspaceStatusPill/WorkspaceStatusPill";
-import { useUserStore } from "../../../../store/userStore";
 
 export interface WorkspaceMemberModalRef {
   handleOpen: () => void;
@@ -115,7 +114,7 @@ const InviteLinkSection = ({ link, expiresAt }: { link: string; expiresAt: strin
       notification.success({
         message: "Đã sao chép link mời",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
     } catch (error) {
       console.error("Copy failed", error);
@@ -236,11 +235,9 @@ const JoinRequestItem = ({
 };
 
 const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
-  const queryClient = useQueryClient();
   const channelRole = useChannelStore((app) => app.channelRole);
   const channelId = useChannelStore((app) => app.channelId);
   const channelName = useChannelStore((app) => app.channelName);
-  const accessToken = useUserStore((app) => app.accessToken);
   const isAdminChannel = channelRole === ChannelMemberRole.ADMIN;
 
   const [open, setOpen] = useState(false);
@@ -308,7 +305,6 @@ const ChannelMemberModal = forwardRef<WorkspaceMemberModalRef>((_, ref) => {
   const handleRequestResolved = () => {
     refetchChannelRequestList();
     refetchFriendInvite();
-    queryClient.invalidateQueries({ queryKey: ["channelDetail", channelId, accessToken] });
   };
 
   const { data: dataLinkInvite } = useQuery({

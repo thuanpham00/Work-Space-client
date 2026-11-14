@@ -9,9 +9,9 @@ import Messages from "../../../../components/Messages/Messages";
 import Composer from "../../../../components/Composer/Composer";
 import { useUserStore } from "../../../../store/userStore";
 import { useChannelStore } from "../../../../store/channelStore";
-import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
-import useScrollMessage from "../../../../Hooks/useScrollMessage";
 import Loading from "../../../../components/Loading/Loading";
+import { useChannelSocket } from "../../../../Hooks/local/useChannelSocket";
+import useScrollMessage from "../../../../Hooks/local/useScrollMessage";
 
 export default function DirectChat() {
   const accessToken = useUserStore((app) => app.accessToken);

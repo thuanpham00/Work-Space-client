@@ -78,7 +78,7 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
         notification.success({
           message: "Đã cập nhật thông tin",
           placement: "topRight",
-          duration: 6,
+          duration: 4,
         });
 
         const updatedUser = response.data.data.user;
@@ -97,7 +97,7 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
         notification.error({
           message: "Cập nhật thông tin thất bại",
           placement: "topRight",
-          duration: 6,
+          duration: 4,
         });
       },
     });
@@ -125,7 +125,7 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
       notification.error({
         message: "Chỉ chấp nhận file JPG/PNG!",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
@@ -133,7 +133,7 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
       notification.error({
         message: "Ảnh phải nhỏ hơn 2MB!",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
     }
     return isJpgOrPng && isLt2M;
@@ -156,7 +156,7 @@ export default function InfoUserPage({ infoUser }: { infoUser: UserType }) {
       notification.error({
         message: "Upload ảnh thất bại",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
     }
   };

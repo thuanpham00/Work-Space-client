@@ -1,6 +1,8 @@
-import { useChannelMembershipSocket } from "./useChannelMembershipSocket";
-import { useAuthSocket } from "./useAuthSocket";
-import { useUnreadSocket } from "./useUnreadSocket";
+import { useChannelMembershipSocketGlobal } from "./useChannelMembershipSocketGlobal";
+import { useAuthSocketGlobal } from "./useAuthSocketGlobal";
+import { useUnreadSocketGlobal } from "./useUnreadSocketGlobal";
+import { useUnreadChannels } from "../local/useUnreadChannel";
+import { useReceiveMessageGlobal } from "./useReceiveMessageGlobal";
 
 /**
  * Một đầu mối duy nhất cho mọi socket global (không phụ thuộc channelId).
@@ -8,6 +10,8 @@ import { useUnreadSocket } from "./useUnreadSocket";
  * - `useAuthSocket`            : heartbeat + token_refresh + auth_error (từ App.tsx)
  * - `useChannelMembershipSocket`: channel_invited / revoked / request_* / resolved (giữ nguyên file Hooks/)
  * - `useUnreadSocket`          : channel_unread + channel_read (từ ListMenu.tsx)
+ * - `useUnreadChannels`        : channel_unread (từ ListMenu.tsx)
+ * - `useReceiveMessageGlobal`  : receive_message_global (từ SidebarFriend.tsx)
  *
  * Ngoại lệ có lý do, KHÔNG gom vào đây:
  * - `useChannelSocket` (room theo channelId, join/leave + mark_read throttle)
@@ -16,7 +20,9 @@ import { useUnreadSocket } from "./useUnreadSocket";
  *   → ở lại `NotificationBell.tsx`, chỉ đổi sang dùng `useSocketEvent`.
  */
 export function useGlobalSocket() {
-  useAuthSocket();
-  useChannelMembershipSocket();
-  useUnreadSocket();
+  useAuthSocketGlobal();
+  useChannelMembershipSocketGlobal();
+  useUnreadSocketGlobal();
+  useUnreadChannels();
+  useReceiveMessageGlobal()
 }

@@ -50,7 +50,7 @@ const ChannelInfoForm = ({ channel, isLoading, onCancel }: ChannelInfoFormProps)
       notification.success({
         message: "Đã cập nhật thông tin kênh",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
       queryClient.invalidateQueries({ queryKey: ["channel-detail", channel.id] });
     } catch (error) {

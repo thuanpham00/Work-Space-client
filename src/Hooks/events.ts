@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   ChannelInviteResolvedPayload,
   ChannelInviteRevokedPayload,
+  ChannelInviteWithdrawnPayload,
   ChannelInvitedPayload,
   ChannelReadPayload,
   ChannelRequestCancelledPayload,
   ChannelRequestResolvedPayload,
   ChannelRequestSentPayload,
+  ChannelRequestWithdrawnPayload,
   ChannelUnreadPayload,
 } from "../types/channel.type";
 import type { Message } from "../types/message.type";
@@ -43,6 +46,7 @@ export interface ServerToClientEvents {
 
   // -- phòng chat (đang xử lý ở useChannelSocket) --
   receive_message: Message;
+  receive_message_global: Message;
   receive_attachments: ReceiveAttachmentsPayload;
   channel_settings_updated: ChannelSettingsUpdatedPayload;
   channel_nicknames_updated: ChannelNicknamesUpdatedPayload;
@@ -54,7 +58,9 @@ export interface ServerToClientEvents {
   channel_request_sent: ChannelRequestSentPayload;
   channel_request_cancelled: ChannelRequestCancelledPayload;
   channel_invite_resolved: ChannelInviteResolvedPayload;
+  channel_invite_withdrawn: ChannelInviteWithdrawnPayload;
   channel_request_resolved: ChannelRequestResolvedPayload;
+  channel_request_withdrawn: ChannelRequestWithdrawnPayload;
 
   // -- badge unread sidebar (đang xử lý ở ListMenu.tsx) --
   channel_unread: ChannelUnreadPayload;
@@ -73,7 +79,6 @@ export interface SendMessageEmitPayload {
   channel_id: string;
   content: string;
   message_type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   files?: any[];
 }
 
@@ -82,7 +87,6 @@ export interface SendGifEmitPayload {
   file_name: string;
   file_url: string;
   mime_type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   file_size: any;
 }
 
@@ -92,13 +96,10 @@ export interface MarkReadEmitPayload {
 }
 
 export interface ClientToServerEvents {
-  // -- vòng đời (App.tsx) --
   heartbeat: void;
-  // -- phòng chat (useChannelSocket) --
   join_channel: string;
   leave_channel: string;
   mark_read: MarkReadEmitPayload;
-  // -- gửi tin (Composer.tsx) --
   send_message: SendMessageEmitPayload;
   send_gif: SendGifEmitPayload;
 }
@@ -108,6 +109,7 @@ export const SOCKET_LISTEN_EVENT = {
   TOKEN_REFRESH: "token_refresh",
   AUTH_ERROR: "auth_error",
   RECEIVE_MESSAGE: "receive_message",
+  RECEIVE_MESSAGE_GLOBAL: "receive_message_global",
   RECEIVE_ATTACHMENTS: "receive_attachments",
   CHANNEL_SETTINGS_UPDATED: "channel_settings_updated",
   CHANNEL_NICKNAMES_UPDATED: "channel_nicknames_updated",
@@ -117,7 +119,9 @@ export const SOCKET_LISTEN_EVENT = {
   CHANNEL_REQUEST_SENT: "channel_request_sent",
   CHANNEL_REQUEST_CANCELLED: "channel_request_cancelled",
   CHANNEL_INVITE_RESOLVED: "channel_invite_resolved",
+  CHANNEL_INVITE_WITHDRAWN: "channel_invite_withdrawn",
   CHANNEL_REQUEST_RESOLVED: "channel_request_resolved",
+  CHANNEL_REQUEST_WITHDRAWN: "channel_request_withdrawn",
   CHANNEL_UNREAD: "channel_unread",
   CHANNEL_READ: "channel_read",
   NOTIFICATION_READ: "notification_read",

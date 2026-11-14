@@ -6,7 +6,7 @@ import Header from "../../components/Header/Header";
 import logo from "../../assets/image/chat.png";
 import { path } from "../../utils/path";
 import ListMenu from "./ListMenu";
-import { useGlobalSocket } from "../../Hooks/useGlobalSocket";
+import { useGlobalSocket } from "../../Hooks/global/useGlobalSocket";
 
 const { Sider, Content } = Layout;
 

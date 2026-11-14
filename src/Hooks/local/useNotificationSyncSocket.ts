@@ -1,6 +1,6 @@
-import { useSocketEvent } from "./useSocketEvent";
-import { SOCKET_LISTEN_EVENT } from "./events";
-import type { NotificationReadPayload } from "./events";
+import { useSocketEvent } from "../useSocketEvent";
+import { SOCKET_LISTEN_EVENT } from "../events";
+import type { NotificationReadPayload } from "../events";
 
 interface NotificationSyncHandlers {
   enabled: boolean;

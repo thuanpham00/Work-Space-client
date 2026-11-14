@@ -1,7 +1,7 @@
-import { useUnreadStore } from "../store/unreadStore";
-import { useUserStore } from "../store/userStore";
-import { useSocketEvent } from "./useSocketEvent";
-import { SOCKET_LISTEN_EVENT } from "./events";
+import { useUnreadStore } from "../../store/unreadStore";
+import { useUserStore } from "../../store/userStore";
+import { SOCKET_LISTEN_EVENT } from "../events";
+import { useSocketEvent } from "../useSocketEvent";
 
 /**
  * Nhóm badge unread sidebar — logic tách nguyên từ `ListMenu.tsx`.
@@ -9,7 +9,7 @@ import { SOCKET_LISTEN_EVENT } from "./events";
  * không phụ thuộc state local của component.
  * Được mount qua `useGlobalSocket` ở `MainLayout`.
  */
-export function useUnreadSocket() {
+export function useUnreadSocketGlobal() {
   const token = useUserStore((state) => state.accessToken);
   const markUnread = useUnreadStore((state) => state.markUnread);
   const markReadOptimistic = useUnreadStore((state) => state.markReadOptimistic);

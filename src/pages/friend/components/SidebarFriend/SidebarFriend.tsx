@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "antd";
 import styles from "./SidebarFriend.module.scss";
 import { List, Plus } from "lucide-react";
+import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { friendApi } from "../../../../apis/friend.api";
 import type { FriendDMChannelResponse, StatusUser } from "../../../../types/friend.type";
@@ -11,15 +13,23 @@ import { StatusRequest } from "../../../../types/user.type";
 import type { LastMessageType } from "../../../../types/message.type";
 import Loading from "../../../../components/Loading/Loading";
 import { useUnreadStore } from "../../../../store/unreadStore";
+import { usePreviewStore } from "../../../../store/previewStore";
 
-const FriendItem = ({ channelFriend, unreadCount }: { channelFriend: FriendDMChannelResponse, unreadCount: number }) => {
+const FriendItem = ({
+  channelFriend,
+  unreadCount,
+  lastMessage,
+}: {
+  channelFriend: FriendDMChannelResponse;
+  unreadCount: number;
+  lastMessage: LastMessageType | null;
+}) => {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
   const channelId = useChannelStore((app) => app.channelId);
 
   const displayName = channelFriend.friend.fullName || "";
   const avatar = channelFriend.friend.avatar || "";
   const status = channelFriend.friend.status as StatusUser;
-  const lastMessage = channelFriend.lastMessage as LastMessageType;
   const hasCount = unreadCount > 0;
 
   return (
@@ -47,17 +57,32 @@ const FriendItem = ({ channelFriend, unreadCount }: { channelFriend: FriendDMCha
 export default function SidebarFriend() {
   const chooseChannelFriend = useChannelStore((app) => app.chooseChannelFriend);
   const byChannelId = useUnreadStore((app) => app.byChannelId);
+  const previewByChannelId = usePreviewStore((app) => app.previewByChannelId);
   const modeListFriendState = useChannelStore((app) => app.modeListFriend);
   const accessToken = useUserStore((app) => app.accessToken);
 
-  const { data: dataChannelsFriends, isFetching } = useQuery({
+  const { data: dataChannelsFriends, isLoading } = useQuery({
     queryKey: ["friendsChannels", StatusRequest.ACCEPTED, accessToken, ""],
     queryFn: () => friendApi.getChannelsFriends({ search: "" }),
-    keepPreviousData: true,
     enabled: Boolean(accessToken),
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    keepPreviousData: true,
   });
 
-  const channelsFriends = (dataChannelsFriends?.data.data.channels ?? []) as FriendDMChannelResponse[];
+  const rawChannels = (dataChannelsFriends?.data.data.channels ?? []) as FriendDMChannelResponse[];
+
+  const channelsFriends = useMemo(() => {
+    const merged = rawChannels.map((ch) => ({
+      ...ch,
+      lastMessage: previewByChannelId.get(ch.channelId) ?? ch.lastMessage,
+    }));
+    merged.sort((a, b) => {
+      const ta = a.lastMessage?.createdAt ? Date.parse(a.lastMessage.createdAt) : 0;
+      const tb = b.lastMessage?.createdAt ? Date.parse(b.lastMessage.createdAt) : 0;
+      return tb - ta;
+    });
+    return merged;
+  }, [rawChannels, previewByChannelId]);
 
   return (
     <div className={styles.layoutInner}>
@@ -82,7 +107,7 @@ export default function SidebarFriend() {
       </div>
 
       <div className={styles.layoutList}>
-        {isFetching ? (
+        {isLoading ? (
           <Loading tip="Đang tải..." size="default" />
         ) : channelsFriends.length === 0 ? (
           <div className="text-center text-xs text-gray-500 py-4">Chưa có tin nhắn trực tiếp nào</div>
@@ -94,6 +119,7 @@ export default function SidebarFriend() {
                 key={channelFriend.channelId}
                 channelFriend={channelFriend}
                 unreadCount={unreadCount}
+                lastMessage={channelFriend.lastMessage ?? null}
               />
             );
           })

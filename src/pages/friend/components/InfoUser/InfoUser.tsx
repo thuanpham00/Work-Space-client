@@ -7,7 +7,7 @@ import PrivacySection from "./sections/PrivacySection";
 import { useUserStore } from "../../../../store/userStore";
 import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
 import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
-import useScrollAttachments from "../../../../Hooks/useScrollAttachments";
+import useScrollAttachments from "../../../../Hooks/local/useScrollAttachments";
 
 interface InfoUserProps {
   channelDMDetail: Channel;

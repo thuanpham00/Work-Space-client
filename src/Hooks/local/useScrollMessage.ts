@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
-import { LIMIT, PAGE } from "../constants/config";
-import type { QueryBase } from "../types/query.type";
-import type { Message } from "../types/message.type";
+import { LIMIT, PAGE } from "../../constants/config";
+import type { QueryBase } from "../../types/query.type";
+import type { Message } from "../../types/message.type";
 import { useQuery } from "react-query";
-import { useChannelStore } from "../store/channelStore";
-import { useUserStore } from "../store/userStore";
-import { channelApi } from "../apis/channel.api";
+import { useChannelStore } from "../../store/channelStore";
+import { useUserStore } from "../../store/userStore";
+import { channelApi } from "../../apis/channel.api";
 
 export default function useScrollMessage() {
   const channelId = useChannelStore((app) => app.channelId);

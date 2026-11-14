@@ -6,6 +6,7 @@ import ChannelInfoForm from "./section/ChannelInfoForm";
 import { useQuery } from "react-query";
 import { channelApi } from "../../../../apis/channel.api";
 import type { Channel } from "../../../../types/channel.type";
+import { useUserStore } from "../../../../store/userStore";
 
 export type ChannelSettingsModalRef = {
   handleOpen: () => void;
@@ -56,13 +57,14 @@ const items: MenuItem[] = [
 
 const ChannelSettingsModal = forwardRef<ChannelSettingsModalRef, ChannelSettingsModalProps>(
   ({ channelId, channelName = "kênh", onClose }, ref) => {
+    const accessToken = useUserStore((app) => app.accessToken);
     const [open, setOpen] = useState(false);
     const [activeKey, setActiveKey] = useState<string>("info");
     const [openKeys, setOpenKeys] = useState<string[]>(["general"]);
 
     // Query chi tiết kênh
     const { data: channelDetail, isLoading } = useQuery({
-      queryKey: ["channel-detail", channelId],
+      queryKey: ["channelDetail", channelId, accessToken],
       queryFn: () => channelApi.getChannelDetail(channelId),
       staleTime: 1000 * 60 * 5,
     });

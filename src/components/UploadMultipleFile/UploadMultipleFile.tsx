@@ -73,7 +73,7 @@ const UploadMultipleFile = forwardRef(({ onSubmit, fileList, setFileList }: Prop
       notification.error({
         message: "Vượt quá giới hạn 4 files",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
       return;
     }

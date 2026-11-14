@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useBaseStore } from "../store/baseStore";
-import type { Message } from "../types/message.type";
-import { queryClient } from "../main";
-import { useChannelStore } from "../store/channelStore";
-import { useUserStore } from "../store/userStore";
+import { useBaseStore } from "../../store/baseStore";
+import type { Message } from "../../types/message.type";
+import { queryClient } from "../../main";
+import { useChannelStore } from "../../store/channelStore";
+import { useUserStore } from "../../store/userStore";
 
 interface UseChannelSocketOptions {
   onMessage: (message: Message) => void;

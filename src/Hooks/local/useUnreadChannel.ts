@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useQuery } from "react-query";
-import { channelApi } from "../apis/channel.api";
+import { channelApi } from "../../apis/channel.api";
 import { useEffect } from "react";
-import { useUnreadStore } from "../store/unreadStore";
+import { useUnreadStore } from "../../store/unreadStore";
+import { useUserStore } from "../../store/userStore";
 
-export function useUnreadChannels(token?: string | null) {
+export function useUnreadChannels() {
+  const token = useUserStore((state) => state.accessToken);
   const loadDataUnreadChannel = useUnreadStore((state) => state.loadDataUnreadChannel);
 
   const { data: dataUnreadChannel } = useQuery({

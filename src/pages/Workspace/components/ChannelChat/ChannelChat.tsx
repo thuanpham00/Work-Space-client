@@ -9,8 +9,8 @@ import { useUserStore } from "../../../../store/userStore";
 import { channelApi } from "../../../../apis/channel.api";
 import InfoChannel from "../InfoChannel/InfoChannel";
 import type { ChannelMember, ChannelMemberNickname } from "../../../../types/channel.type";
-import { useChannelSocket } from "../../../../Hooks/useChannelSocket";
-import useScrollMessage from "../../../../Hooks/useScrollMessage";
+import { useChannelSocket } from "../../../../Hooks/local/useChannelSocket";
+import useScrollMessage from "../../../../Hooks/local/useScrollMessage";
 import Loading from "../../../../components/Loading/Loading";
 
 export default function ChannelChat() {

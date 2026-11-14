@@ -189,13 +189,24 @@ export type ChannelRequestResolvedPayload = ChannelEventBase & {
   resolvedByName: string;
 };
 
-/** Lời mời được chính user đó accept / reject */
+/** Lời mời được chính user đó accept / reject (đồng bộ tab khác của B) */
 export type ChannelInviteResolvedPayload = ChannelEventBase & {
   type: "invite";
   status: "ACTIVE" | "LEFT";
   action: "accepted" | "rejected";
   /** User thực hiện thao tác — dùng để bỏ qua toast ở tab đã bấm nút */
   actorId: string;
+  actorName: string | null;
+};
+
+/** Socket riêng báo cho ADMIN khi B accept / reject lời mời (tương tự channel_request_withdrawn) */
+export type ChannelInviteWithdrawnPayload = ChannelEventBase & {
+  type: "invite";
+  status: "ACTIVE" | "LEFT";
+  action: "accepted" | "rejected";
+  /** B — người accept / reject */
+  actorId: string;
+  actorName: string | null;
 };
 
 /** Membership trong workspace thay đổi → sidebar cần refresh */
@@ -218,4 +229,16 @@ export interface ChannelRequestCancelledPayload extends ChannelEventBase {
   status: "CANCELED";
   action: "cancelled";
   actorId: string;
+}
+
+/** Socket chung báo cho ADMIN về mọi biến động join-request của B (gộp received cũ vào đây) */
+export interface ChannelRequestWithdrawnPayload extends ChannelEventBase {
+  type: "join";
+  status: "PENDING_REQUEST" | "CANCELED" | "ACTIVE" | "LEFT";
+  action: "requested" | "cancelled" | "approved" | "rejected";
+  /** B — người gửi / hủy / được duyệt / bị từ chối */
+  actorId: string;
+  requesterId: string;
+  requesterName: string | null;
+  requesterAvatar?: string | null;
 }

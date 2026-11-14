@@ -2,10 +2,10 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useQuery } from "react-query";
 import { useCallback, useEffect, useState } from "react";
-import type { QueryBase } from "../types/query.type";
-import { PAGE } from "../constants/config";
-import { channelApi } from "../apis/channel.api";
-import { AttachmentType, type Attachment } from "../types/attachment.type";
+import type { QueryBase } from "../../types/query.type";
+import { PAGE } from "../../constants/config";
+import { channelApi } from "../../apis/channel.api";
+import { AttachmentType, type Attachment } from "../../types/attachment.type";
 
 const ATTACHMENT_LIMIT = 9;
 
@@ -25,7 +25,8 @@ export default function useScrollAttachments({ channelId, token }: { channelId: 
     queryKey: ["attachmentsChannel", channelId, query, token],
     queryFn: () => channelApi.getAttachmentsChannel(channelId as string, query),
     enabled: Boolean(channelId),
-    staleTime: 60 * 1000,
+    staleTime: 60 * 1000, // 1 minute
+    keepPreviousData: true,
   });
 
   const attachmentsData = (dataAttachments?.data?.data?.attachments || []) as Attachment[];

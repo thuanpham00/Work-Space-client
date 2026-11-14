@@ -6,7 +6,7 @@ import type { Channel, ChannelMemberNickname, ChannelMember } from "../../../../
 import CustomizeChannel from "../../../../components/CustomizeChannel/CustomizeChannel";
 import MediaChannel from "../../../../components/MediaChannel/MediaChannel";
 import MemberChannel from "./section/MemberChannel";
-import useScrollAttachments from "../../../../Hooks/useScrollAttachments";
+import useScrollAttachments from "../../../../Hooks/local/useScrollAttachments";
 import { useUserStore } from "../../../../store/userStore";
 import ChannelSettingsModal, {
   type ChannelSettingsModalRef,

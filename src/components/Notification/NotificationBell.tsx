@@ -13,7 +13,7 @@ import { notificationApi } from "../../apis/notification.api";
 import { useUserStore } from "../../store/userStore";
 import { LIMIT, PAGE } from "../../constants/config";
 import { useNavigate } from "react-router-dom";
-import { useNotificationSyncSocket } from "../../Hooks/useNotificationSyncSocket";
+import { useNotificationSyncSocket } from "../../Hooks/local/useNotificationSyncSocket";
 import type { NotificationReadPayload } from "../../Hooks/events";
 
 dayjs.extend(relativeTime);

@@ -31,7 +31,7 @@ export default function MemberNicknameRow({ member, onNicknameChange }: MemberNi
       notification.warning({
         message: "Biệt danh không được để trống",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
       return;
     }
@@ -39,7 +39,7 @@ export default function MemberNicknameRow({ member, onNicknameChange }: MemberNi
       notification.warning({
         message: `Biệt danh tối đa ${NICKNAME_MAX_LENGTH} ký tự`,
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
       return;
     }

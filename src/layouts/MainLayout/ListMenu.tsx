@@ -11,7 +11,6 @@ import { workspaceAPI } from "../../apis/workspace.api";
 import { useQuery } from "react-query";
 import { useUserStore } from "../../store/userStore";
 import styles from "./ListMenu.module.scss";
-import { useUnreadChannels } from "../../Hooks/useUnreadChannel";
 
 export default function ListMenu() {
   const { pathname } = useLocation();
@@ -105,8 +104,6 @@ export default function ListMenu() {
     // key chính là String(workspace.id) — navigate thẳng không cần slug
     navigate(`/workspaces/${key}`);
   };
-
-  useUnreadChannels(token);
 
   return (
     <Menu

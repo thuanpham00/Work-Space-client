@@ -29,7 +29,7 @@ const PrivacySection = () => {
     notification.success({
       message: checked ? "Đã tắt thông báo đoạn chat" : "Đã bật thông báo đoạn chat",
       placement: "topRight",
-      duration: 6,
+      duration: 4,
     });
   };
 
@@ -38,7 +38,7 @@ const PrivacySection = () => {
     notification.success({
       message: "Đã chặn người dùng này",
       placement: "topRight",
-      duration: 6,
+      duration: 4,
     });
   };
 
@@ -47,7 +47,7 @@ const PrivacySection = () => {
     notification.success({
       message: "Đã bỏ chặn người dùng",
       placement: "topRight",
-      duration: 6,
+      duration: 4,
     });
   };
 
@@ -56,7 +56,7 @@ const PrivacySection = () => {
       notification.warning({
         message: "Vui lòng chọn lý do báo cáo",
         placement: "topRight",
-        duration: 6,
+        duration: 4,
       });
       return;
     }
@@ -66,7 +66,7 @@ const PrivacySection = () => {
     notification.success({
       message: "Đã gửi báo cáo. Cảm ơn bạn đã phản hồi",
       placement: "topRight",
-      duration: 6,
+      duration: 4,
     });
   };
 
@@ -74,7 +74,7 @@ const PrivacySection = () => {
     notification.success({
       message: "Đã xoá đoạn chat",
       placement: "topRight",
-      duration: 6,
+      duration: 4,
     });
   };
 

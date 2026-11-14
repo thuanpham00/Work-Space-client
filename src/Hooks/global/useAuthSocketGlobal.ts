@@ -2,14 +2,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
-import { useBaseStore } from "../store/baseStore";
-import { useUserStore } from "../store/userStore";
-import { useChannelStore } from "../store/channelStore";
-import { socketApi } from "../apis/socket.api";
-import { httpRaw } from "../utils/http";
-import { useSocketEvent } from "./useSocketEvent";
-import { SOCKET_EMIT_EVENT, SOCKET_LISTEN_EVENT } from "./events";
-import type { AuthErrorPayload, TokenRefreshPayload } from "./events";
+import { useBaseStore } from "../../store/baseStore";
+import { useUserStore } from "../../store/userStore";
+import { useChannelStore } from "../../store/channelStore";
+import { socketApi } from "../../apis/socket.api";
+import { httpRaw } from "../../utils/http";
+import { SOCKET_EMIT_EVENT, SOCKET_LISTEN_EVENT } from "../events";
+import type { AuthErrorPayload, TokenRefreshPayload } from "../events";
+import { useSocketEvent } from "../useSocketEvent";
 
 /**
  * Nhóm auth / vòng đời — logic tách nguyên từ `App.tsx`, giữ nguyên hành vi.
@@ -18,7 +18,7 @@ import type { AuthErrorPayload, TokenRefreshPayload } from "./events";
  * - `token_refresh`: đổi accessToken + reconnect socket
  * - `auth_error`: RT hết hạn → logout về /login
  */
-export function useAuthSocket() {
+export function useAuthSocketGlobal() {
   const socket = useBaseStore((state) => state.socket);
   const accessToken = useUserStore((state) => state.accessToken);
   const setAccessToken = useUserStore((state) => state.setAccessToken);

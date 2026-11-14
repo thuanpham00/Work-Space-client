@@ -64,7 +64,7 @@ export default function SettingDisplayPage({ settings }: { settings: Setting }) 
         notification.success({
           message: "Cập nhật cài đặt thành công",
           placement: "topRight",
-          duration: 6,
+          duration: 4,
         });
         const updatedSettings = response.data.data.settings;
         queryClient.setQueryData(["settings", token], (old: any) => {
@@ -79,7 +79,7 @@ export default function SettingDisplayPage({ settings }: { settings: Setting }) 
         notification.error({
           message: "Cập nhật cài đặt thất bại",
           placement: "topRight",
-          duration: 6,
+          duration: 4,
         });
       },
     });

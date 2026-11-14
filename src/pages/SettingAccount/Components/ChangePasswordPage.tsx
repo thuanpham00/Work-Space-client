@@ -30,7 +30,7 @@ export default function ChangePasswordPage() {
         notification.success({
           message: "Đã đổi mật khẩu",
           placement: "topRight",
-          duration: 6,
+          duration: 4,
         });
         form.resetFields();
       },
